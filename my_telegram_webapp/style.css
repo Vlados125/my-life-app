@@ -1,0 +1,195 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+  background-color: var(--tg-theme-bg-color, #0f172a);
+  color: var(--tg-theme-text-color, #f8fafc);
+  padding: 16px;
+}
+
+.container {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.screen {
+  display: none;
+}
+
+.screen.active {
+  display: block;
+}
+
+h1 {
+  font-size: 24px;
+  margin-bottom: 4px;
+  text-align: center;
+}
+
+.subtitle {
+  text-align: center;
+  color: #94a3b8;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+/* ХМАРИНКИ (ГРИД) */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.card.cloud {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border: 1px solid #475569;
+  border-radius: 18px;
+  padding: 20px 12px;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: transform 0.1s ease, border-color 0.2s ease;
+}
+
+.card.cloud:active {
+  transform: scale(0.96);
+  border-color: #38bdf8;
+}
+
+.card .icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.card .title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* ЕКРАНИ ТА НАВІГАЦІЯ */
+.nav-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.btn-back {
+  background: #334155;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+/* БЛОК СТАТИСТИКИ */
+.stats-box {
+  background: #1e293b;
+  border-left: 4px solid #38bdf8;
+  padding: 14px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+
+.stats-box h3 {
+  font-size: 15px;
+  margin-bottom: 10px;
+  color: #38bdf8;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.stat-row.highlight {
+  font-size: 16px;
+  color: #4ade80;
+  border-top: 1px solid #334155;
+  padding-top: 6px;
+  margin-top: 6px;
+}
+
+/* ФОРМИ */
+.form-box {
+  background: #1e293b;
+  padding: 14px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.form-box h3 {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  color: #fff;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.input-group {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-primary {
+  width: 100%;
+  background: #0284c7;
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-primary:active {
+  background: #0369a1;
+}
+
+/* ІСТОРІЯ */
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.history-item {
+  background: #1e293b;
+  padding: 10px 14px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.btn-delete {
+  background: none;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.placeholder-text {
+  text-align: center;
+  color: #64748b;
+  margin-top: 40px;
+}

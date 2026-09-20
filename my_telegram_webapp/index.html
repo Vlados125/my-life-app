@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Мій Помічник</title>
+  <!-- Підключаємо Telegram WebApp SDK -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    
+    <!-- ГОЛОВНЕ МЕНЮ (ХМАРИНКИ) -->
+    <div id="main-menu" class="screen active">
+      <h1>✨ Мій Помічник</h1>
+      <p class="subtitle">Обери розділ для роботи:</p>
+      
+      <div class="grid">
+        <div class="card cloud" onclick="openScreen('stocks-screen')">
+          <div class="icon">📈</div>
+          <div class="title">Фінанси & Акції</div>
+        </div>
+        
+        <div class="card cloud" onclick="openScreen('gym-screen')">
+          <div class="icon">🏋️‍♂️</div>
+          <div class="title">Тренування</div>
+        </div>
+
+        <div class="card cloud" onclick="openScreen('food-screen')">
+          <div class="icon">🥗</div>
+          <div class="title">Харчування</div>
+        </div>
+
+        <div class="card cloud" onclick="openScreen('goals-screen')">
+          <div class="icon">🎯</div>
+          <div class="title">Цілі & Плани</div>
+        </div>
+
+        <div class="card cloud" onclick="openScreen('projects-screen')">
+          <div class="icon">💼</div>
+          <div class="title">Проєкти</div>
+        </div>
+
+        <div class="card cloud" onclick="openScreen('ideas-screen')">
+          <div class="icon">💡</div>
+          <div class="title">Ідеї</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ЕКРАН: ФІНАНСИ ТА АКЦІЇ -->
+    <div id="stocks-screen" class="screen">
+      <div class="nav-bar">
+        <button class="btn-back" onclick="openScreen('main-menu')">⬅️ Назад</button>
+        <h2>📈 Фінанси та Акції</h2>
+      </div>
+
+      <!-- Блок загальної статистики (Авто-обчислення) -->
+      <div class="stats-box">
+        <h3>📊 Підсумок по акції</h3>
+        <div class="stat-row">
+          <span>Всього куплено:</span> <b id="stat-total-qty">0 шт.</b>
+        </div>
+        <div class="stat-row">
+          <span>Всього інвестовано:</span> <b id="stat-total-spent">$0</b>
+        </div>
+        <div class="stat-row highlight">
+          <span>Середня ціна:</span> <b id="stat-avg-price">$0.00</b>
+        </div>
+      </div>
+
+      <!-- Форма додавання покупки -->
+      <div class="form-box">
+        <h3>+ Додати покупку</h3>
+        <input type="text" id="stock-name" placeholder="Назва (напр. Apple)" value="Apple">
+        <div class="input-group">
+          <input type="number" id="stock-qty" placeholder="Кількість (шт)" step="any">
+          <input type="number" id="stock-price" placeholder="Ціна за 1 шт ($)" step="any">
+        </div>
+        <button class="btn-primary" onclick="addStockPurchase()">Зберегти покупку</button>
+      </div>
+
+      <!-- Історія покупок -->
+      <h3>Історія покупок:</h3>
+      <div id="stocks-history-list" class="history-list"></div>
+    </div>
+
+    <!-- ЕКРАН: ТРЕНУВАННЯ -->
+    <div id="gym-screen" class="screen">
+      <div class="nav-bar">
+        <button class="btn-back" onclick="openScreen('main-menu')">⬅️ Назад</button>
+        <h2>🏋️‍♂️ Тренування</h2>
+      </div>
+      
+      <div class="stats-box">
+        <h3>📊 Статистика сесії</h3>
+        <div class="stat-row">
+          <span>Загальний тоннаж:</span> <b id="gym-total-tonnage">0 кг</b>
+        </div>
+        <div class="stat-row">
+          <span>Виконано підходів:</span> <b id="gym-total-sets">0</b>
+        </div>
+      </div>
+
+      <div class="form-box">
+        <h3>+ Внести підхід</h3>
+        <input type="text" id="gym-exercise" placeholder="Вправа (напр. Жим лежачи)" value="Жим лежачи">
+        <div class="input-group">
+          <input type="number" id="gym-weight" placeholder="Вага (кг)">
+          <input type="number" id="gym-reps" placeholder="Повтори">
+        </div>
+        <button class="btn-primary" onclick="addGymSet()">Зберегти підхід</button>
+      </div>
+
+      <h3>Підходи за сьогодні:</h3>
+      <div id="gym-history-list" class="history-list"></div>
+    </div>
+
+    <!-- Інші екрани (Заглушки) -->
+    <div id="food-screen" class="screen">
+      <button class="btn-back" onclick="openScreen('main-menu')">⬅️ Назад</button>
+      <h2>🥗 Харчування та Рецепти</h2>
+      <p class="placeholder-text">Розділ у розробці...</p>
+    </div>
+
+    <div id="goals-screen" class="screen">
+      <button class="btn-back" onclick="openScreen('main-menu')">⬅️ Назад</button>
+      <h2>🎯 Цілі та Плани</h2>
+      <p class="placeholder-text">Розділ у розробці...</p>
+    </div>
+
+    <div id="projects-screen" class="screen">
+      <button class="btn-back" onclick="openScreen('main-menu')">⬅️ Назад</button>
+      <h2>💼 Проєкти</h2>
+      <p class="placeholder-text">Розділ у розробці...</p>
+    </div>
+
+    <div id="ideas-screen" class="screen">
+      <button class="btn-back" onclick="openScreen('main-menu')">⬅️ Назад</button>
+      <h2>💡 Ідеї</h2>
+      <p class="placeholder-text">Розділ у розробці...</p>
+    </div>
+
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
