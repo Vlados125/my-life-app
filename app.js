@@ -154,17 +154,23 @@ function initUI() {
   const renderList = (data, elementId) => {
     const container = document.getElementById(elementId);
     if (!container) return;
-    container.innerHTML = data.map(item => `
-      <div class="asset-card" onclick='openTradeModal(${JSON.stringify(item)})'>
-        <div class="asset-info">
-          <img class="real-logo" src="${item.logo}" alt="${item.ticker}" onerror="this.src='https://img.icons8.com/color/48/coins.png'" />
-          <div class="asset-names">
-            <span class="ticker">${item.ticker}</span>
-            <span class="subtitle">${item.name}</span>
+    
+    container.innerHTML = data.map(item => {
+      // Безопечне екранування апострофів для запобігання синтаксичних помилок в HTML (наприклад, для McDonald's)
+      const safeItem = JSON.stringify(item).replace(/'/g, "&#39;");
+      
+      return `
+        <div class="asset-card" onclick='openTradeModal(${safeItem})'>
+          <div class="asset-info">
+            <img class="real-logo" src="${item.logo}" alt="${item.ticker}" onerror="this.src='https://img.icons8.com/color/48/coins.png'" />
+            <div class="asset-names">
+              <span class="ticker">${item.ticker}</span>
+              <span class="subtitle">${item.name}</span>
+            </div>
           </div>
         </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
   };
 
   renderList(stocksData, 'stocks-list');
