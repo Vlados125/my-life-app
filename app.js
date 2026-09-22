@@ -3,11 +3,11 @@ if (tg) { tg.ready(); tg.expand(); }
 
 // Надійні посилання на векторні/PNG логотипи
 let stocksData = [
-  { id: 'meta', name: "Meta Platforms", ticker: "META", logo: "https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a635392fd237830f1350a41f6a15291fb463b2f/svg/color/meta.svg", invested: 0 },
-  { id: 'coinbase', name: "Coinbase Global", ticker: "COIN", logo: "https://assets.coingecko.com/coins/images/28329/large/coinbase.png", invested: 0 },
+  { id: 'meta', name: "Meta Platforms", ticker: "META", logo: "https://upload.wikimedia.org/wikipedia/commons/7/7b/Meta_Platforms_Inc._logo.svg", invested: 0 },
+  { id: 'coinbase', name: "Coinbase Global", ticker: "COIN", logo: "https://upload.wikimedia.org/wikipedia/commons/1/1a/Coinbase.svg", invested: 0 },
   { id: 'netflix', name: "Netflix Inc.", ticker: "NFLX", logo: "https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_N_logo.svg", invested: 0 },
   { id: 'albemarle', name: "Albemarle Corp.", ticker: "ALB", logo: "https://img.icons8.com/color/48/chemical-plant.png", invested: 0 },
-  { id: 'taketwo', name: "Take-Two Interactive", ticker: "TTWO", logo: "https://img.icons8.com/color/48/game-controller.png", invested: 0 },
+  { id: 'taketwo', name: "Take-Two Interactive", ticker: "TTWO", logo: "https://upload.wikimedia.org/wikipedia/commons/5/53/Take-Two_Interactive_Logo.svg", invested: 0 },
   { id: 'mcdonalds', name: "McDonald's Corp.", ticker: "MCD", logo: "https://upload.wikimedia.org/wikipedia/commons/3/36/McDonald%27s_Golden_Arches.svg", invested: 0 },
   { id: 'tesla', name: "Tesla Inc.", ticker: "TSLA", logo: "https://upload.wikimedia.org/wikipedia/commons/e/e8/Tesla_logo.png", invested: 0 },
   { id: 'dax', name: "DAX Index", ticker: "DAX", logo: "https://img.icons8.com/color/48/line-chart.png", invested: 0 }
