@@ -1,16 +1,16 @@
 const tg = window.Telegram?.WebApp;
 if (tg) { tg.ready(); tg.expand(); }
 
-// Перевірені та стабільні CDN-посилання на логотипи
+// 100% робочі та відкриті CDN-посилання без блокувань Hotlink/CORS
 let stocksData = [
-  { id: 'meta', name: "Meta Platforms", ticker: "META", logo: "https://logo.clearbit.com/meta.com", invested: 0 },
-  { id: 'coinbase', name: "Coinbase Global", ticker: "COIN", logo: "https://logo.clearbit.com/coinbase.com", invested: 0 },
-  { id: 'netflix', name: "Netflix Inc.", ticker: "NFLX", logo: "https://logo.clearbit.com/netflix.com", invested: 0 },
-  { id: 'albemarle', name: "Albemarle Corp.", ticker: "ALB", logo: "https://logo.clearbit.com/albemarle.com", invested: 0 },
-  { id: 'taketwo', name: "Take-Two Interactive", ticker: "TTWO", logo: "https://logo.clearbit.com/take2games.com", invested: 0 },
-  { id: 'mcdonalds', name: "McDonald's Corp.", ticker: "MCD", logo: "https://logo.clearbit.com/mcdonalds.com", invested: 0 },
-  { id: 'tesla', name: "Tesla Inc.", ticker: "TSLA", logo: "https://logo.clearbit.com/tesla.com", invested: 0 },
-  { id: 'dax', name: "DAX Index", ticker: "DAX", logo: "https://img.icons8.com/color/48/line-chart.png", invested: 0 }
+  { id: 'meta', name: "Meta Platforms", ticker: "META", logo: "https://img.icons8.com/color/96/meta.png", invested: 0 },
+  { id: 'coinbase', name: "Coinbase Global", ticker: "COIN", logo: "https://img.icons8.com/color/96/coinbase.png", invested: 0 },
+  { id: 'netflix', name: "Netflix Inc.", ticker: "NFLX", logo: "https://img.icons8.com/color/96/netflix--v1.png", invested: 0 },
+  { id: 'albemarle', name: "Albemarle Corp.", ticker: "ALB", logo: "https://img.icons8.com/color/96/chemical-plant.png", invested: 0 },
+  { id: 'taketwo', name: "Take-Two Interactive", ticker: "TTWO", logo: "https://img.icons8.com/color/96/game-controller.png", invested: 0 },
+  { id: 'mcdonalds', name: "McDonald's Corp.", ticker: "MCD", logo: "https://img.icons8.com/color/96/mcdonalds.png", invested: 0 },
+  { id: 'tesla', name: "Tesla Inc.", ticker: "TSLA", logo: "https://img.icons8.com/color/96/tesla-motors.png", invested: 0 },
+  { id: 'dax', name: "DAX Index", ticker: "DAX", logo: "https://img.icons8.com/color/96/line-chart.png", invested: 0 }
 ];
 
 let cryptoData = [
