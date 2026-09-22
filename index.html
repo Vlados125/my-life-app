@@ -2,146 +2,143 @@
 <html lang="uk">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Personal Management WebApp</title>
-  <link rel="stylesheet" href="style.css?v=3">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Трекер Фінансів та Харчування</title>
+  <link rel="stylesheet" href="style.css">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-  <div class="app-container">
-    
+  <div id="app">
     <!-- ГОЛОВНЕ МЕНЮ -->
-    <section id="main-menu" class="screen active">
-      <header class="header">
-        <h1>Мій Помічник</h1>
-        <p>Система управління життям</p>
-      </header>
-
+    <div id="main-menu" class="screen active">
+      <h2>Головне меню</h2>
       <div class="menu-grid">
-        <button class="card-btn" onclick="navigateTo('finance-screen')">
-          <span class="icon">📈</span>
-          <span class="label">Фінанси та Активи</span>
+        <button class="menu-btn" onclick="navigateTo('finance-screen')">
+          <span>💼</span> Фінанси та Інвестиції
         </button>
-        <button class="card-btn" onclick="navigateTo('nutrition-screen')">
-          <span class="icon">🥗</span>
-          <span class="label">Харчування</span>
+        <button class="menu-btn" onclick="navigateTo('nutrition-screen')">
+          <span>🥗</span> Харчування
         </button>
-        <button class="card-btn" onclick="navigateTo('workout-screen')">
-          <span class="icon">🏋️‍♂️</span>
-          <span class="label">Тренування</span>
-        </button>
-        <button class="card-btn" onclick="navigateTo('tasks-screen')">
-          <span class="icon">📅</span>
-          <span class="label">Плани: день / тиждень / рік</span>
-        </button>
-        <button class="card-btn" onclick="navigateTo('notes-screen')">
-          <span class="icon">⏰</span>
-          <span class="label">Рутина дня</span>
-        </button>
-        <button class="card-btn" onclick="navigateTo('habits-screen')">
-          <span class="icon">🚫</span>
-          <span class="label">Шкідливі звички</span>
-        </button>
-      </div>
-    </section>
-
-    <!-- СЕКЦІЯ: ФІНАНСИ -->
-    <section id="finance-screen" class="screen">
-      <header class="screen-header">
-        <h2>Фінанси та Активи</h2>
-        <div class="total-badge">
-          <span>Загальний капітал / Інвестиції</span>
-          <h3 id="total-invested-sum">0.00 €</h3>
-        </div>
-        <button class="action-btn journal-link-btn" onclick="navigateTo('journal-screen')">
-          📜 Відкрити Щоденник Угод
-        </button>
-      </header>
-
-      <div class="category-block">
-        <h3>📊 Акції (Stocks)</h3>
-        <div class="assets-list" id="stocks-list"></div>
-      </div>
-
-      <div class="category-block">
-        <h3>🪙 Криптовалюта (Crypto)</h3>
-        <div class="assets-list" id="crypto-list"></div>
-      </div>
-    </section>
-
-    <!-- ЕКРАН: ЩОДЕННИК УГОД -->
-    <section id="journal-screen" class="screen">
-      <header class="screen-header">
-        <h2>📜 Щоденник Угод</h2>
-      </header>
-
-      <div class="stats-card">
-        <h4>📊 Статистика за рік</h4>
-        <div class="stats-grid">
-          <div><span>Угод:</span> <strong id="stat-count">0</strong></div>
-          <div><span>Успішність:</span> <strong id="stat-rate">100%</strong></div>
-          <div><span>Прибуток:</span> <strong id="stat-profit" class="green">+0.00€</strong></div>
-          <div><span>Збиток:</span> <strong id="stat-loss" class="red">-0.00€</strong></div>
-        </div>
-      </div>
-
-      <div class="journal-columns">
-        <div class="journal-col">
-          <h4>📈 Акції</h4>
-          <div id="journal-stocks" class="journal-list"></div>
-        </div>
-        <div class="journal-col">
-          <h4>🪙 Криптовалюта</h4>
-          <div id="journal-crypto" class="journal-list"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ДОДАТКОВІ РОЗДІЛИ -->
-    <section id="nutrition-screen" class="screen"><header class="screen-header"><h2>🥗 Харчування</h2></header><p class="placeholder">Розділ у розробці...</p></section>
-    <section id="workout-screen" class="screen"><header class="screen-header"><h2>🏋️‍♂️ Тренування</h2></header><p class="placeholder">Розділ у розробці...</p></section>
-    <section id="tasks-screen" class="screen"><header class="screen-header"><h2>📅 Плани: день / тиждень / рік</h2></header><p class="placeholder">Розділ у розробці...</p></section>
-    <section id="notes-screen" class="screen"><header class="screen-header"><h2>⏰ Рутина дня</h2></header><p class="placeholder">Розділ у розробці...</p></section>
-    <section id="habits-screen" class="screen"><header class="screen-header"><h2>🚫 Шкідливі звички</h2></header><p class="placeholder">Розділ у розробці...</p></section>
-
-    <!-- МОДАЛЬНЕ ВІКНО КУПІВЛІ/ПРОДАЖУ -->
-    <div id="trade-modal" class="modal">
-      <div class="modal-content">
-        <h3 id="modal-title">Операція з активом</h3>
-        <div class="form-group">
-          <label>Тип операції:</label>
-          <select id="trade-type">
-            <option value="buy">🟢 Купівля</option>
-            <option value="sell">🔴 Продаж (Фіксація)</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Кількість:</label>
-          <input type="number" id="trade-amount" placeholder="Наприклад: 2" step="any">
-        </div>
-        <div class="form-group">
-          <label>Сума (€/$):</label>
-          <input type="number" id="trade-price" placeholder="Наприклад: 100" step="any">
-        </div>
-        <div class="modal-actions">
-          <button onclick="submitTrade()" class="btn-save">Зберегти</button>
-          <button onclick="closeModal()" class="btn-cancel">Скасувати</button>
-        </div>
       </div>
     </div>
 
-    <!-- НИЖНЯ ПАНЕЛЬ НАВІГАЦІЇ -->
-    <nav class="bottom-nav">
-      <button class="nav-btn" onclick="goBack()">
-        <span class="nav-icon">⬅️</span>
-        <span class="nav-text">Назад</span>
-      </button>
-      <button class="nav-btn" onclick="navigateTo('main-menu')">
-        <span class="nav-icon">🏠</span>
-        <span class="nav-text">Головне меню</span>
-      </button>
-    </nav>
+    <!-- ЕКРАН ФІНАНСІВ -->
+    <div id="finance-screen" class="screen">
+      <button class="back-btn" onclick="goBack()">⬅ Назад</button>
+      <h2>Фінанси та Інвестиції</h2>
 
+      <div class="total-card">
+        <span>Загалом інвестовано:</span>
+        <h1 id="total-invested-sum">0.00 €</h1>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <span class="stat-label">Угод</span>
+          <span class="stat-value" id="stat-count">0</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Профіт</span>
+          <span class="stat-value green" id="stat-profit">+0.00€</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Збиток</span>
+          <span class="stat-value red" id="stat-loss">-0.00€</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Успішність</span>
+          <span class="stat-value" id="stat-rate">100%</span>
+        </div>
+      </div>
+
+      <h3>Акції</h3>
+      <div id="stocks-list" class="asset-grid"></div>
+
+      <h3>Криптовалюта</h3>
+      <div id="crypto-list" class="asset-grid"></div>
+
+      <h3>Журнал Акцій</h3>
+      <div id="journal-stocks" class="journal-list"></div>
+
+      <h3>Журнал Крипти</h3>
+      <div id="journal-crypto" class="journal-list"></div>
+    </div>
+
+    <!-- ЕКРАН ХАРЧУВАННЯ -->
+    <div id="nutrition-screen" class="screen">
+      <button class="back-btn" onclick="goBack()">⬅ Назад</button>
+      
+      <div class="nutrition-header">
+        <h2>Харчування</h2>
+        <div class="target-select-wrapper">
+          <label for="calorie-target">Цільовий калораж:</label>
+          <select id="calorie-target" onchange="changeCalorieTarget(this.value)">
+            <option value="2500" selected>2500 ккал (Базовий)</option>
+            <option value="2400">2400 ккал (-25г вуглеводів)</option>
+            <option value="2300">2300 ккал (-50г вуглеводів)</option>
+            <option value="2200">2200 ккал (-75г вуглеводів)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- БЖУ ТА ЗАГАЛЬНІ ДАНІ -->
+      <div class="macros-card">
+        <div class="macros-title" id="nutrition-title">🟢 ВАРІАНТ 1: ~2500 ккал</div>
+        <div class="macros-bju" id="nutrition-bju">БЖУ: ~197 г Б | ~100 г Ж | ~187 г В</div>
+      </div>
+
+      <!-- КУРКА КАРІ (ПРИГОТУВАННЯ НА ДЕКІЛЬКА ПОРЦІЙ) -->
+      <div class="batch-cooking-card">
+        <h3>🍗 Заготовка: Курка Карі</h3>
+        <div class="servings-control">
+          <span>Кількість порцій:</span>
+          <div class="counter-btn-group">
+            <button type="button" onclick="changeCurryServings(-1)">-</button>
+            <span id="curry-servings-count">1</span>
+            <button type="button" onclick="changeCurryServings(1)">+</button>
+          </div>
+        </div>
+        <ul id="curry-ingredients-list" class="ingredients-list"></ul>
+      </div>
+
+      <!-- МЕНЮ НА ДЕНЬ -->
+      <div class="meal-section">
+        <h3>🥣 Сніданок</h3>
+        <ul id="breakfast-list" class="ingredients-list"></ul>
+      </div>
+
+      <div class="meal-section">
+        <h3>🍲 Вечеря №1 — Курка Карі</h3>
+        <ul id="dinner1-list" class="ingredients-list"></ul>
+      </div>
+
+      <div class="meal-section">
+        <h3>🥘 Вечеря №2 — Гречка з індичкою</h3>
+        <ul id="dinner2-list" class="ingredients-list"></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- МОДАЛЬНЕ ВІКНО УГОД -->
+  <div id="trade-modal" class="modal">
+    <div class="modal-content">
+      <h3 id="modal-title">Операція</h3>
+      <div class="input-group">
+        <label for="trade-type">Тип операції:</label>
+        <select id="trade-type">
+          <option value="buy">Купівля (Інвестиція)</option>
+          <option value="sell">Продаж / Фіксація прибутку</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label for="trade-price">Сума (€):</label>
+        <input type="number" id="trade-price" placeholder="0.00" step="0.01">
+      </div>
+      <div class="modal-actions">
+        <button onclick="submitTrade()" class="btn-primary">Зберегти</button>
+        <button onclick="closeModal()" class="btn-secondary">Скасувати</button>
+      </div>
+    </div>
   </div>
 
   <script src="app.js"></script>
