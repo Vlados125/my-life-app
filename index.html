@@ -1,73 +1,5 @@
-<!DOCTYPE html>
-<html lang="uk">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Personal Management WebApp</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-</head>
-<body>
-  <div class="app-container">
-    
-    <!-- СЕКЦІЯ: ГОЛОВНЕ МЕНЮ -->
-    <section id="main-menu" class="screen active">
-      <header class="header">
-        <h1>Мій Помічник</h1>
-        <p>Обирай потрібний розділ</p>
-      </header>
 
-      <div class="menu-grid">
-        <button class="card-btn" onclick="navigateTo('finance-screen')">
-          <span class="icon">📈</span>
-          <span class="label">Фінанси та Активи</span>
-        </button>
-        <button class="card-btn" onclick="navigateTo('nutrition-screen')">
-          <span class="icon">🥗</span>
-          <span class="label">Харчування</span>
-        </button>
-      </div>
-    </section>
-
-    <!-- СЕКЦІЯ: ФІНАНСИ -->
-    <section id="finance-screen" class="screen">
-      <header class="screen-header">
-        <h2>Фінанси та Активи</h2>
-        <div class="total-badge">
-          <span>Загальний прибуток</span>
-          <h3 id="total-profit-sum">+0.00 € / $</h3>
-        </div>
-      </header>
-
-      <!-- БЛОК 1: АКЦІЇ -->
-      <div class="category-block">
-        <h3>📊 Акції (Stocks)</h3>
-        <div class="assets-list" id="stocks-list"></div>
-      </div>
-
-      <!-- БЛОК 2: КРИПТОВАЛЮТА -->
-      <div class="category-block">
-        <h3>🪙 Криптовалюта (Crypto)</h3>
-        <div class="assets-list" id="crypto-list"></div>
-      </div>
-
-      <!-- БЛОК 3: ЩОДЕННИК УГОД -->
-      <div class="category-block journal-block">
-        <h3>📜 Щоденник угод (Фіксації)</h3>
-        <div class="journal-columns">
-          <div class="journal-col">
-            <h4>📈 Акції</h4>
-            <div id="journal-stocks" class="journal-list"></div>
-          </div>
-          <div class="journal-col">
-            <h4>🪙 Криптовалюта</h4>
-            <div id="journal-crypto" class="journal-list"></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
- <!DOCTYPE html>
+    <!DOCTYPE html>
 <html lang="uk">
 <head>
   <meta charset="UTF-8">
@@ -134,15 +66,14 @@
       </div>
     </section>
 
-    <!-- ОКОРЕМИЙ ЕКРАН: ЩОДЕННИК УГОД -->
+    <!-- ЕКРАН: ЩОДЕННИК УГОД -->
     <section id="journal-screen" class="screen">
       <header class="screen-header">
         <h2>📜 Щоденник Угод</h2>
       </header>
 
-      <!-- СТАТИСТИКА ЗА РІК -->
       <div class="stats-card">
-        <h4>📊 Статистика за 2026 рік</h4>
+        <h4>📊 Статистика за рік</h4>
         <div class="stats-grid">
           <div><span>Угод:</span> <strong id="stat-count">0</strong></div>
           <div><span>Прибуток:</span> <strong id="stat-profit" class="green">+0.00€</strong></div>
@@ -163,7 +94,7 @@
       </div>
     </section>
 
-    <!-- ЗАГОТОВКИ ДЛЯ ІНШИХ РОЗДІЛІВ -->
+    <!-- ДОДАТКОВІ РОЗДІЛИ -->
     <section id="nutrition-screen" class="screen"><header class="screen-header"><h2>🥗 Харчування</h2></header><p class="placeholder">Розділ у розробці...</p></section>
     <section id="workout-screen" class="screen"><header class="screen-header"><h2>🏋️‍♂️ Тренування</h2></header><p class="placeholder">Розділ у розробці...</p></section>
     <section id="tasks-screen" class="screen"><header class="screen-header"><h2>✅ Задачі та Звички</h2></header><p class="placeholder">Розділ у розробці...</p></section>
