@@ -90,7 +90,7 @@ body {
 .ticker { font-weight: bold; font-size: 0.95rem; }
 .subtitle { font-size: 0.75rem; color: #777; }
 
-/* СТАТИСТИКА У ЩОДЕННИКУ */
+/* СТАТИСТИКА У ЩОДЕННИКУ (Виправлено рівні) */
 .stats-card {
   background: #fff;
   padding: 14px;
@@ -102,22 +102,40 @@ body {
 .stats-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  gap: 10px;
   margin-top: 8px;
   font-size: 0.85rem;
 }
 
-.green { color: #2e7d32; }
-.red { color: #d32f2f; }
+.stats-grid div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
+.green { color: #2e7d32; font-weight: 600; }
+.red { color: #d32f2f; font-weight: 600; }
+
+/* ЕЛЕМЕНТИ ЩОДЕННИКА (Сувора горизонтальна лінія) */
 .journal-item {
   background: #ffffff;
-  padding: 8px 12px;
-  border-radius: 6px;
+  padding: 10px 12px;
+  border-radius: 8px;
   margin-bottom: 6px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   font-size: 0.85rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+}
+
+.journal-name {
+  font-weight: 500;
+  color: var(--tg-theme-text-color, #222);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 65%;
 }
 
 /* МОДАЛЬНЕ ВІКНО */
