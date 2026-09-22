@@ -1,39 +1,42 @@
 const tg = window.Telegram?.WebApp;
 if (tg) { tg.ready(); tg.expand(); }
 
+// Списоку акцій з прямими посиланнями на логотипи
 let stocksData = [
   { id: 'meta', name: "Meta Platforms", ticker: "META", logo: "https://logo.clearbit.com/meta.com", invested: 0 },
-  { id: 'coinbase', name: "Coinbase Global", ticker: "CoinBase", logo: "https://logo.clearbit.com/coinbase.com", invested: 0 },
-  { id: 'netflix', name: "Netflix Inc.", ticker: "Netflix", logo: "https://logo.clearbit.com/netflix.com", invested: 0 },
+  { id: 'coinbase', name: "Coinbase Global", ticker: "COIN", logo: "https://logo.clearbit.com/coinbase.com", invested: 0 },
+  { id: 'netflix', name: "Netflix Inc.", ticker: "NFLX", logo: "https://logo.clearbit.com/netflix.com", invested: 0 },
   { id: 'albemarle', name: "Albemarle Corp.", ticker: "ALB", logo: "https://logo.clearbit.com/albemarle.com", invested: 0 },
-  { id: 'taketwo', name: "Take-Two Interactive", ticker: "TAKE TWO", logo: "https://logo.clearbit.com/take2games.com", invested: 0 },
-  { id: 'mcdonalds', name: "McDonald's Corp.", ticker: "MCdonalds", logo: "https://logo.clearbit.com/mcdonalds.com", invested: 0 },
-  { id: 'tesla', name: "Tesla Inc.", ticker: "Tesla", logo: "https://logo.clearbit.com/tesla.com", invested: 0 },
+  { id: 'taketwo', name: "Take-Two Interactive", ticker: "TTWO", logo: "https://logo.clearbit.com/take2games.com", invested: 0 },
+  { id: 'mcdonalds', name: "McDonald's Corp.", ticker: "MCD", logo: "https://logo.clearbit.com/mcdonalds.com", invested: 0 },
+  { id: 'tesla', name: "Tesla Inc.", ticker: "TSLA", logo: "https://logo.clearbit.com/tesla.com", invested: 0 },
   { id: 'dax', name: "DAX Index", ticker: "DAX", logo: "https://logo.clearbit.com/dax-indices.com", invested: 0 }
 ];
 
+// Список криптовалют
 let cryptoData = [
-  { id: 'ton', name: "Toncoin", ticker: "TON", logo: "https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/32/icon/ton.png", invested: 0 },
+  { id: 'gram', name: "Gram / Toncoin", ticker: "GRAM", logo: "https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/32/icon/ton.png", invested: 0 },
   { id: 'btc', name: "Bitcoin", ticker: "BTC", logo: "https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/32/icon/btc.png", invested: 0 },
   { id: 'xrp', name: "XRP", ticker: "XRP", logo: "https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/32/icon/xrp.png", invested: 0 },
   { id: 'sol', name: "Solana", ticker: "SOL", logo: "https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/32/icon/sol.png", invested: 0 },
   { id: 'eth', name: "Ethereum", ticker: "ETH", logo: "https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/32/icon/eth.png", invested: 0 }
 ];
 
+// Історія фіксованих угод
 let journalStocks = [
-  { name: "Meta Platforms", profit: 22, note: "8%" },
-  { name: "Coinbase Global", profit: 45, note: "27%" },
+  { name: "Meta Platforms", profit: 22.00, note: "8%" },
+  { name: "Coinbase Global", profit: 45.00, note: "27%" },
   { name: "Netflix Inc.", profit: 9.65, note: "" },
   { name: "Albemarle Corp.", profit: 41.77, note: "" },
   { name: "DAX Index", profit: 7.47, note: "" }
 ];
 
 let journalCrypto = [
-  { name: "Toncoin", profit: 67.80 },
-  { name: "Bitcoin", profit: 58.35 },
-  { name: "XRP (Ripple)", profit: 0 },
-  { name: "Solana", profit: 102.67 },
-  { name: "Ethereum", profit: 86.52 }
+  { name: "Gram (Toncoin)", profit: 67.80, note: "" },
+  { name: "Bitcoin", profit: 58.35, note: "" },
+  { name: "XRP (Ripple)", profit: 0.00, note: "" },
+  { name: "Solana", profit: 102.67, note: "" },
+  { name: "Ethereum", profit: 86.52, note: "" }
 ];
 
 let selectedAsset = null;
@@ -76,9 +79,21 @@ function submitTrade() {
     if (type === 'buy') {
       selectedAsset.invested += price;
     } else {
+      const profit = price;
       selectedAsset.invested = Math.max(0, selectedAsset.invested - price);
+      
+      // Запис у відповідний щоденник
+      const isStock = stocksData.some(s => s.id === selectedAsset.id);
+      const targetJournal = isStock ? journalStocks : journalCrypto;
+      
+      targetJournal.unshift({
+        name: selectedAsset.name,
+        profit: profit,
+        note: ""
+      });
     }
     updateTotals();
+    renderJournals();
   }
   closeModal();
 }
@@ -86,7 +101,58 @@ function submitTrade() {
 function updateTotals() {
   const totalStocks = stocksData.reduce((acc, item) => acc + item.invested, 0);
   const totalCrypto = cryptoData.reduce((acc, item) => acc + item.invested, 0);
-  document.getElementById('total-invested-sum').innerText = `${(totalStocks + totalCrypto).toFixed(2)} €`;
+  
+  const sumElem = document.getElementById('total-invested-sum');
+  if (sumElem) sumElem.innerText = `${(totalStocks + totalCrypto).toFixed(2)} €`;
+
+  // Підрахунок загальної статистики угод
+  const allTrades = [...journalStocks, ...journalCrypto];
+  let totalProfit = 0;
+  let totalLoss = 0;
+
+  allTrades.forEach(item => {
+    if (item.profit >= 0) {
+      totalProfit += item.profit;
+    } else {
+      totalLoss += Math.abs(item.profit);
+    }
+  });
+
+  const countElem = document.getElementById('stat-count');
+  const profitElem = document.getElementById('stat-profit');
+  const lossElem = document.getElementById('stat-loss');
+  const rateElem = document.getElementById('stat-rate');
+
+  if (countElem) countElem.innerText = allTrades.length;
+  if (profitElem) profitElem.innerText = `+${totalProfit.toFixed(2)}€`;
+  if (lossElem) lossElem.innerText = `-${totalLoss.toFixed(2)}€`;
+  
+  if (rateElem) {
+    const successRate = allTrades.length > 0 ? ((allTrades.filter(t => t.profit >= 0).length / allTrades.length) * 100).toFixed(0) : 100;
+    rateElem.innerText = `${successRate}%`;
+  }
+}
+
+function renderJournals() {
+  const jStocks = document.getElementById('journal-stocks');
+  if (jStocks) {
+    jStocks.innerHTML = journalStocks.map(j => `
+      <div class="journal-item">
+        <span class="journal-name">${j.name}</span>
+        <span class="${j.profit >= 0 ? 'green' : 'red'}">${j.profit >= 0 ? '+' : ''}${j.profit.toFixed(2)}€</span>
+      </div>
+    `).join('');
+  }
+
+  const jCrypto = document.getElementById('journal-crypto');
+  if (jCrypto) {
+    jCrypto.innerHTML = journalCrypto.map(j => `
+      <div class="journal-item">
+        <span class="journal-name">${j.name}</span>
+        <span class="${j.profit >= 0 ? 'green' : 'red'}">${j.profit >= 0 ? '+' : ''}${j.profit.toFixed(2)}$</span>
+      </div>
+    `).join('');
+  }
 }
 
 function initUI() {
@@ -96,7 +162,7 @@ function initUI() {
     container.innerHTML = data.map(item => `
       <div class="asset-card" onclick='openTradeModal(${JSON.stringify(item)})'>
         <div class="asset-info">
-          <img class="real-logo" src="${item.logo}" onerror="this.src='https://via.placeholder.com/32'" />
+          <img class="real-logo" src="${item.logo}" onerror="this.src='https://via.placeholder.com/32?text=${item.ticker}'" />
           <div class="asset-names">
             <span class="ticker">${item.ticker}</span>
             <span class="subtitle">${item.name}</span>
@@ -109,20 +175,7 @@ function initUI() {
   renderList(stocksData, 'stocks-list');
   renderList(cryptoData, 'crypto-list');
 
-  const jStocks = document.getElementById('journal-stocks');
-  if (jStocks) {
-    jStocks.innerHTML = journalStocks.map(j => `
-      <div class="journal-item"><span>${j.name}</span><span class="green">+${j.profit}€</span></div>
-    `).join('');
-  }
-
-  const jCrypto = document.getElementById('journal-crypto');
-  if (jCrypto) {
-    jCrypto.innerHTML = journalCrypto.map(j => `
-      <div class="journal-item"><span>${j.name}</span><span class="green">+${j.profit}$</span></div>
-    `).join('');
-  }
-
+  renderJournals();
   updateTotals();
 }
 
