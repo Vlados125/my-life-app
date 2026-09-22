@@ -1,7 +1,8 @@
 const tg = window.Telegram?.WebApp;
 if (tg) { tg.ready(); tg.expand(); }
 
-// 100% робочі та відкриті CDN-посилання без блокувань Hotlink/CORS
+// --- РОЗДІЛ: ФІНАНСИ ТА ІНВЕСТИЦІЇ ---
+
 let stocksData = [
   { id: 'meta', name: "Meta Platforms", ticker: "META", logo: "https://img.icons8.com/color/96/meta.png", invested: 0 },
   { id: 'coinbase', name: "Coinbase Global", ticker: "COIN", logo: "https://img.icons8.com/color/96/coinbase.png", invested: 0 },
@@ -150,13 +151,207 @@ function renderJournals() {
   }
 }
 
+// --- РОЗДІЛ: ХАРЧУВАННЯ ---
+
+const nutritionData = {
+  2500: {
+    title: "🟢 ВАРІАНТ 1: ~2500 ккал (Базовий)",
+    bju: "БЖУ: ~197 г Б | ~100 г Ж | ~187 г В",
+    breakfast: [
+      "Speisequark 20%: 300 г",
+      "Яйця курячі: 2 шт. (~110 г)",
+      "Протеїн (Whey): 30 г",
+      "Вівсяні пластівці: 80 г",
+      "Заморожені ягоди: 150 г",
+      "Насіння: 15 г",
+      "Молоко 1.5%: 150 мл",
+      "Твердий сир (45%): 20 г"
+    ],
+    dinner1: {
+      title: "Курка Карі (~1350 ккал)",
+      filet: 330,
+      rice: 105,
+      veggies: 250,
+      cream: 100,
+      oilFry: 15,
+      oilEV: 10,
+      almonds: 35
+    },
+    dinner2: [
+      "Фарш з індички (160 ккал): 400 г",
+      "Гречка суха: 120 г",
+      "Томатний соус: 150 г",
+      "Овочі: 200 г",
+      "Оливкова олія EV: 10 г",
+      "Мигдаль: 15 г"
+    ]
+  },
+  2400: {
+    title: "🟡 ВАРІАНТ 2: ~2400 ккал (-25г вуглеводів)",
+    bju: "БЖУ: ~195 г Б | ~98 г Ж | ~162 г В",
+    breakfast: [
+      "Speisequark 20%: 300 г",
+      "Яйця курячі: 2 шт. (~110 г)",
+      "Протеїн (Whey): 30 г",
+      "Вівсяні пластівці: 65 г (−15г)",
+      "Заморожені ягоди: 150 г",
+      "Насіння: 15 г",
+      "Молоко 1.5%: 150 мл",
+      "Твердий сир (45%): 20 г"
+    ],
+    dinner1: {
+      title: "Курка Карі (~1210 ккал)",
+      filet: 330,
+      rice: 80,
+      veggies: 250,
+      cream: 100,
+      oilFry: 15,
+      oilEV: 10,
+      almonds: 35
+    },
+    dinner2: [
+      "Фарш з індички: 400 г",
+      "Суха гречка: 90 г (−30г)",
+      "Томатний соус: 150 г",
+      "Овочі: 200 г",
+      "Оливкова олія EV: 10 г",
+      "Мигдаль: 15 г"
+    ]
+  },
+  2300: {
+    title: "🟠 ВАРІАНТ 3: ~2300 ккал (-50г вуглеводів)",
+    bju: "БЖУ: ~193 г Б | ~96 г Ж | ~137 г В",
+    breakfast: [
+      "Speisequark 20%: 300 г",
+      "Яйця курячі: 2 шт. (~110 г)",
+      "Протеїн (Whey): 30 г",
+      "Вівсяні пластівці: 55 г (−25г)",
+      "Заморожені ягоди: 150 г",
+      "Насіння: 15 г",
+      "Молоко 1.5%: 150 мл",
+      "Твердий сир (45%): 20 г"
+    ],
+    dinner1: {
+      title: "Курка Карі (~1150 ккал)",
+      filet: 330,
+      rice: 55,
+      veggies: 250,
+      cream: 100,
+      oilFry: 15,
+      oilEV: 10,
+      almonds: 35
+    },
+    dinner2: [
+      "Фарш з індички: 400 г",
+      "Суха гречка: 65 г (−55г)",
+      "Томатний соус: 150 г",
+      "Овочі: 200 г",
+      "Оливкова олія EV: 10 г",
+      "Мигдаль: 15 г"
+    ]
+  },
+  2200: {
+    title: "🔴 ВАРІАНТ 4: ~2200 ккал (-75г вуглеводів)",
+    bju: "БЖУ: ~190 г Б | ~94 г Ж | ~112 г В",
+    breakfast: [
+      "Speisequark 20%: 300 г",
+      "Яйця курячі: 2 шт. (~110 г)",
+      "Протеїн (Whey): 30 г",
+      "Вівсяні пластівці: 45 г (−35г)",
+      "Заморожені ягоди: 150 г",
+      "Насіння: 15 г",
+      "Молоко 1.5%: 150 мл",
+      "Твердий сир (45%): 20 г"
+    ],
+    dinner1: {
+      title: "Курка Карі (~1100 ккал)",
+      filet: 330,
+      rice: 35,
+      veggies: 250,
+      cream: 100,
+      oilFry: 15,
+      oilEV: 10,
+      almonds: 35
+    },
+    dinner2: [
+      "Фарш з індички: 400 г",
+      "Суха гречка: 40 г (−80г)",
+      "Томатний соус: 150 г",
+      "Овочі: 200 г",
+      "Оливкова олія EV: 10 г",
+      "Мигдаль: 15 г"
+    ]
+  }
+};
+
+let currentCalorieTarget = 2500;
+let curryServings = 1;
+
+function changeCalorieTarget(val) {
+  currentCalorieTarget = parseInt(val);
+  renderNutrition();
+}
+
+function changeCurryServings(delta) {
+  curryServings = Math.max(1, curryServings + delta);
+  document.getElementById('curry-servings-count').innerText = curryServings;
+  renderNutrition();
+}
+
+function renderNutrition() {
+  const data = nutritionData[currentCalorieTarget];
+  if (!data) return;
+
+  document.getElementById('nutrition-title').innerText = data.title;
+  document.getElementById('nutrition-bju').innerText = data.bju;
+
+  const bfElem = document.getElementById('breakfast-list');
+  if (bfElem) {
+    bfElem.innerHTML = data.breakfast.map(item => `<li>${item}</li>`).join('');
+  }
+
+  const d1 = data.dinner1;
+  const d1Elem = document.getElementById('dinner1-list');
+  if (d1Elem) {
+    d1Elem.innerHTML = `
+      <li><b>${d1.title}</b></li>
+      <li>Куряче філе: ${d1.filet} г</li>
+      <li>Сухий рис: ${d1.rice} г</li>
+      <li>Заморожені овочі: ${d1.veggies} г</li>
+      <li>Вершки 7%: ${d1.cream} мл</li>
+      <li>Олія для смаження: ${d1.oilFry} г | Оливкова EV: ${d1.oilEV} г</li>
+      <li>Мигдаль: ${d1.almonds} г</li>
+    `;
+  }
+
+  const curryList = document.getElementById('curry-ingredients-list');
+  if (curryList) {
+    curryList.innerHTML = `
+      <li>Куряче філе: <b>${d1.filet * curryServings} г</b></li>
+      <li>Сухий рис: <b>${d1.rice * curryServings} г</b></li>
+      <li>Заморожені овочі: <b>${d1.veggies * curryServings} г</b></li>
+      <li>Вершки 7%: <b>${d1.cream * curryServings} мл</b></li>
+      <li>Олія для смаження: <b>${d1.oilFry * curryServings} г</b></li>
+      <li>Оливкова олія EV: <b>${d1.oilEV * curryServings} г</b></li>
+      <li>Мигдаль: <b>${d1.almonds * curryServings} г</b></li>
+    `;
+  }
+
+  const d2Elem = document.getElementById('dinner2-list');
+  if (d2Elem) {
+    d2Elem.innerHTML = data.dinner2.map(item => `<li>${item}</li>`).join('');
+  }
+}
+
+// --- ІНІЦІАЛІЗАЦІЯ ІНТЕРФЕЙСУ ---
+
 function initUI() {
   const renderList = (data, elementId) => {
     const container = document.getElementById(elementId);
     if (!container) return;
     
     container.innerHTML = data.map(item => {
-      // Безопечне екранування апострофів для запобігання синтаксичних помилок в HTML (наприклад, для McDonald's)
+      // Безопечне екранування апострофів для McDonald's
       const safeItem = JSON.stringify(item).replace(/'/g, "&#39;");
       
       return `
@@ -178,6 +373,7 @@ function initUI() {
 
   renderJournals();
   updateTotals();
+  renderNutrition();
 }
 
 document.addEventListener('DOMContentLoaded', initUI);
