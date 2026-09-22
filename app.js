@@ -307,39 +307,39 @@ function renderNutrition() {
 
   const bfElem = document.getElementById('breakfast-list');
   if (bfElem) {
-    bfElem.innerHTML = data.breakfast.map(item => `<li>${item}</li>`).join('');
+    bfElem.innerHTML = data.breakfast.map(item => `<div>${item}</div>`).join('');
   }
 
   const d1 = data.dinner1;
   const d1Elem = document.getElementById('dinner1-list');
   if (d1Elem) {
     d1Elem.innerHTML = `
-      <li><b>${d1.title}</b></li>
-      <li>Куряче філе: ${d1.filet} г</li>
-      <li>Сухий рис: ${d1.rice} г</li>
-      <li>Заморожені овочі: ${d1.veggies} г</li>
-      <li>Вершки 7%: ${d1.cream} мл</li>
-      <li>Олія для смаження: ${d1.oilFry} г | Оливкова EV: ${d1.oilEV} г</li>
-      <li>Мигдаль: ${d1.almonds} г</li>
+      <div><b>${d1.title}</b></div>
+      <div>Куряче філе: ${d1.filet} г</div>
+      <div>Сухий рис: ${d1.rice} г</div>
+      <div>Заморожені овочі: ${d1.veggies} г</div>
+      <div>Вершки 7%: ${d1.cream} мл</div>
+      <div>Олія для смаження: ${d1.oilFry} г | Оливкова EV: ${d1.oilEV} г</div>
+      <div>Мигдаль: ${d1.almonds} г</div>
     `;
   }
 
   const curryList = document.getElementById('curry-ingredients-list');
   if (curryList) {
     curryList.innerHTML = `
-      <li>Куряче філе: <b>${d1.filet * curryServings} г</b></li>
-      <li>Сухий рис: <b>${d1.rice * curryServings} г</b></li>
-      <li>Заморожені овочі: <b>${d1.veggies * curryServings} г</b></li>
-      <li>Вершки 7%: <b>${d1.cream * curryServings} мл</b></li>
-      <li>Олія для смаження: <b>${d1.oilFry * curryServings} г</b></li>
-      <li>Оливкова олія EV: <b>${d1.oilEV * curryServings} г</b></li>
-      <li>Мигдаль: <b>${d1.almonds * curryServings} г</b></li>
+      <div>Куряче філе: <b>${d1.filet * curryServings} г</b></div>
+      <div>Сухий рис: <b>${d1.rice * curryServings} г</b></div>
+      <div>Заморожені овочі: <b>${d1.veggies * curryServings} г</b></div>
+      <div>Вершки 7%: <b>${d1.cream * curryServings} мл</b></div>
+      <div>Олія для смаження: <b>${d1.oilFry * curryServings} г</b></div>
+      <div>Оливкова олія EV: <b>${d1.oilEV * curryServings} г</b></div>
+      <div>Мигдаль: <b>${d1.almonds * curryServings} г</b></div>
     `;
   }
 
   const d2Elem = document.getElementById('dinner2-list');
   if (d2Elem) {
-    d2Elem.innerHTML = data.dinner2.map(item => `<li>${item}</li>`).join('');
+    d2Elem.innerHTML = data.dinner2.map(item => `<div>${item}</div>`).join('');
   }
 }
 
@@ -351,7 +351,7 @@ function initUI() {
     if (!container) return;
     
     container.innerHTML = data.map(item => {
-      // Безопечне екранування апострофів для McDonald's
+      // Безпечне екранування апострофів для запобігання синтаксичних помилок в HTML (наприклад, для McDonald's)
       const safeItem = JSON.stringify(item).replace(/'/g, "&#39;");
       
       return `
