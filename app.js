@@ -1,42 +1,40 @@
 const tg = window.Telegram?.WebApp;
 if (tg) { tg.ready(); tg.expand(); }
 
-// Списоку акцій з прямими посиланнями на логотипи
+// Надійні посилання на векторні/PNG логотипи
 let stocksData = [
-  { id: 'meta', name: "Meta Platforms", ticker: "META", logo: "https://logo.clearbit.com/meta.com", invested: 0 },
-  { id: 'coinbase', name: "Coinbase Global", ticker: "COIN", logo: "https://logo.clearbit.com/coinbase.com", invested: 0 },
-  { id: 'netflix', name: "Netflix Inc.", ticker: "NFLX", logo: "https://logo.clearbit.com/netflix.com", invested: 0 },
-  { id: 'albemarle', name: "Albemarle Corp.", ticker: "ALB", logo: "https://logo.clearbit.com/albemarle.com", invested: 0 },
-  { id: 'taketwo', name: "Take-Two Interactive", ticker: "TTWO", logo: "https://logo.clearbit.com/take2games.com", invested: 0 },
-  { id: 'mcdonalds', name: "McDonald's Corp.", ticker: "MCD", logo: "https://logo.clearbit.com/mcdonalds.com", invested: 0 },
-  { id: 'tesla', name: "Tesla Inc.", ticker: "TSLA", logo: "https://logo.clearbit.com/tesla.com", invested: 0 },
-  { id: 'dax', name: "DAX Index", ticker: "DAX", logo: "https://logo.clearbit.com/dax-indices.com", invested: 0 }
+  { id: 'meta', name: "Meta Platforms", ticker: "META", logo: "https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a635392fd237830f1350a41f6a15291fb463b2f/svg/color/meta.svg", invested: 0 },
+  { id: 'coinbase', name: "Coinbase Global", ticker: "COIN", logo: "https://assets.coingecko.com/coins/images/28329/large/coinbase.png", invested: 0 },
+  { id: 'netflix', name: "Netflix Inc.", ticker: "NFLX", logo: "https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_N_logo.svg", invested: 0 },
+  { id: 'albemarle', name: "Albemarle Corp.", ticker: "ALB", logo: "https://img.icons8.com/color/48/chemical-plant.png", invested: 0 },
+  { id: 'taketwo', name: "Take-Two Interactive", ticker: "TTWO", logo: "https://img.icons8.com/color/48/game-controller.png", invested: 0 },
+  { id: 'mcdonalds', name: "McDonald's Corp.", ticker: "MCD", logo: "https://upload.wikimedia.org/wikipedia/commons/3/36/McDonald%27s_Golden_Arches.svg", invested: 0 },
+  { id: 'tesla', name: "Tesla Inc.", ticker: "TSLA", logo: "https://upload.wikimedia.org/wikipedia/commons/e/e8/Tesla_logo.png", invested: 0 },
+  { id: 'dax', name: "DAX Index", ticker: "DAX", logo: "https://img.icons8.com/color/48/line-chart.png", invested: 0 }
 ];
 
-// Список криптовалют
 let cryptoData = [
-  { id: 'gram', name: "Gram / Toncoin", ticker: "GRAM", logo: "https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/32/icon/ton.png", invested: 0 },
-  { id: 'btc', name: "Bitcoin", ticker: "BTC", logo: "https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/32/icon/btc.png", invested: 0 },
-  { id: 'xrp', name: "XRP", ticker: "XRP", logo: "https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/32/icon/xrp.png", invested: 0 },
-  { id: 'sol', name: "Solana", ticker: "SOL", logo: "https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/32/icon/sol.png", invested: 0 },
-  { id: 'eth', name: "Ethereum", ticker: "ETH", logo: "https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/32/icon/eth.png", invested: 0 }
+  { id: 'gram', name: "Gram / Toncoin", ticker: "GRAM", logo: "https://assets.coingecko.com/coins/images/17980/large/ton_symbol.png", invested: 0 },
+  { id: 'btc', name: "Bitcoin", ticker: "BTC", logo: "https://assets.coingecko.com/coins/images/1/large/bitcoin.png", invested: 0 },
+  { id: 'xrp', name: "XRP", ticker: "XRP", logo: "https://assets.coingecko.com/coins/images/44/large/xrp-symbol-white-128.png", invested: 0 },
+  { id: 'sol', name: "Solana", ticker: "SOL", logo: "https://assets.coingecko.com/coins/images/4128/large/solana.png", invested: 0 },
+  { id: 'eth', name: "Ethereum", ticker: "ETH", logo: "https://assets.coingecko.com/coins/images/279/large/ethereum.png", invested: 0 }
 ];
 
-// Історія фіксованих угод
 let journalStocks = [
-  { name: "Meta Platforms", profit: 22.00, note: "8%" },
-  { name: "Coinbase Global", profit: 45.00, note: "27%" },
-  { name: "Netflix Inc.", profit: 9.65, note: "" },
-  { name: "Albemarle Corp.", profit: 41.77, note: "" },
-  { name: "DAX Index", profit: 7.47, note: "" }
+  { name: "Meta Platforms", profit: 22.00 },
+  { name: "Coinbase Global", profit: 45.00 },
+  { name: "Netflix Inc.", profit: 9.65 },
+  { name: "Albemarle Corp.", profit: 41.77 },
+  { name: "DAX Index", profit: 7.47 }
 ];
 
 let journalCrypto = [
-  { name: "Gram (Toncoin)", profit: 67.80, note: "" },
-  { name: "Bitcoin", profit: 58.35, note: "" },
-  { name: "XRP (Ripple)", profit: 0.00, note: "" },
-  { name: "Solana", profit: 102.67, note: "" },
-  { name: "Ethereum", profit: 86.52, note: "" }
+  { name: "Gram (Toncoin)", profit: 67.80 },
+  { name: "Bitcoin", profit: 58.35 },
+  { name: "XRP (Ripple)", profit: 0.00 },
+  { name: "Solana", profit: 102.67 },
+  { name: "Ethereum", profit: 86.52 }
 ];
 
 let selectedAsset = null;
@@ -82,14 +80,12 @@ function submitTrade() {
       const profit = price;
       selectedAsset.invested = Math.max(0, selectedAsset.invested - price);
       
-      // Запис у відповідний щоденник
       const isStock = stocksData.some(s => s.id === selectedAsset.id);
       const targetJournal = isStock ? journalStocks : journalCrypto;
       
       targetJournal.unshift({
         name: selectedAsset.name,
-        profit: profit,
-        note: ""
+        profit: profit
       });
     }
     updateTotals();
@@ -105,7 +101,6 @@ function updateTotals() {
   const sumElem = document.getElementById('total-invested-sum');
   if (sumElem) sumElem.innerText = `${(totalStocks + totalCrypto).toFixed(2)} €`;
 
-  // Підрахунок загальної статистики угод
   const allTrades = [...journalStocks, ...journalCrypto];
   let totalProfit = 0;
   let totalLoss = 0;
@@ -162,7 +157,7 @@ function initUI() {
     container.innerHTML = data.map(item => `
       <div class="asset-card" onclick='openTradeModal(${JSON.stringify(item)})'>
         <div class="asset-info">
-          <img class="real-logo" src="${item.logo}" onerror="this.src='https://via.placeholder.com/32?text=${item.ticker}'" />
+          <img class="real-logo" src="${item.logo}" alt="${item.ticker}" onerror="this.src='https://img.icons8.com/color/48/coins.png'" />
           <div class="asset-names">
             <span class="ticker">${item.ticker}</span>
             <span class="subtitle">${item.name}</span>
