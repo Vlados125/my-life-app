@@ -125,6 +125,7 @@ body {
 .stats-grid div { display: flex; justify-content: space-between; align-items: center; background: #2c2c2e; padding: 8px 12px; border-radius: 8px; }
 
 .green { color: #30d158; font-weight: 600; }
+.yellow { color: #ffd60a; font-weight: 600; }
 .red { color: #ff453a; font-weight: 600; }
 
 .journal-item {
@@ -240,19 +241,12 @@ body {
 .routine-plan-block { display: none; }
 .routine-plan-block.active { display: block; }
 
-/* КАЛЕНДАР ДИСЦИПЛІНИ */
+/* КАЛЕНДАР ТА АРХІВ */
 .status-legend { display: flex; justify-content: space-between; font-size: 0.75rem; color: #8e8e93; margin: 8px 0; }
 .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 10px; }
 .day-square {
-  aspect-ratio: 1;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
-  font-weight: bold;
-  cursor: pointer;
-  border: 1px solid #2c2c2e;
+  aspect-ratio: 1; border-radius: 6px; display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; font-weight: bold; cursor: pointer; border: 1px solid #2c2c2e;
 }
 
 .day-square.status-green { background: #30d158; color: #000; }
@@ -261,3 +255,14 @@ body {
 .day-square.status-gray { background: #3a3a3c; color: #8e8e93; }
 
 .discipline-stats { margin-top: 12px; font-size: 0.85rem; text-align: center; color: #8e8e93; }
+
+.reset-month-btn {
+  width: 100%; margin-top: 14px; padding: 12px; background: #2c2c2e; color: #30d158; border: 1px solid #30d158;
+  border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 0.85rem;
+}
+
+.history-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+.history-item {
+  background: #2c2c2e; padding: 10px 12px; border-radius: 8px; display: flex; justify-content: space-between;
+  align-items: center; font-size: 0.85rem;
+}
