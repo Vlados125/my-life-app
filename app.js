@@ -191,16 +191,8 @@ const nutritionData = {
 let currentCalorieTarget = 2500;
 let servingsCount = 1;
 
-function changeCalorieTarget(val) {
-  currentCalorieTarget = parseInt(val);
-  renderNutrition();
-}
-
-function changeServings(delta) {
-  servingsCount = Math.max(1, servingsCount + delta);
-  document.getElementById('servings-count').innerText = servingsCount;
-  renderNutrition();
-}
+function changeCalorieTarget(val) { currentCalorieTarget = parseInt(val); renderNutrition(); }
+function changeServings(delta) { servingsCount = Math.max(1, servingsCount + delta); document.getElementById('servings-count').innerText = servingsCount; renderNutrition(); }
 
 function renderNutrition() {
   const data = nutritionData[currentCalorieTarget];
@@ -332,7 +324,6 @@ function archiveCurrentMonth() {
 
   localStorage.setItem('discipline_history', JSON.stringify(monthHistory));
 
-  // Очищаємо новий місяць
   daysStatus = Array(30).fill('green');
   localStorage.setItem('current_month_days', JSON.stringify(daysStatus));
 
@@ -344,7 +335,7 @@ function renderHistory() {
   if (!container) return;
 
   if (monthHistory.length === 0) {
-    container.innerHTML = `<div style="color: #8e8e93; font-size: 0.85rem; text-align: center;">Архів поки порожній. Натисніть кнопку збереження вище після завершення місяця.</div>`;
+    container.innerHTML = `<div style="color: #8e8e93; font-size: 0.85rem; text-align: center;">Архів поки порожній.</div>`;
     return;
   }
 
@@ -354,6 +345,156 @@ function renderHistory() {
       <strong class="${parseInt(item.rate) >= 80 ? 'green' : 'yellow'}">${item.rate}</strong>
     </div>
   `).join('');
+}
+
+// --- РОЗДІЛ: ПЛАНИ, ТЕРМІНИ ТА ЦІЛІ ---
+
+let termineList = JSON.parse(localStorage.getItem('user_termine')) || [];
+let yearGoals = JSON.parse(localStorage.getItem('user_year_goals')) || [];
+let stepGoals = JSON.parse(localStorage.getItem('user_step_goals')) || [];
+let plansArchive = JSON.parse(localStorage.getItem('user_plans_archive')) || [];
+
+function switchPlansTab(tab) {
+  document.getElementById('plan-tab-termine-btn').classList.toggle('active', tab === 'termine');
+  document.getElementById('plan-tab-goals-btn').classList.toggle('active', tab === 'goals');
+  document.getElementById('plan-tab-archive-btn').classList.toggle('active', tab === 'archive');
+
+  document.getElementById('plans-tab-termine').classList.toggle('active', tab === 'termine');
+  document.getElementById('plans-tab-goals').classList.toggle('active', tab === 'goals');
+  document.getElementById('plans-tab-archive').classList.toggle('active', tab === 'archive');
+}
+
+function addTermine() {
+  const title = document.getElementById('termine-title').value.trim();
+  const date = document.getElementById('termine-date').value;
+  const note = document.getElementById('termine-note').value.trim();
+
+  if (!title || !date) {
+    alert("Будь ласка, введіть назву та дату зустрічі!");
+    return;
+  }
+
+  termineList.push({ id: Date.now(), title, date, note });
+  localStorage.setItem('user_termine', JSON.stringify(termineList));
+
+  document.getElementById('termine-title').value = '';
+  document.getElementById('termine-date').value = '';
+  document.getElementById('termine-note').value = '';
+
+  renderPlans();
+}
+
+function addGoal(type) {
+  const inputElem = type === 'year' ? document.getElementById('year-goal-input') : document.getElementById('step-goal-input');
+  const title = inputElem.value.trim();
+
+  if (!title) return;
+
+  const newGoal = { id: Date.now(), title };
+  if (type === 'year') {
+    yearGoals.push(newGoal);
+    localStorage.setItem('user_year_goals', JSON.stringify(yearGoals));
+  } else {
+    stepGoals.push(newGoal);
+    localStorage.setItem('user_step_goals', JSON.stringify(stepGoals));
+  }
+
+  inputElem.value = '';
+  renderPlans();
+}
+
+function completePlanItem(category, id) {
+  let item = null;
+  const dateStr = new Date().toLocaleDateString('uk-UA');
+
+  if (category === 'termine') {
+    const idx = termineList.findIndex(t => t.id === id);
+    if (idx !== -1) {
+      item = termineList.splice(idx, 1)[0];
+      localStorage.setItem('user_termine', JSON.stringify(termineList));
+      plansArchive.unshift({ title: `📌 Termine: ${item.title}`, sub: `Дата була: ${item.date.replace('T', ' ')}`, completedAt: dateStr });
+    }
+  } else if (category === 'year') {
+    const idx = yearGoals.findIndex(g => g.id === id);
+    if (idx !== -1) {
+      item = yearGoals.splice(idx, 1)[0];
+      localStorage.setItem('user_year_goals', JSON.stringify(yearGoals));
+      plansArchive.unshift({ title: `🏆 Ціль на рік: ${item.title}`, sub: 'Виконано!', completedAt: dateStr });
+    }
+  } else if (category === 'step') {
+    const idx = stepGoals.findIndex(g => g.id === id);
+    if (idx !== -1) {
+      item = stepGoals.splice(idx, 1)[0];
+      localStorage.setItem('user_step_goals', JSON.stringify(stepGoals));
+      plansArchive.unshift({ title: `🗓 Крок/Плани: ${item.title}`, sub: 'Виконано!', completedAt: dateStr });
+    }
+  }
+
+  localStorage.setItem('user_plans_archive', JSON.stringify(plansArchive));
+  renderPlans();
+}
+
+function renderPlans() {
+  // 1. Терміни
+  const tContainer = document.getElementById('termine-list');
+  if (tContainer) {
+    if (termineList.length === 0) {
+      tContainer.innerHTML = `<div style="color: #8e8e93; font-size: 0.85rem;">Немає запланованих термінів.</div>`;
+    } else {
+      tContainer.innerHTML = termineList.map(t => `
+        <div class="plan-card">
+          <input type="checkbox" onclick="completePlanItem('termine', ${t.id})">
+          <div class="plan-card-content">
+            <div class="plan-card-title">${t.title}</div>
+            <div class="plan-card-sub">📅 ${t.date.replace('T', ' ')} ${t.note ? ' | ' + t.note : ''}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+  }
+
+  // 2. Цілі на рік
+  const yContainer = document.getElementById('year-goals-list');
+  if (yContainer) {
+    yContainer.innerHTML = yearGoals.map(g => `
+      <div class="plan-card">
+        <input type="checkbox" onclick="completePlanItem('year', ${g.id})">
+        <div class="plan-card-content">
+          <div class="plan-card-title">${g.title}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // 3. Кроки
+  const sContainer = document.getElementById('step-goals-list');
+  if (sContainer) {
+    sContainer.innerHTML = stepGoals.map(g => `
+      <div class="plan-card">
+        <input type="checkbox" onclick="completePlanItem('step', ${g.id})">
+        <div class="plan-card-content">
+          <div class="plan-card-title">${g.title}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // 4. Архів
+  const aContainer = document.getElementById('plans-archive-list');
+  if (aContainer) {
+    if (plansArchive.length === 0) {
+      aContainer.innerHTML = `<div style="color: #8e8e93; font-size: 0.85rem;">Архів поки порожній.</div>`;
+    } else {
+      aContainer.innerHTML = plansArchive.map(a => `
+        <div class="plan-card" style="opacity: 0.7;">
+          <div class="plan-card-content">
+            <div class="plan-card-title" style="text-decoration: line-through;">${a.title}</div>
+            <div class="plan-card-sub">Завершено: ${a.completedAt} (${a.sub})</div>
+          </div>
+        </div>
+      `).join('');
+    }
+  }
 }
 
 // --- ІНІЦІАЛІЗАЦІЯ ІНТЕРФЕЙСУ ---
@@ -387,6 +528,7 @@ function initUI() {
   updateTotals();
   renderNutrition();
   renderDisciplineCalendar();
+  renderPlans();
 }
 
 document.addEventListener('DOMContentLoaded', initUI);
