@@ -261,7 +261,7 @@ function renderNutrition() {
   }
 }
 
-// --- РОЗДІЛ: РУТИНА ТА ДИСЦИПЛІНА ---
+// --- РОЗДІЛ: РУТИНА, ДИСЦИПЛІНА ТА АРХІВ ---
 
 function switchRoutineTab(tab) {
   document.getElementById('tab-a-btn').classList.toggle('active', tab === 'A');
@@ -270,8 +270,8 @@ function switchRoutineTab(tab) {
   document.getElementById('routine-plan-b').classList.toggle('active', tab === 'B');
 }
 
-// Календар дисципліни (30 днів)
-let daysStatus = Array(30).fill('green'); // За замовчуванням 'green'
+let daysStatus = JSON.parse(localStorage.getItem('current_month_days')) || Array(30).fill('green');
+let monthHistory = JSON.parse(localStorage.getItem('discipline_history')) || [];
 const statusCycle = ['green', 'yellow', 'red', 'gray'];
 
 function renderDisciplineCalendar() {
@@ -285,12 +285,14 @@ function renderDisciplineCalendar() {
   `).join('');
 
   calculateDisciplineRate();
+  renderHistory();
 }
 
 function cycleDayStatus(index) {
   const currentIdx = statusCycle.indexOf(daysStatus[index]);
   const nextIdx = (currentIdx + 1) % statusCycle.length;
   daysStatus[index] = statusCycle[nextIdx];
+  localStorage.setItem('current_month_days', JSON.stringify(daysStatus));
   renderDisciplineCalendar();
 }
 
@@ -298,7 +300,7 @@ function calculateDisciplineRate() {
   const activeDays = daysStatus.filter(s => s !== 'gray');
   if (activeDays.length === 0) {
     document.getElementById('discipline-rate').innerText = '100%';
-    return;
+    return '100%';
   }
 
   let totalPoints = 0;
@@ -314,6 +316,44 @@ function calculateDisciplineRate() {
     rateElem.innerText = `${rate}%`;
     rateElem.className = rate >= 80 ? 'green' : (rate >= 50 ? 'yellow' : 'red');
   }
+  return `${rate}%`;
+}
+
+function archiveCurrentMonth() {
+  if (!confirm("Завершити поточний місяць та зберегти результат в Архів?")) return;
+
+  const currentRate = calculateDisciplineRate();
+  const dateStr = new Date().toLocaleDateString('uk-UA', { month: 'long', year: 'numeric' });
+
+  monthHistory.unshift({
+    title: `Місяць #${monthHistory.length + 1} (${dateStr})`,
+    rate: currentRate
+  });
+
+  localStorage.setItem('discipline_history', JSON.stringify(monthHistory));
+
+  // Очищаємо новий місяць
+  daysStatus = Array(30).fill('green');
+  localStorage.setItem('current_month_days', JSON.stringify(daysStatus));
+
+  renderDisciplineCalendar();
+}
+
+function renderHistory() {
+  const container = document.getElementById('history-list');
+  if (!container) return;
+
+  if (monthHistory.length === 0) {
+    container.innerHTML = `<div style="color: #8e8e93; font-size: 0.85rem; text-align: center;">Архів поки порожній. Натисніть кнопку збереження вище після завершення місяця.</div>`;
+    return;
+  }
+
+  container.innerHTML = monthHistory.map(item => `
+    <div class="history-item">
+      <span>${item.title}</span>
+      <strong class="${parseInt(item.rate) >= 80 ? 'green' : 'yellow'}">${item.rate}</strong>
+    </div>
+  `).join('');
 }
 
 // --- ІНІЦІАЛІЗАЦІЯ ІНТЕРФЕЙСУ ---
