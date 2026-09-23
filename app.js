@@ -155,20 +155,19 @@ function renderJournals() {
 
 const nutritionData = {
   2500: {
-    title: "🟢 ВАРІАНТ 1: ~2500 ккал (Базовий)",
+    title: "🟢 2500 ккал (Базовий)",
     bju: "БЖУ: ~197 г Б | ~100 г Ж | ~187 г В",
-    breakfast: [
-      "Speisequark 20%: 300 г",
-      "Яйця курячі: 2 шт. (~110 г)",
-      "Протеїн (Whey): 30 г",
-      "Вівсяні пластівці: 80 г",
-      "Заморожені ягоди: 150 г",
-      "Насіння: 15 г",
-      "Молоко 1.5%: 150 мл",
-      "Твердий сир (45%): 20 г"
-    ],
+    breakfast: {
+      quark: 300,
+      eggs: 2,
+      protein: 30,
+      oats: 80,
+      berries: 150,
+      seeds: 15,
+      milk: 150,
+      cheese: 20
+    },
     dinner1: {
-      title: "Курка Карі (~1350 ккал)",
       filet: 330,
       rice: 105,
       veggies: 250,
@@ -177,30 +176,32 @@ const nutritionData = {
       oilEV: 10,
       almonds: 35
     },
-    dinner2: [
-      "Фарш з індички (160 ккал): 400 г",
-      "Гречка суха: 120 г",
-      "Томатний соус: 150 г",
-      "Овочі: 200 г",
-      "Оливкова олія EV: 10 г",
-      "Мигдаль: 15 г"
-    ]
+    dinner2: {
+      turkey: 400,
+      buckwheat: 120,
+      sauce: 150,
+      veggies: 200,
+      oilEV: 10,
+      almonds: 15
+    },
+    snack: {
+      apple: 1 // 1 шт
+    }
   },
   2400: {
-    title: "🟡 ВАРІАНТ 2: ~2400 ккал (-25г вуглеводів)",
+    title: "🟡 2400 ккал (При вазі 95 кг)",
     bju: "БЖУ: ~195 г Б | ~98 г Ж | ~162 г В",
-    breakfast: [
-      "Speisequark 20%: 300 г",
-      "Яйця курячі: 2 шт. (~110 г)",
-      "Протеїн (Whey): 30 г",
-      "Вівсяні пластівці: 65 г (−15г)",
-      "Заморожені ягоди: 150 г",
-      "Насіння: 15 г",
-      "Молоко 1.5%: 150 мл",
-      "Твердий сир (45%): 20 г"
-    ],
+    breakfast: {
+      quark: 300,
+      eggs: 2,
+      protein: 30,
+      oats: 65,
+      berries: 150,
+      seeds: 15,
+      milk: 150,
+      cheese: 20
+    },
     dinner1: {
-      title: "Курка Карі (~1210 ккал)",
       filet: 330,
       rice: 80,
       veggies: 250,
@@ -209,30 +210,32 @@ const nutritionData = {
       oilEV: 10,
       almonds: 35
     },
-    dinner2: [
-      "Фарш з індички: 400 г",
-      "Суха гречка: 90 г (−30г)",
-      "Томатний соус: 150 г",
-      "Овочі: 200 г",
-      "Оливкова олія EV: 10 г",
-      "Мигдаль: 15 г"
-    ]
+    dinner2: {
+      turkey: 400,
+      buckwheat: 90,
+      sauce: 150,
+      veggies: 200,
+      oilEV: 10,
+      almonds: 15
+    },
+    snack: {
+      apple: 1
+    }
   },
   2300: {
-    title: "🟠 ВАРІАНТ 3: ~2300 ккал (-50г вуглеводів)",
+    title: "🟠 2300 ккал (При вазі 90 кг)",
     bju: "БЖУ: ~193 г Б | ~96 г Ж | ~137 г В",
-    breakfast: [
-      "Speisequark 20%: 300 г",
-      "Яйця курячі: 2 шт. (~110 г)",
-      "Протеїн (Whey): 30 г",
-      "Вівсяні пластівці: 55 г (−25г)",
-      "Заморожені ягоди: 150 г",
-      "Насіння: 15 г",
-      "Молоко 1.5%: 150 мл",
-      "Твердий сир (45%): 20 г"
-    ],
+    breakfast: {
+      quark: 300,
+      eggs: 2,
+      protein: 30,
+      oats: 55,
+      berries: 150,
+      seeds: 15,
+      milk: 150,
+      cheese: 20
+    },
     dinner1: {
-      title: "Курка Карі (~1150 ккал)",
       filet: 330,
       rice: 55,
       veggies: 250,
@@ -241,30 +244,32 @@ const nutritionData = {
       oilEV: 10,
       almonds: 35
     },
-    dinner2: [
-      "Фарш з індички: 400 г",
-      "Суха гречка: 65 г (−55г)",
-      "Томатний соус: 150 г",
-      "Овочі: 200 г",
-      "Оливкова олія EV: 10 г",
-      "Мигдаль: 15 г"
-    ]
+    dinner2: {
+      turkey: 400,
+      buckwheat: 65,
+      sauce: 150,
+      veggies: 200,
+      oilEV: 10,
+      almonds: 15
+    },
+    snack: {
+      apple: 1
+    }
   },
   2200: {
-    title: "🔴 ВАРІАНТ 4: ~2200 ккал (-75г вуглеводів)",
+    title: "🔴 2200 ккал (При вазі <90 кг)",
     bju: "БЖУ: ~190 г Б | ~94 г Ж | ~112 г В",
-    breakfast: [
-      "Speisequark 20%: 300 г",
-      "Яйця курячі: 2 шт. (~110 г)",
-      "Протеїн (Whey): 30 г",
-      "Вівсяні пластівці: 45 г (−35г)",
-      "Заморожені ягоди: 150 г",
-      "Насіння: 15 г",
-      "Молоко 1.5%: 150 мл",
-      "Твердий сир (45%): 20 г"
-    ],
+    breakfast: {
+      quark: 300,
+      eggs: 2,
+      protein: 30,
+      oats: 45,
+      berries: 150,
+      seeds: 15,
+      milk: 150,
+      cheese: 20
+    },
     dinner1: {
-      title: "Курка Карі (~1100 ккал)",
       filet: 330,
       rice: 35,
       veggies: 250,
@@ -273,28 +278,31 @@ const nutritionData = {
       oilEV: 10,
       almonds: 35
     },
-    dinner2: [
-      "Фарш з індички: 400 г",
-      "Суха гречка: 40 г (−80г)",
-      "Томатний соус: 150 г",
-      "Овочі: 200 г",
-      "Оливкова олія EV: 10 г",
-      "Мигдаль: 15 г"
-    ]
+    dinner2: {
+      turkey: 400,
+      buckwheat: 40,
+      sauce: 150,
+      veggies: 200,
+      oilEV: 10,
+      almonds: 15
+    },
+    snack: {
+      apple: 1
+    }
   }
 };
 
 let currentCalorieTarget = 2500;
-let curryServings = 1;
+let servingsCount = 1;
 
 function changeCalorieTarget(val) {
   currentCalorieTarget = parseInt(val);
   renderNutrition();
 }
 
-function changeCurryServings(delta) {
-  curryServings = Math.max(1, curryServings + delta);
-  document.getElementById('curry-servings-count').innerText = curryServings;
+function changeServings(delta) {
+  servingsCount = Math.max(1, servingsCount + delta);
+  document.getElementById('servings-count').innerText = servingsCount;
   renderNutrition();
 }
 
@@ -302,44 +310,80 @@ function renderNutrition() {
   const data = nutritionData[currentCalorieTarget];
   if (!data) return;
 
+  const mult = servingsCount;
+
+  // Оновлюємо заголовок та БЖУ
   document.getElementById('nutrition-title').innerText = data.title;
   document.getElementById('nutrition-bju').innerText = data.bju;
 
+  // 1. СНІДАНОК
+  const bf = data.breakfast;
   const bfElem = document.getElementById('breakfast-list');
   if (bfElem) {
-    bfElem.innerHTML = data.breakfast.map(item => `<div>${item}</div>`).join('');
-  }
-
-  const d1 = data.dinner1;
-  const d1Elem = document.getElementById('dinner1-list');
-  if (d1Elem) {
-    d1Elem.innerHTML = `
-      <div><b>${d1.title}</b></div>
-      <div>Куряче філе: ${d1.filet} г</div>
-      <div>Сухий рис: ${d1.rice} г</div>
-      <div>Заморожені овочі: ${d1.veggies} г</div>
-      <div>Вершки 7%: ${d1.cream} мл</div>
-      <div>Олія для смаження: ${d1.oilFry} г | Оливкова EV: ${d1.oilEV} г</div>
-      <div>Мигдаль: ${d1.almonds} г</div>
+    bfElem.innerHTML = `
+      <div>Speisequark 20%: <b>${bf.quark * mult} г</b></div>
+      <div>Яйця курячі: <b>${bf.eggs * mult} шт. (~${110 * mult} г)</b></div>
+      <div>Протеїн (Whey): <b>${bf.protein * mult} г</b></div>
+      <div>Вівсяні пластівці: <b>${bf.oats * mult} г</b></div>
+      <div>Заморожені ягоди: <b>${bf.berries * mult} г</b></div>
+      <div>Насіння: <b>${bf.seeds * mult} г</b></div>
+      <div class="sub-block-title">☕ Додатки до кави:</div>
+      <div style="padding-left: 10px;">• Твердий сир (45%): <b>${bf.cheese * mult} г</b></div>
+      <div style="padding-left: 10px;">• Молоко 1.5%: <b>${bf.milk * mult} мл</b></div>
     `;
   }
 
+  // 2. ЗАГОТОВКА КУРКА КАРІ
+  const d1 = data.dinner1;
   const curryList = document.getElementById('curry-ingredients-list');
   if (curryList) {
     curryList.innerHTML = `
-      <div>Куряче філе: <b>${d1.filet * curryServings} г</b></div>
-      <div>Сухий рис: <b>${d1.rice * curryServings} г</b></div>
-      <div>Заморожені овочі: <b>${d1.veggies * curryServings} г</b></div>
-      <div>Вершки 7%: <b>${d1.cream * curryServings} мл</b></div>
-      <div>Олія для смаження: <b>${d1.oilFry * curryServings} г</b></div>
-      <div>Оливкова олія EV: <b>${d1.oilEV * curryServings} г</b></div>
-      <div>Мигдаль: <b>${d1.almonds * curryServings} г</b></div>
+      <div>Куряче філе: <b>${d1.filet * mult} г</b></div>
+      <div>Сухий рис: <b>${d1.rice * mult} г</b></div>
+      <div>Заморожені овочі: <b>${d1.veggies * mult} г</b></div>
+      <div>Вершки 7%: <b>${d1.cream * mult} мл</b></div>
+      <div>Олія для смаження: <b>${d1.oilFry * mult} г</b></div>
+      <div>Оливкова олія EV: <b>${d1.oilEV * mult} г</b></div>
+      <div class="sub-block-title">🥜 Горіхи:</div>
+      <div style="padding-left: 10px;">• Мигдаль: <b>${d1.almonds * mult} г</b></div>
     `;
   }
 
+  // 3. ВЕЧЕРЯ 1 — ГОТОВА СТРАВА
+  const d1Elem = document.getElementById('dinner1-list');
+  if (d1Elem) {
+    d1Elem.innerHTML = `
+      <div>Куряче філе: <b>${d1.filet * mult} г</b></div>
+      <div>Сухий рис: <b>${d1.rice * mult} г</b></div>
+      <div>Заморожені овочі: <b>${d1.veggies * mult} г</b></div>
+      <div>Вершки 7%: <b>${d1.cream * mult} мл</b></div>
+      <div>Олія для смаження: <b>${d1.oilFry * mult} г</b> | Оливкова EV: <b>${d1.oilEV * mult} г</b></div>
+      <div class="sub-block-title">🥜 Окремо:</div>
+      <div style="padding-left: 10px;">• Мигдаль: <b>${d1.almonds * mult} г</b></div>
+    `;
+  }
+
+  // 4. ВЕЧЕРЯ 2 — ГРЕЧКА З ІНДИЧКОЮ
+  const d2 = data.dinner2;
   const d2Elem = document.getElementById('dinner2-list');
   if (d2Elem) {
-    d2Elem.innerHTML = data.dinner2.map(item => `<div>${item}</div>`).join('');
+    d2Elem.innerHTML = `
+      <div>Фарш з індички: <b>${d2.turkey * mult} г</b></div>
+      <div>Суха гречка: <b>${d2.buckwheat * mult} г</b></div>
+      <div>Томатний соус: <b>${d2.sauce * mult} г</b></div>
+      <div>Овочі: <b>${d2.veggies * mult} г</b></div>
+      <div>Оливкова олія EV: <b>${d2.oilEV * mult} г</b></div>
+      <div class="sub-block-title">🥜 Окремо:</div>
+      <div style="padding-left: 10px;">• Мигдаль: <b>${d2.almonds * mult} г</b></div>
+    `;
+  }
+
+  // 5. ПЕРЕКУС
+  const snackElem = document.getElementById('snack-list');
+  if (snackElem) {
+    snackElem.innerHTML = `
+      <div>Яблуко: <b>${data.snack.apple * mult} шт.</b></div>
+    `;
   }
 }
 
@@ -351,7 +395,6 @@ function initUI() {
     if (!container) return;
     
     container.innerHTML = data.map(item => {
-      // Безпечне екранування апострофів для запобігання синтаксичних помилок в HTML (наприклад, для McDonald's)
       const safeItem = JSON.stringify(item).replace(/'/g, "&#39;");
       
       return `
