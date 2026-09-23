@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Personal Management WebApp</title>
-  <link rel="stylesheet" href="style.css?v=11">
+  <link rel="stylesheet" href="style.css?v=12">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
@@ -156,7 +156,6 @@
         <h2>⏰ Рутина та Дисципліна</h2>
       </header>
 
-      <!-- ДІАГРАМА РОЗПОДІЛУ ЧАСУ -->
       <div class="stats-card">
         <h4>📊 Баланс часу (24 години)</h4>
         <div class="chart-container">
@@ -173,13 +172,11 @@
         </div>
       </div>
 
-      <!-- ПЕРЕМИКАЧ ВАРІАНТІВ ДНЯ -->
       <div class="routine-toggle-container">
         <button id="tab-a-btn" class="toggle-btn active" onclick="switchRoutineTab('A')">🏋️‍♂️ Варіант А (З залом)</button>
         <button id="tab-b-btn" class="toggle-btn" onclick="switchRoutineTab('B')">🧘‍♂️ Варіант Б (Без залу)</button>
       </div>
 
-      <!-- ПЛАН ДНЯ А -->
       <div id="routine-plan-a" class="routine-plan-block active">
         <div class="custom-ingredients-list">
           <div><input type="checkbox"> <b>05:50 - 06:10</b> — Підйом, гігієна, D3 + Omega-3</div>
@@ -198,7 +195,6 @@
         </div>
       </div>
 
-      <!-- ПЛАН ДНЯ Б -->
       <div id="routine-plan-b" class="routine-plan-block">
         <div class="custom-ingredients-list">
           <div><input type="checkbox"> <b>05:50 - 06:10</b> — Підйом, гігієна, D3 + Omega-3</div>
@@ -215,7 +211,6 @@
         </div>
       </div>
 
-      <!-- ЩОДЕННИК ДИСЦИПЛІНИ -->
       <div class="stats-card" style="margin-top: 20px;">
         <h4>📅 Поточний місяць дисципліни</h4>
         <p class="subtitle">Клікніть на день, щоб змінити статус:</p>
@@ -249,7 +244,6 @@
         <h2>📅 Плани та Цілі</h2>
       </header>
 
-      <!-- 4 ВІДКРЕМЛЕНІ ВКАДКИ ПЛАНІВ -->
       <div class="plans-toggle-container">
         <button id="plan-tab-termine-btn" class="toggle-btn active" onclick="switchPlansTab('termine')">📌 Терміни</button>
         <button id="plan-tab-year-btn" class="toggle-btn" onclick="switchPlansTab('year')">🏆 Цілі Рік</button>
@@ -257,7 +251,6 @@
         <button id="plan-tab-archive-btn" class="toggle-btn" onclick="switchPlansTab('archive')">📦 Архів</button>
       </div>
 
-      <!-- 1. ТЕРМІНИ (TERMINE) -->
       <div id="plans-tab-termine" class="plans-tab-block active">
         <div class="stats-card">
           <h4>➕ Додати новий Termine</h4>
@@ -282,7 +275,6 @@
         </div>
       </div>
 
-      <!-- 2. ЦІЛІ НА РІК -->
       <div id="plans-tab-year" class="plans-tab-block">
         <div class="stats-card">
           <h4>➕ Додати ціль на рік</h4>
@@ -297,7 +289,6 @@
         </div>
       </div>
 
-      <!-- 3. ЦІЛІ НА ТИЖДЕНЬ / МІСЯЦЬ -->
       <div id="plans-tab-step" class="plans-tab-block">
         <div class="stats-card">
           <h4>➕ Додати крок (тиждень/місяць)</h4>
@@ -312,7 +303,6 @@
         </div>
       </div>
 
-      <!-- 4. АРХІВ ВИКОНАНОГО -->
       <div id="plans-tab-archive" class="plans-tab-block">
         <div class="stats-card">
           <h4>📦 Архів виконаних завдань та термінів</h4>
@@ -333,7 +323,8 @@
           <label>Тип операції:</label>
           <select id="trade-type">
             <option value="buy">🟢 Купівля</option>
-            <option value="sell">🔴 Продаж (Фіксація)</option>
+            <option value="sell">🔴 Продаж</option>
+            <option value="set">⚙️ Коригувати суму / інвестиції</option>
           </select>
         </div>
         <div class="form-group">
@@ -341,7 +332,7 @@
           <input type="number" id="trade-amount" placeholder="Наприклад: 2.574" step="any">
         </div>
         <div class="form-group">
-          <label>Сума (€) або ціна за 1:</label>
+          <label>Загальна сума (€) або ціна за 1:</label>
           <input type="number" id="trade-price" placeholder="Наприклад: 601 або 233.5" step="any">
         </div>
         <div class="modal-actions">
