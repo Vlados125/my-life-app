@@ -21,7 +21,7 @@ html, body {
   width: 100%;
   max-width: 480px;
   padding: 16px;
-  padding-bottom: 110px; /* Гарантована висота для нижньої панелі */
+  padding-bottom: 110px;
   position: relative;
   overflow-x: hidden;
 }
@@ -102,7 +102,7 @@ html, body {
 .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
 .dot.sleep { background: #0a84ff; } .dot.work { background: #30d158; } .dot.learn { background: #ffd60a; } .dot.sport { background: #ff9f0a; } .dot.projects { background: #bf5af2; } .dot.self { background: #ff375f; } .dot.road { background: #8e8e93; }
 
-/* ПЕРЕМИКАЧІ ВКАДОК (РУТИНА ТА ПЛАНИ) */
+/* ПЕРЕМИКАЧІ ВКАДОК */
 .routine-toggle-container, .plans-toggle-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-bottom: 12px; }
 .plans-toggle-container { grid-template-columns: repeat(4, 1fr); }
 
