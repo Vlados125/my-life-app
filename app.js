@@ -58,6 +58,7 @@ function goBack() {
 function renderScreen(screenId) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(screenId)?.classList.add('active');
+  window.scrollTo(0, 0);
 }
 
 function openTradeModal(asset) {
@@ -356,11 +357,13 @@ let plansArchive = JSON.parse(localStorage.getItem('user_plans_archive')) || [];
 
 function switchPlansTab(tab) {
   document.getElementById('plan-tab-termine-btn').classList.toggle('active', tab === 'termine');
-  document.getElementById('plan-tab-goals-btn').classList.toggle('active', tab === 'goals');
+  document.getElementById('plan-tab-year-btn').classList.toggle('active', tab === 'year');
+  document.getElementById('plan-tab-step-btn').classList.toggle('active', tab === 'step');
   document.getElementById('plan-tab-archive-btn').classList.toggle('active', tab === 'archive');
 
   document.getElementById('plans-tab-termine').classList.toggle('active', tab === 'termine');
-  document.getElementById('plans-tab-goals').classList.toggle('active', tab === 'goals');
+  document.getElementById('plans-tab-year').classList.toggle('active', tab === 'year');
+  document.getElementById('plans-tab-step').classList.toggle('active', tab === 'step');
   document.getElementById('plans-tab-archive').classList.toggle('active', tab === 'archive');
 }
 
@@ -456,27 +459,35 @@ function renderPlans() {
   // 2. Цілі на рік
   const yContainer = document.getElementById('year-goals-list');
   if (yContainer) {
-    yContainer.innerHTML = yearGoals.map(g => `
-      <div class="plan-card">
-        <input type="checkbox" onclick="completePlanItem('year', ${g.id})">
-        <div class="plan-card-content">
-          <div class="plan-card-title">${g.title}</div>
+    if (yearGoals.length === 0) {
+      yContainer.innerHTML = `<div style="color: #8e8e93; font-size: 0.85rem;">Немає річних цілей. Додайте першу вище!</div>`;
+    } else {
+      yContainer.innerHTML = yearGoals.map(g => `
+        <div class="plan-card">
+          <input type="checkbox" onclick="completePlanItem('year', ${g.id})">
+          <div class="plan-card-content">
+            <div class="plan-card-title">${g.title}</div>
+          </div>
         </div>
-      </div>
-    `).join('');
+      `).join('');
+    }
   }
 
   // 3. Кроки
   const sContainer = document.getElementById('step-goals-list');
   if (sContainer) {
-    sContainer.innerHTML = stepGoals.map(g => `
-      <div class="plan-card">
-        <input type="checkbox" onclick="completePlanItem('step', ${g.id})">
-        <div class="plan-card-content">
-          <div class="plan-card-title">${g.title}</div>
+    if (stepGoals.length === 0) {
+      sContainer.innerHTML = `<div style="color: #8e8e93; font-size: 0.85rem;">Немає кроків. Додайте перший вище!</div>`;
+    } else {
+      sContainer.innerHTML = stepGoals.map(g => `
+        <div class="plan-card">
+          <input type="checkbox" onclick="completePlanItem('step', ${g.id})">
+          <div class="plan-card-content">
+            <div class="plan-card-title">${g.title}</div>
+          </div>
         </div>
-      </div>
-    `).join('');
+      `).join('');
+    }
   }
 
   // 4. Архів
