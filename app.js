@@ -157,138 +157,34 @@ const nutritionData = {
   2500: {
     title: "🟢 2500 ккал (Базовий)",
     bju: "БЖУ: ~197 г Б | ~100 г Ж | ~187 г В",
-    breakfast: {
-      quark: 300,
-      eggs: 2,
-      protein: 30,
-      oats: 80,
-      berries: 150,
-      seeds: 15,
-      milk: 150,
-      cheese: 20
-    },
-    dinner1: {
-      filet: 330,
-      rice: 105,
-      veggies: 250,
-      cream: 100,
-      oilFry: 15,
-      oilEV: 10
-    },
-    dinner2: {
-      turkey: 400,
-      buckwheat: 120,
-      sauce: 150,
-      veggies: 200,
-      oilEV: 10
-    },
-    snack: {
-      almondsCurry: 35,
-      almondsBuckwheat: 15,
-      apple: 1
-    }
+    breakfast: { quark: 300, eggs: 2, protein: 30, oats: 80, berries: 150, seeds: 15, milk: 150, cheese: 20 },
+    dinner1: { filet: 330, rice: 105, veggies: 250, cream: 100, oilFry: 15, oilEV: 10 },
+    dinner2: { turkey: 400, buckwheat: 120, sauce: 150, veggies: 200, oilEV: 10 },
+    snack: { almondsCurry: 35, almondsBuckwheat: 15, apple: 1 }
   },
   2400: {
     title: "🟡 2400 ккал (При вазі 95 кг)",
     bju: "БЖУ: ~195 г Б | ~98 г Ж | ~162 г В",
-    breakfast: {
-      quark: 300,
-      eggs: 2,
-      protein: 30,
-      oats: 65,
-      berries: 150,
-      seeds: 15,
-      milk: 150,
-      cheese: 20
-    },
-    dinner1: {
-      filet: 330,
-      rice: 80,
-      veggies: 250,
-      cream: 100,
-      oilFry: 15,
-      oilEV: 10
-    },
-    dinner2: {
-      turkey: 400,
-      buckwheat: 90,
-      sauce: 150,
-      veggies: 200,
-      oilEV: 10
-    },
-    snack: {
-      almondsCurry: 35,
-      almondsBuckwheat: 15,
-      apple: 1
-    }
+    breakfast: { quark: 300, eggs: 2, protein: 30, oats: 65, berries: 150, seeds: 15, milk: 150, cheese: 20 },
+    dinner1: { filet: 330, rice: 80, veggies: 250, cream: 100, oilFry: 15, oilEV: 10 },
+    dinner2: { turkey: 400, buckwheat: 90, sauce: 150, veggies: 200, oilEV: 10 },
+    snack: { almondsCurry: 35, almondsBuckwheat: 15, apple: 1 }
   },
   2300: {
     title: "🟠 2300 ккал (При вазі 90 кг)",
     bju: "БЖУ: ~193 г Б | ~96 г Ж | ~137 г В",
-    breakfast: {
-      quark: 300,
-      eggs: 2,
-      protein: 30,
-      oats: 55,
-      berries: 150,
-      seeds: 15,
-      milk: 150,
-      cheese: 20
-    },
-    dinner1: {
-      filet: 330,
-      rice: 55,
-      veggies: 250,
-      cream: 100,
-      oilFry: 15,
-      oilEV: 10
-    },
-    dinner2: {
-      turkey: 400,
-      buckwheat: 65,
-      sauce: 150,
-      veggies: 200,
-      oilEV: 10
-    },
-    snack: {
-      almondsCurry: 35,
-      almondsBuckwheat: 15,
-      apple: 1
-    }
+    breakfast: { quark: 300, eggs: 2, protein: 30, oats: 55, berries: 150, seeds: 15, milk: 150, cheese: 20 },
+    dinner1: { filet: 330, rice: 55, veggies: 250, cream: 100, oilFry: 15, oilEV: 10 },
+    dinner2: { turkey: 400, buckwheat: 65, sauce: 150, veggies: 200, oilEV: 10 },
+    snack: { almondsCurry: 35, almondsBuckwheat: 15, apple: 1 }
   },
   2200: {
     title: "🔴 2200 ккал (При вазі <90 кг)",
     bju: "БЖУ: ~190 г Б | ~94 г Ж | ~112 г В",
-    breakfast: {
-      quark: 300,
-      eggs: 2,
-      protein: 30,
-      oats: 45,
-      berries: 150,
-      seeds: 15,
-      milk: 150,
-      cheese: 20
-    },
-    dinner1: {
-      filet: 330,
-      rice: 35,
-      veggies: 250,
-      cream: 100,
-      oilFry: 15,
-      oilEV: 10
-    },
-    dinner2: {
-      turkey: 400,
-      buckwheat: 40,
-      sauce: 150,
-      veggies: 200,
-      oilEV: 10
-    },
-    snack: {
-      almondsCurry: 35,
-      almondsBuckwheat: 15,
-      apple: 1
-    }
+    breakfast: { quark: 300, eggs: 2, protein: 30, oats: 45, berries: 150, seeds: 15, milk: 150, cheese: 20 },
+    dinner1: { filet: 330, rice: 35, veggies: 250, cream: 100, oilFry: 15, oilEV: 10 },
+    dinner2: { turkey: 400, buckwheat: 40, sauce: 150, veggies: 200, oilEV: 10 },
+    snack: { almondsCurry: 35, almondsBuckwheat: 15, apple: 1 }
   }
 };
 
@@ -311,11 +207,9 @@ function renderNutrition() {
   if (!data) return;
 
   const mult = servingsCount;
-
   document.getElementById('nutrition-title').innerText = data.title;
   document.getElementById('nutrition-bju').innerText = data.bju;
 
-  // 1. СНІДАНОК
   const bf = data.breakfast;
   const bfElem = document.getElementById('breakfast-list');
   if (bfElem) {
@@ -332,7 +226,6 @@ function renderNutrition() {
     `;
   }
 
-  // 2. ВЕЧЕРЯ 1 — КУРКА КАРІ З РИСОМ
   const d1 = data.dinner1;
   const d1Elem = document.getElementById('dinner1-list');
   if (d1Elem) {
@@ -345,7 +238,6 @@ function renderNutrition() {
     `;
   }
 
-  // 3. ВЕЧЕРЯ 2 — ГРЕЧКА З ФАРШЕМ
   const d2 = data.dinner2;
   const d2Elem = document.getElementById('dinner2-list');
   if (d2Elem) {
@@ -358,7 +250,6 @@ function renderNutrition() {
     `;
   }
 
-  // 4. ПЕРЕКУС
   const snack = data.snack;
   const snackElem = document.getElementById('snack-list');
   if (snackElem) {
@@ -367,6 +258,61 @@ function renderNutrition() {
       <div>Мигдаль (до Вечері №2): <b>${snack.almondsBuckwheat * mult} г</b></div>
       <div>Яблуко: <b>${snack.apple * mult} шт.</b></div>
     `;
+  }
+}
+
+// --- РОЗДІЛ: РУТИНА ТА ДИСЦИПЛІНА ---
+
+function switchRoutineTab(tab) {
+  document.getElementById('tab-a-btn').classList.toggle('active', tab === 'A');
+  document.getElementById('tab-b-btn').classList.toggle('active', tab === 'B');
+  document.getElementById('routine-plan-a').classList.toggle('active', tab === 'A');
+  document.getElementById('routine-plan-b').classList.toggle('active', tab === 'B');
+}
+
+// Календар дисципліни (30 днів)
+let daysStatus = Array(30).fill('green'); // За замовчуванням 'green'
+const statusCycle = ['green', 'yellow', 'red', 'gray'];
+
+function renderDisciplineCalendar() {
+  const container = document.getElementById('discipline-calendar');
+  if (!container) return;
+
+  container.innerHTML = daysStatus.map((status, index) => `
+    <div class="day-square status-${status}" onclick="cycleDayStatus(${index})">
+      ${index + 1}
+    </div>
+  `).join('');
+
+  calculateDisciplineRate();
+}
+
+function cycleDayStatus(index) {
+  const currentIdx = statusCycle.indexOf(daysStatus[index]);
+  const nextIdx = (currentIdx + 1) % statusCycle.length;
+  daysStatus[index] = statusCycle[nextIdx];
+  renderDisciplineCalendar();
+}
+
+function calculateDisciplineRate() {
+  const activeDays = daysStatus.filter(s => s !== 'gray');
+  if (activeDays.length === 0) {
+    document.getElementById('discipline-rate').innerText = '100%';
+    return;
+  }
+
+  let totalPoints = 0;
+  activeDays.forEach(s => {
+    if (s === 'green') totalPoints += 100;
+    if (s === 'yellow') totalPoints += 50;
+    if (s === 'red') totalPoints += 0;
+  });
+
+  const rate = Math.round(totalPoints / activeDays.length);
+  const rateElem = document.getElementById('discipline-rate');
+  if (rateElem) {
+    rateElem.innerText = `${rate}%`;
+    rateElem.className = rate >= 80 ? 'green' : (rate >= 50 ? 'yellow' : 'red');
   }
 }
 
@@ -400,6 +346,7 @@ function initUI() {
   renderJournals();
   updateTotals();
   renderNutrition();
+  renderDisciplineCalendar();
 }
 
 document.addEventListener('DOMContentLoaded', initUI);
