@@ -173,19 +173,19 @@ const nutritionData = {
       veggies: 250,
       cream: 100,
       oilFry: 15,
-      oilEV: 10,
-      almonds: 35
+      oilEV: 10
     },
     dinner2: {
       turkey: 400,
       buckwheat: 120,
       sauce: 150,
       veggies: 200,
-      oilEV: 10,
-      almonds: 15
+      oilEV: 10
     },
     snack: {
-      apple: 1 // 1 шт
+      almondsCurry: 35,
+      almondsBuckwheat: 15,
+      apple: 1
     }
   },
   2400: {
@@ -207,18 +207,18 @@ const nutritionData = {
       veggies: 250,
       cream: 100,
       oilFry: 15,
-      oilEV: 10,
-      almonds: 35
+      oilEV: 10
     },
     dinner2: {
       turkey: 400,
       buckwheat: 90,
       sauce: 150,
       veggies: 200,
-      oilEV: 10,
-      almonds: 15
+      oilEV: 10
     },
     snack: {
+      almondsCurry: 35,
+      almondsBuckwheat: 15,
       apple: 1
     }
   },
@@ -241,18 +241,18 @@ const nutritionData = {
       veggies: 250,
       cream: 100,
       oilFry: 15,
-      oilEV: 10,
-      almonds: 35
+      oilEV: 10
     },
     dinner2: {
       turkey: 400,
       buckwheat: 65,
       sauce: 150,
       veggies: 200,
-      oilEV: 10,
-      almonds: 15
+      oilEV: 10
     },
     snack: {
+      almondsCurry: 35,
+      almondsBuckwheat: 15,
       apple: 1
     }
   },
@@ -275,18 +275,18 @@ const nutritionData = {
       veggies: 250,
       cream: 100,
       oilFry: 15,
-      oilEV: 10,
-      almonds: 35
+      oilEV: 10
     },
     dinner2: {
       turkey: 400,
       buckwheat: 40,
       sauce: 150,
       veggies: 200,
-      oilEV: 10,
-      almonds: 15
+      oilEV: 10
     },
     snack: {
+      almondsCurry: 35,
+      almondsBuckwheat: 15,
       apple: 1
     }
   }
@@ -312,7 +312,6 @@ function renderNutrition() {
 
   const mult = servingsCount;
 
-  // Оновлюємо заголовок та БЖУ
   document.getElementById('nutrition-title').innerText = data.title;
   document.getElementById('nutrition-bju').innerText = data.bju;
 
@@ -333,23 +332,8 @@ function renderNutrition() {
     `;
   }
 
-  // 2. ЗАГОТОВКА КУРКА КАРІ
+  // 2. ВЕЧЕРЯ 1 — КУРКА КАРІ З РИСОМ
   const d1 = data.dinner1;
-  const curryList = document.getElementById('curry-ingredients-list');
-  if (curryList) {
-    curryList.innerHTML = `
-      <div>Куряче філе: <b>${d1.filet * mult} г</b></div>
-      <div>Сухий рис: <b>${d1.rice * mult} г</b></div>
-      <div>Заморожені овочі: <b>${d1.veggies * mult} г</b></div>
-      <div>Вершки 7%: <b>${d1.cream * mult} мл</b></div>
-      <div>Олія для смаження: <b>${d1.oilFry * mult} г</b></div>
-      <div>Оливкова олія EV: <b>${d1.oilEV * mult} г</b></div>
-      <div class="sub-block-title">🥜 Горіхи:</div>
-      <div style="padding-left: 10px;">• Мигдаль: <b>${d1.almonds * mult} г</b></div>
-    `;
-  }
-
-  // 3. ВЕЧЕРЯ 1 — ГОТОВА СТРАВА
   const d1Elem = document.getElementById('dinner1-list');
   if (d1Elem) {
     d1Elem.innerHTML = `
@@ -358,12 +342,10 @@ function renderNutrition() {
       <div>Заморожені овочі: <b>${d1.veggies * mult} г</b></div>
       <div>Вершки 7%: <b>${d1.cream * mult} мл</b></div>
       <div>Олія для смаження: <b>${d1.oilFry * mult} г</b> | Оливкова EV: <b>${d1.oilEV * mult} г</b></div>
-      <div class="sub-block-title">🥜 Окремо:</div>
-      <div style="padding-left: 10px;">• Мигдаль: <b>${d1.almonds * mult} г</b></div>
     `;
   }
 
-  // 4. ВЕЧЕРЯ 2 — ГРЕЧКА З ІНДИЧКОЮ
+  // 3. ВЕЧЕРЯ 2 — ГРЕЧКА З ФАРШЕМ
   const d2 = data.dinner2;
   const d2Elem = document.getElementById('dinner2-list');
   if (d2Elem) {
@@ -373,16 +355,17 @@ function renderNutrition() {
       <div>Томатний соус: <b>${d2.sauce * mult} г</b></div>
       <div>Овочі: <b>${d2.veggies * mult} г</b></div>
       <div>Оливкова олія EV: <b>${d2.oilEV * mult} г</b></div>
-      <div class="sub-block-title">🥜 Окремо:</div>
-      <div style="padding-left: 10px;">• Мигдаль: <b>${d2.almonds * mult} г</b></div>
     `;
   }
 
-  // 5. ПЕРЕКУС
+  // 4. ПЕРЕКУС
+  const snack = data.snack;
   const snackElem = document.getElementById('snack-list');
   if (snackElem) {
     snackElem.innerHTML = `
-      <div>Яблуко: <b>${data.snack.apple * mult} шт.</b></div>
+      <div>Мигдаль (до Вечері №1): <b>${snack.almondsCurry * mult} г</b></div>
+      <div>Мигдаль (до Вечері №2): <b>${snack.almondsBuckwheat * mult} г</b></div>
+      <div>Яблуко: <b>${snack.apple * mult} шт.</b></div>
     `;
   }
 }
