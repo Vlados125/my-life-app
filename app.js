@@ -22,16 +22,22 @@ let defaultCrypto = [
   { id: 'eth', name: "Ethereum", ticker: "ETH", logo: "https://assets.coingecko.com/coins/images/279/large/ethereum.png", invested: 0, amount: 0 }
 ];
 
-let stocksData = JSON.parse(localStorage.getItem('user_stocks_v2')) || defaultStocks;
-let cryptoData = JSON.parse(localStorage.getItem('user_crypto_v2')) || defaultCrypto;
+// Відновлюємо ваші дані та журнали з localStorage або за замовчуванням
+let stocksData = JSON.parse(localStorage.getItem('user_stocks_v3')) || defaultStocks;
+let cryptoData = JSON.parse(localStorage.getItem('user_crypto_v3')) || defaultCrypto;
 
-let journalStocks = JSON.parse(localStorage.getItem('journal_stocks_v2')) || [
-  { name: "Meta Platforms", profit: 22.00 },
-  { name: "Coinbase Global", profit: 45.00 }
+let journalStocks = JSON.parse(localStorage.getItem('journal_stocks_v3')) || [
+  { name: "Meta Platforms", profit: 55.00 },
+  { name: "Coinbase Global", profit: 85.00 },
+  { name: "Netflix Inc.", profit: 65.00 },
+  { name: "Albemarle Corp.", profit: 95.00 },
+  { name: "DAX Index", profit: 50.00 }
 ];
 
-let journalCrypto = JSON.parse(localStorage.getItem('journal_crypto_v2')) || [
-  { name: "Gram (Toncoin)", profit: 67.80 }
+let journalCrypto = JSON.parse(localStorage.getItem('journal_crypto_v3')) || [
+  { name: "Gram (Toncoin)", profit: 75.00 },
+  { name: "Bitcoin", profit: 120.00 },
+  { name: "Solana", profit: 110.00 }
 ];
 
 let selectedAsset = null;
@@ -60,6 +66,8 @@ function renderScreen(screenId) {
 function openTradeModal(asset) {
   selectedAsset = asset;
   document.getElementById('modal-title').innerText = `Операція: ${asset.name}`;
+  document.getElementById('trade-amount').value = '';
+  document.getElementById('trade-price').value = '';
   document.getElementById('trade-modal').style.display = 'flex';
 }
 
@@ -72,45 +80,48 @@ function submitTrade() {
   const inputAmount = parseFloat(document.getElementById('trade-amount').value) || 0;
   const priceInput = parseFloat(document.getElementById('trade-price').value) || 0;
   
+  if (!selectedAsset) {
+    closeModal();
+    return;
+  }
+
   let totalPrice = priceInput;
+  // Якщо введено і кількість, і ціна за штуку
   if (inputAmount > 0 && priceInput > 0 && priceInput < 10000) {
     totalPrice = inputAmount * priceInput;
   }
 
-  if (selectedAsset) {
-    if (type === 'buy') {
-      selectedAsset.invested += totalPrice;
-      selectedAsset.amount = (selectedAsset.amount || 0) + inputAmount;
-    } else if (type === 'sell') {
-      // При продажу зменшуємо інвестиції та кількість, АЛЕ НЕ додаємо до прибутку портфеля
-      selectedAsset.invested = Math.max(0, (selectedAsset.invested || 0) - totalPrice);
-      selectedAsset.amount = Math.max(0, (selectedAsset.amount || 0) - inputAmount);
-      
-      const isStock = stocksData.some(s => s.id === selectedAsset.id);
-      const targetJournal = isStock ? journalStocks : journalCrypto;
-      
-      targetJournal.unshift({
-        name: selectedAsset.name,
-        profit: totalPrice // Просто фіксація продажу в щоденник
-      });
-    } else if (type === 'set') {
-      // Пряме коригування значень через нову кнопку
-      if (priceInput >= 0) selectedAsset.invested = priceInput;
-      if (inputAmount >= 0) selectedAsset.amount = inputAmount;
-    }
-
-    // Зберігаємо в пам'ять пристрою
-    localStorage.setItem('user_stocks_v2', JSON.stringify(stocksData));
-    localStorage.setItem('user_crypto_v2', JSON.stringify(cryptoData));
-    localStorage.setItem('journal_stocks_v2', JSON.stringify(journalStocks));
-    localStorage.setItem('journal_crypto_v2', JSON.stringify(journalCrypto));
-
-    initUI();
+  if (type === 'buy') {
+    selectedAsset.invested = (selectedAsset.invested || 0) + totalPrice;
+    selectedAsset.amount = (selectedAsset.amount || 0) + inputAmount;
+  } 
+  else if (type === 'sell') {
+    // Продаж: зменшуємо інвестиції та кількість, прибуток портфеля не чіпаємо, але додаємо запис у щоденник угод
+    selectedAsset.invested = Math.max(0, (selectedAsset.invested || 0) - totalPrice);
+    selectedAsset.amount = Math.max(0, (selectedAsset.amount || 0) - inputAmount);
+    
+    const isStock = stocksData.some(s => s.id === selectedAsset.id);
+    const targetJournal = isStock ? journalStocks : journalCrypto;
+    
+    targetJournal.unshift({
+      name: selectedAsset.name,
+      profit: totalPrice // Фіксація суми продажу
+    });
+  } 
+  else if (type === 'set') {
+    // Коригування суми / інвестицій напряму
+    if (priceInput >= 0) selectedAsset.invested = priceInput;
+    if (inputAmount >= 0) selectedAsset.amount = inputAmount;
   }
 
-  document.getElementById('trade-amount').value = '';
-  document.getElementById('trade-price').value = '';
+  // Зберігаємо зміни у пам'ять пристрою
+  localStorage.setItem('user_stocks_v3', JSON.stringify(stocksData));
+  localStorage.setItem('user_crypto_v3', JSON.stringify(cryptoData));
+  localStorage.setItem('journal_stocks_v3', JSON.stringify(journalStocks));
+  localStorage.setItem('journal_crypto_v3', JSON.stringify(journalCrypto));
+
   closeModal();
+  initUI();
 }
 
 function updateTotals() {
@@ -150,7 +161,7 @@ function renderJournals() {
     jStocks.innerHTML = journalStocks.map(j => `
       <div class="journal-item">
         <span class="journal-name">${j.name}</span>
-        <span class="green">${j.profit.toFixed(2)}€</span>
+        <span class="green">+${j.profit.toFixed(2)}€</span>
       </div>
     `).join('');
   }
@@ -160,7 +171,7 @@ function renderJournals() {
     jCrypto.innerHTML = journalCrypto.map(j => `
       <div class="journal-item">
         <span class="journal-name">${j.name}</span>
-        <span class="green">${j.profit.toFixed(2)}$</span>
+        <span class="green">+${j.profit.toFixed(2)}$</span>
       </div>
     `).join('');
   }
@@ -518,7 +529,7 @@ function renderPlans() {
   }
 }
 
-// --- ІНІЦІАЛІЗАЦІЯ ІНТЕРФЕЙСУ ТА ВІДОБРАЖЕННЯ НА ЧОРНОМУ ФОНІ ---
+// --- ІНІЦІАЛІЗАЦІЯ ІНТЕРФЕЙСУ ---
 
 function initUI() {
   const renderList = (data, elementId, currencySymbol) => {
