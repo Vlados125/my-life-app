@@ -7,10 +7,12 @@
   user-select: none;
 }
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+html, body {
+  width: 100%;
+  overflow-x: hidden;
   background-color: #121214;
   color: #f0f0f5;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   display: flex;
   justify-content: center;
 }
@@ -19,10 +21,12 @@ body {
   width: 100%;
   max-width: 480px;
   padding: 16px;
-  padding-bottom: 95px;
+  padding-bottom: 110px; /* Гарантована висота для нижньої панелі */
+  position: relative;
+  overflow-x: hidden;
 }
 
-.screen { display: none; }
+.screen { display: none; width: 100%; }
 .screen.active { display: block; }
 
 .header, .screen-header { text-align: center; margin-bottom: 20px; }
@@ -73,7 +77,7 @@ body {
 .btn-cancel { flex: 1; background: #3a3a3c; color: #fff; border: none; padding: 12px; border-radius: 10px; cursor: pointer; }
 
 /* НИЖНЯ ПАНЕЛЬ */
-.bottom-nav { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); width: calc(100% - 32px); max-width: 448px; background: rgba(28, 28, 30, 0.9); backdrop-filter: blur(20px); border: 1px solid #2c2c2e; border-radius: 24px; display: flex; justify-around; padding: 10px 0; z-index: 1000; }
+.bottom-nav { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); width: calc(100% - 32px); max-width: 448px; background: rgba(28, 28, 30, 0.95); backdrop-filter: blur(20px); border: 1px solid #2c2c2e; border-radius: 24px; display: flex; justify-content: space-around; padding: 10px 0; z-index: 1000; }
 .nav-btn { background: none; border: none; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
 .nav-text { color: #0a84ff; font-size: 0.75rem; margin-top: 2px; }
 .placeholder { text-align: center; color: #8e8e93; margin-top: 40px; }
@@ -98,9 +102,11 @@ body {
 .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
 .dot.sleep { background: #0a84ff; } .dot.work { background: #30d158; } .dot.learn { background: #ffd60a; } .dot.sport { background: #ff9f0a; } .dot.projects { background: #bf5af2; } .dot.self { background: #ff375f; } .dot.road { background: #8e8e93; }
 
-/* ПЕРЕМИКАЧ ВАРІАНТІВ */
-.routine-toggle-container, .plans-toggle-container { display: flex; gap: 8px; margin-bottom: 12px; }
-.toggle-btn { flex: 1; padding: 10px; background: #1c1c1e; border: 1px solid #2c2c2e; color: #8e8e93; border-radius: 10px; font-size: 0.85rem; cursor: pointer; }
+/* ПЕРЕМИКАЧІ ВКАДОК (РУТИНА ТА ПЛАНИ) */
+.routine-toggle-container, .plans-toggle-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-bottom: 12px; }
+.plans-toggle-container { grid-template-columns: repeat(4, 1fr); }
+
+.toggle-btn { padding: 8px 4px; background: #1c1c1e; border: 1px solid #2c2c2e; color: #8e8e93; border-radius: 10px; font-size: 0.75rem; cursor: pointer; text-align: center; }
 .toggle-btn.active { background: #0a84ff; color: #fff; font-weight: bold; border-color: #0a84ff; }
 
 .routine-plan-block, .plans-tab-block { display: none; }
@@ -120,17 +126,14 @@ body {
 .history-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
 .history-item { background: #2c2c2e; padding: 10px 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; }
 
-/* ПЛАНИ ТА ДВІ КОЛОНКИ */
-.goals-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; }
-.goal-column { background: #1c1c1e; border: 1px solid #2c2c2e; border-radius: 14px; padding: 10px; }
-.column-header h3 { font-size: 0.85rem; color: #0a84ff; text-align: center; margin-bottom: 8px; }
-.add-goal-inline { display: flex; gap: 6px; margin-bottom: 10px; }
-.add-goal-inline input { flex: 1; background: #2c2c2e; border: 1px solid #3a3a3c; color: #fff; padding: 6px 8px; border-radius: 6px; font-size: 0.75rem; }
-.add-goal-inline button { background: #30d158; border: none; color: #000; font-weight: bold; width: 28px; border-radius: 6px; cursor: pointer; }
+/* ПЛАНИ ТА АДАПТИВНІ СПИСКИ */
+.add-goal-inline { display: flex; gap: 6px; }
+.add-goal-inline input { flex: 1; background: #2c2c2e; border: 1px solid #3a3a3c; color: #fff; padding: 8px 10px; border-radius: 8px; font-size: 0.85rem; }
+.add-goal-inline button { background: #30d158; border: none; color: #000; font-weight: bold; width: 36px; border-radius: 8px; cursor: pointer; font-size: 1.1rem; }
 
 .plans-list, .goals-list { display: flex; flex-direction: column; gap: 8px; }
-.plan-card { background: #2c2c2e; border-radius: 8px; padding: 8px 10px; display: flex; align-items: flex-start; gap: 8px; font-size: 0.8rem; }
-.plan-card input[type="checkbox"] { margin-top: 3px; }
+.plan-card { background: #1c1c1e; border: 1px solid #2c2c2e; border-radius: 10px; padding: 10px 12px; display: flex; align-items: flex-start; gap: 10px; font-size: 0.85rem; }
+.plan-card input[type="checkbox"] { margin-top: 2px; width: 18px; height: 18px; }
 .plan-card-content { flex: 1; }
 .plan-card-title { font-weight: 600; color: #fff; }
-.plan-card-sub { font-size: 0.7rem; color: #8e8e93; margin-top: 2px; }
+.plan-card-sub { font-size: 0.75rem; color: #8e8e93; margin-top: 2px; }
