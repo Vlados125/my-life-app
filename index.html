@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Personal Management WebApp</title>
-  <link rel="stylesheet" href="style.css?v=7">
+  <link rel="stylesheet" href="style.css?v=8">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
@@ -217,8 +217,8 @@
 
       <!-- ЩОДЕННИК ДИСЦИПЛІНИ (ТРЕКЕР ДНІВ) -->
       <div class="stats-card" style="margin-top: 20px;">
-        <h4>📅 Щоденник Дисципліни (Цей місяць)</h4>
-        <p class="subtitle">Натисніть на день, щоб змінити статус:</p>
+        <h4>📅 Поточний місяць дисципліни</h4>
+        <p class="subtitle">Клікніть на день, щоб змінити статус:</p>
         <div class="status-legend">
           <span>🟢 100%</span>
           <span>🟡 50%</span>
@@ -229,7 +229,19 @@
         <div id="discipline-calendar" class="calendar-grid"></div>
 
         <div class="discipline-stats">
-          Успішність за місяць: <strong id="discipline-rate" class="green">100%</strong>
+          Успішність за цей місяць: <strong id="discipline-rate" class="green">100%</strong>
+        </div>
+
+        <button class="reset-month-btn" onclick="archiveCurrentMonth()">
+          💾 Завершити місяць та зберегти в Архів
+        </button>
+      </div>
+
+      <!-- ІСТОРІЯ МІСЯЦІВ (АРХІВ) -->
+      <div class="stats-card">
+        <h4>📜 Історія та статистика за рік</h4>
+        <div id="history-list" class="history-list">
+          <!-- Заповнюється з JS -->
         </div>
       </div>
     </section>
