@@ -6,12 +6,12 @@ if (tg) { tg.ready(); tg.expand(); }
 let stocksData = [
   { id: 'meta', name: "Meta Platforms", ticker: "META", logo: "https://img.icons8.com/color/96/meta.png", invested: 0 },
   { id: 'coinbase', name: "Coinbase Global", ticker: "COIN", logo: "https://img.icons8.com/color/96/coinbase.png", invested: 0 },
-  { id: 'netflix', name: "Netflix Inc.", ticker: "NFLX", logo: "https://img.icons8.com/color/96/netflix--v1.png", invested: 0 },
-  { id: 'albemarle', name: "Albemarle Corp.", ticker: "ALB", logo: "https://img.icons8.com/color/96/chemical-plant.png", invested: 0 },
-  { id: 'taketwo', name: "Take-Two Interactive", ticker: "TTWO", logo: "https://img.icons8.com/color/96/game-controller.png", invested: 0 },
-  { id: 'mcdonalds', name: "McDonald's Corp.", ticker: "MCD", logo: "https://img.icons8.com/color/96/mcdonalds.png", invested: 0 },
-  { id: 'tesla', name: "Tesla Inc.", ticker: "TSLA", logo: "https://img.icons8.com/color/96/tesla-motors.png", invested: 0 },
-  { id: 'dax', name: "DAX Index", ticker: "DAX", logo: "https://img.icons8.com/color/96/line-chart.png", invested: 0 }
+  { id: 'netflix', name: "Netflix Inc.", ticker: "NFLX", logo: "https://img.icons8.com/color/96/netflix--v1.png", invested: 369.39 },
+  { id: 'albemarle', name: "Albemarle Corp.", ticker: "ALB", logo: "https://img.icons8.com/color/96/chemical-plant.png", invested: 289.38 },
+  { id: 'taketwo', name: "Take-Two Interactive", ticker: "TTWO", logo: "https://img.icons8.com/color/96/game-controller.png", invested: 376.00 },
+  { id: 'mcdonalds', name: "McDonald's Corp.", ticker: "MCD", logo: "https://img.icons8.com/color/96/mcdonalds.png", invested: 601.00 },
+  { id: 'tesla', name: "Tesla Inc.", ticker: "TSLA", logo: "https://img.icons8.com/color/96/tesla-motors.png", invested: 63.00 },
+  { id: 'dax', name: "DAX Index", ticker: "DAX", logo: "https://img.icons8.com/color/96/line-chart.png", invested: 100.00 }
 ];
 
 let cryptoData = [
@@ -73,14 +73,20 @@ function closeModal() {
 
 function submitTrade() {
   const type = document.getElementById('trade-type').value;
-  const price = parseFloat(document.getElementById('trade-price').value) || 0;
+  const amount = parseFloat(document.getElementById('trade-amount').value) || 0;
+  const priceInput = parseFloat(document.getElementById('trade-price').value) || 0;
   
-  if (selectedAsset) {
+  let totalPrice = priceInput;
+  if (amount > 0 && priceInput > 0 && priceInput < 1000) {
+    totalPrice = amount * priceInput;
+  }
+
+  if (selectedAsset && totalPrice > 0) {
     if (type === 'buy') {
-      selectedAsset.invested += price;
+      selectedAsset.invested += totalPrice;
     } else {
-      const profit = price;
-      selectedAsset.invested = Math.max(0, selectedAsset.invested - price);
+      const profit = totalPrice;
+      selectedAsset.invested = Math.max(0, selectedAsset.invested - totalPrice);
       
       const isStock = stocksData.some(s => s.id === selectedAsset.id);
       const targetJournal = isStock ? journalStocks : journalCrypto;
@@ -90,9 +96,11 @@ function submitTrade() {
         profit: profit
       });
     }
-    updateTotals();
-    renderJournals();
+    initUI();
   }
+
+  document.getElementById('trade-amount').value = '';
+  document.getElementById('trade-price').value = '';
   closeModal();
 }
 
@@ -438,7 +446,6 @@ function completePlanItem(category, id) {
 }
 
 function renderPlans() {
-  // 1. Терміни
   const tContainer = document.getElementById('termine-list');
   if (tContainer) {
     if (termineList.length === 0) {
@@ -456,7 +463,6 @@ function renderPlans() {
     }
   }
 
-  // 2. Цілі на рік
   const yContainer = document.getElementById('year-goals-list');
   if (yContainer) {
     if (yearGoals.length === 0) {
@@ -473,7 +479,6 @@ function renderPlans() {
     }
   }
 
-  // 3. Кроки
   const sContainer = document.getElementById('step-goals-list');
   if (sContainer) {
     if (stepGoals.length === 0) {
@@ -490,7 +495,6 @@ function renderPlans() {
     }
   }
 
-  // 4. Архів
   const aContainer = document.getElementById('plans-archive-list');
   if (aContainer) {
     if (plansArchive.length === 0) {
