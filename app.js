@@ -1,6 +1,61 @@
 const tg = window.Telegram?.WebApp;
 if (tg) { tg.ready(); tg.expand(); }
 
+// --- ФУНКЦІЇ ЕКСПОРТУ ТА ІМПОРТУ ДАНИХ ---
+
+function exportData() {
+  const keys = [
+    'user_stocks_v6', 'user_crypto_v6', 'journal_stocks_v6', 'journal_crypto_v6',
+    'current_month_days', 'discipline_history', 'user_termine', 'user_year_goals',
+    'user_step_goals', 'user_plans_archive'
+  ];
+  
+  const backupData = {};
+  keys.forEach(key => {
+    const item = localStorage.getItem(key);
+    if (item) {
+      try {
+        backupData[key] = JSON.parse(item);
+      } catch (e) {
+        backupData[key] = item;
+      }
+    }
+  });
+
+  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
+  const downloadAnchor = document.createElement('a');
+  downloadAnchor.setAttribute("href", dataStr);
+  downloadAnchor.setAttribute("download", `my_life_app_backup_${new Date().toISOString().slice(0, 10)}.json`);
+  document.body.appendChild(downloadAnchor);
+  downloadAnchor.click();
+  downloadAnchor.remove();
+}
+
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const parsedData = JSON.parse(e.target.result);
+      if (typeof parsedData !== 'object' || parsedData === null) {
+        throw new Error("Невірний формат");
+      }
+
+      for (const key in parsedData) {
+        localStorage.setItem(key, JSON.stringify(parsedData[key]));
+      }
+
+      alert("Дані успішно імпортовано! Додаток буде перезавантажено.");
+      window.location.reload();
+    } catch (err) {
+      alert("Помилка при читанні файлу бекапу. Перевірте формат JSON.");
+    }
+  };
+  reader.readAsText(file);
+}
+
 // --- РОЗДІЛ: ФІНАНСИ ТА ІНВЕСТИЦІЇ ---
 
 let defaultStocks = [
@@ -42,7 +97,6 @@ let journalCrypto = JSON.parse(localStorage.getItem('journal_crypto_v6')) || [
 
 let selectedAsset = null;
 let journalEditTarget = null;
-
 let screenHistory = ['main-menu'];
 
 function navigateTo(screenId) {
