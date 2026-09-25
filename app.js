@@ -22,10 +22,10 @@ let defaultCrypto = [
   { id: 'eth', name: "Ethereum", ticker: "ETH", logo: "https://assets.coingecko.com/coins/images/279/large/ethereum.png", invested: 0, amount: 0 }
 ];
 
-let stocksData = JSON.parse(localStorage.getItem('user_stocks_v4')) || defaultStocks;
-let cryptoData = JSON.parse(localStorage.getItem('user_crypto_v4')) || defaultCrypto;
+let stocksData = JSON.parse(localStorage.getItem('user_stocks_v5')) || defaultStocks;
+let cryptoData = JSON.parse(localStorage.getItem('user_crypto_v5')) || defaultCrypto;
 
-let journalStocks = JSON.parse(localStorage.getItem('journal_stocks_v4')) || [
+let journalStocks = JSON.parse(localStorage.getItem('journal_stocks_v5')) || [
   { name: "Meta Platforms", profit: 22.00 },
   { name: "Coinbase Global", profit: 45.00 },
   { name: "Netflix Inc.", profit: 9.65 },
@@ -33,7 +33,7 @@ let journalStocks = JSON.parse(localStorage.getItem('journal_stocks_v4')) || [
   { name: "DAX Index", profit: 7.47 }
 ];
 
-let journalCrypto = JSON.parse(localStorage.getItem('journal_crypto_v4')) || [
+let journalCrypto = JSON.parse(localStorage.getItem('journal_crypto_v5')) || [
   { name: "Gram (Toncoin)", profit: 67.80 },
   { name: "Bitcoin", profit: 58.35 },
   { name: "Solana", profit: 102.61 },
@@ -41,6 +41,8 @@ let journalCrypto = JSON.parse(localStorage.getItem('journal_crypto_v4')) || [
 ];
 
 let selectedAsset = null;
+let journalEditTarget = null; // Змінна для редагування існуючої угоди в щоденнику
+
 let screenHistory = ['main-menu'];
 
 function navigateTo(screenId) {
@@ -75,6 +77,7 @@ function closeModal() {
   document.getElementById('trade-modal').style.display = 'none';
 }
 
+// Покупка/продаж акцій у портфелі
 function submitTrade() {
   const type = document.getElementById('trade-type').value;
   const inputAmount = parseFloat(document.getElementById('trade-amount').value) || 0;
@@ -90,7 +93,6 @@ function submitTrade() {
     totalPrice = inputAmount * priceInput;
   }
 
-  // Перевірка, де саме знаходиться актив (в акціях чи крипті)
   let targetArray = stocksData.some(s => s.id === selectedAsset.id) ? stocksData : cryptoData;
   let currentAsset = targetArray.find(s => s.id === selectedAsset.id);
 
@@ -100,30 +102,70 @@ function submitTrade() {
       currentAsset.amount = (currentAsset.amount || 0) + inputAmount;
     } 
     else if (type === 'sell') {
+      // ПРОДАЖ: віднімається тільки від інвестицій та кількості акцій, НЕ йде в прибуток
       currentAsset.invested = Math.max(0, (currentAsset.invested || 0) - totalPrice);
       currentAsset.amount = Math.max(0, (currentAsset.amount || 0) - inputAmount);
-      
-      const isStock = stocksData.some(s => s.id === currentAsset.id);
-      const targetJournal = isStock ? journalStocks : journalCrypto;
-      
-      targetJournal.unshift({
-        name: currentAsset.name,
-        profit: totalPrice
-      });
     } 
     else if (type === 'set') {
       if (priceInput >= 0) currentAsset.invested = priceInput;
       if (inputAmount >= 0) currentAsset.amount = inputAmount;
     }
 
-    // Зберігаємо зміни у localStorage
-    localStorage.setItem('user_stocks_v4', JSON.stringify(stocksData));
-    localStorage.setItem('user_crypto_v4', JSON.stringify(cryptoData));
-    localStorage.setItem('journal_stocks_v4', JSON.stringify(journalStocks));
-    localStorage.setItem('journal_crypto_v4', JSON.stringify(journalCrypto));
+    localStorage.setItem('user_stocks_v5', JSON.stringify(stocksData));
+    localStorage.setItem('user_crypto_v5', JSON.stringify(cryptoData));
   }
 
   closeModal();
+  initUI();
+}
+
+// --- УПРАВЛІННЯ ЩОДЕННИКОМ УГОД (ПРИБУТКИ) ---
+
+function openJournalAddModal(type) {
+  journalEditTarget = { type: type, isNew: true };
+  document.getElementById('journal-modal-title').innerText = type === 'stock' ? '➕ Нова угода (Акції)' : '➕ Нова угода (Крипта)';
+  document.getElementById('journal-name-group').style.display = 'block';
+  document.getElementById('journal-input-name').value = '';
+  document.getElementById('journal-input-profit').value = '';
+  document.getElementById('journal-modal').style.display = 'flex';
+}
+
+function openJournalEditModal(typeName, index) {
+  journalEditTarget = { type: typeName, isNew: false, index: index };
+  const targetList = typeName === 'stock' ? journalStocks : journalCrypto;
+  const item = targetList[index];
+
+  document.getElementById('journal-modal-title').innerText = `Додати прибуток: ${item.name}`;
+  document.getElementById('journal-name-group').style.display = 'none';
+  document.getElementById('journal-input-profit').value = '';
+  document.getElementById('journal-modal').style.display = 'flex';
+}
+
+function closeJournalModal() {
+  document.getElementById('journal-modal').style.display = 'none';
+}
+
+function submitJournalAdd() {
+  const profitInput = parseFloat(document.getElementById('journal-input-profit').value) || 0;
+  if (!journalEditTarget) {
+    closeJournalModal();
+    return;
+  }
+
+  const targetList = journalEditTarget.type === 'stock' ? journalStocks : journalCrypto;
+
+  if (journalEditTarget.isNew) {
+    const nameInput = document.getElementById('journal-input-name').value.trim() || 'Новий актив';
+    targetList.unshift({ name: nameInput, profit: profitInput });
+  } else {
+    // Додаємо новий прибуток до вже існуючого зафіксованого
+    targetList[journalEditTarget.index].profit += profitInput;
+  }
+
+  localStorage.setItem('journal_stocks_v5', JSON.stringify(journalStocks));
+  localStorage.setItem('journal_crypto_v5', JSON.stringify(journalCrypto));
+
+  closeJournalModal();
   initUI();
 }
 
@@ -161,8 +203,8 @@ function updateTotals() {
 function renderJournals() {
   const jStocks = document.getElementById('journal-stocks');
   if (jStocks) {
-    jStocks.innerHTML = journalStocks.map(j => `
-      <div class="journal-item">
+    jStocks.innerHTML = journalStocks.map((j, index) => `
+      <div class="journal-item" onclick="openJournalEditModal('stock', ${index})">
         <span class="journal-name">${j.name}</span>
         <span class="green">+${j.profit.toFixed(2)}€</span>
       </div>
@@ -171,8 +213,8 @@ function renderJournals() {
 
   const jCrypto = document.getElementById('journal-crypto');
   if (jCrypto) {
-    jCrypto.innerHTML = journalCrypto.map(j => `
-      <div class="journal-item">
+    jCrypto.innerHTML = journalCrypto.map((j, index) => `
+      <div class="journal-item" onclick="openJournalEditModal('crypto', ${index})">
         <span class="journal-name">${j.name}</span>
         <span class="green">+${j.profit.toFixed(2)}$</span>
       </div>
