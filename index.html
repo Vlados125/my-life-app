@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Personal Management WebApp</title>
-  <link rel="stylesheet" href="style.css?v=12">
+  <link rel="stylesheet" href="style.css?v=13">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
@@ -85,13 +85,19 @@
         </div>
       </div>
 
-      <div class="journal-columns">
+      <!-- КНОПКИ ДОДАВАННЯ УГОД -->
+      <div class="journal-add-buttons">
+        <button class="btn-save" onclick="openJournalAddModal('stock')">➕ Додати угоду (Акції)</button>
+        <button class="btn-save" onclick="openJournalAddModal('crypto')" style="background: #0a84ff; color: #fff;">➕ Додати угоду (Крипта)</button>
+      </div>
+
+      <div class="journal-columns" style="margin-top: 14px;">
         <div class="journal-col">
-          <h4>📈 Акції</h4>
+          <h4>📈 Акції (Клікніть для додавання прибутку)</h4>
           <div id="journal-stocks" class="journal-list"></div>
         </div>
         <div class="journal-col">
-          <h4>🪙 Криптовалюта</h4>
+          <h4>🪙 Криптовалюта (Клікніть для додавання прибутку)</h4>
           <div id="journal-crypto" class="journal-list"></div>
         </div>
       </div>
@@ -315,16 +321,16 @@
     <section id="workout-screen" class="screen"><header class="screen-header"><h2>🏋️‍♂️ Тренування</h2></header><p class="placeholder">Розділ у розробці...</p></section>
     <section id="habits-screen" class="screen"><header class="screen-header"><h2>🚫 Шкідливі звички</h2></header><p class="placeholder">Розділ у розробці...</p></section>
 
-    <!-- МОДАЛЬНЕ ВІКНО КУПІВЛІ/ПРОДАЖУ -->
+    <!-- МОДАЛЬНЕ ВІКНО КУПІВЛІ/ПРОДАЖУ/КОРИГУВАННЯ -->
     <div id="trade-modal" class="modal">
       <div class="modal-content">
         <h3 id="modal-title">Операція з активом</h3>
         <div class="form-group">
           <label>Тип операції:</label>
           <select id="trade-type">
-            <option value="buy">🟢 Купівля</option>
-            <option value="sell">🔴 Продаж</option>
-            <option value="set">⚙️ Коригувати суму / інвестиції</option>
+            <option value="buy">🟢 Купівля (Додати до інвестицій)</option>
+            <option value="sell">🔴 Продаж (Зменшити інвестиції)</option>
+            <option value="set">⚙️ Пряме коригування (Ввести точні значення)</option>
           </select>
         </div>
         <div class="form-group">
@@ -338,6 +344,25 @@
         <div class="modal-actions">
           <button onclick="submitTrade()" class="btn-save">Зберегти</button>
           <button onclick="closeModal()" class="btn-cancel">Скасувати</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- МОДАЛЬНЕ ВІКНО ДОДАВАННЯ/ДОДАТКОВОГО ПРИБУТКУ В ЩОДЕННИК -->
+    <div id="journal-modal" class="modal">
+      <div class="modal-content">
+        <h3 id="journal-modal-title">Додати прибуток до угоди</h3>
+        <div class="form-group" id="journal-name-group">
+          <label>Назва активу:</label>
+          <input type="text" id="journal-input-name" placeholder="Наприклад: Meta Platforms">
+        </div>
+        <div class="form-group">
+          <label>Сума прибутку (€/$):</label>
+          <input type="number" id="journal-input-profit" placeholder="Наприклад: 30" step="any">
+        </div>
+        <div class="modal-actions">
+          <button onclick="submitJournalAdd()" class="btn-save">Зберегти</button>
+          <button onclick="closeJournalModal()" class="btn-cancel">Скасувати</button>
         </div>
       </div>
     </div>
