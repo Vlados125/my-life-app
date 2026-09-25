@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Personal Management WebApp</title>
-  <link rel="stylesheet" href="style.css?v=13">
+  <link rel="stylesheet" href="style.css?v=15">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
@@ -85,19 +85,16 @@
         </div>
       </div>
 
-      <!-- КНОПКИ ДОДАВАННЯ УГОД -->
-      <div class="journal-add-buttons">
-        <button class="btn-save" onclick="openJournalAddModal('stock')">➕ Додати угоду (Акції)</button>
-        <button class="btn-save" onclick="openJournalAddModal('crypto')" style="background: #0a84ff; color: #fff;">➕ Додати угоду (Крипта)</button>
-      </div>
-
-      <div class="journal-columns" style="margin-top: 14px;">
+      <div class="journal-columns">
         <div class="journal-col">
-          <h4>📈 Акції (Клікніть для додавання прибутку)</h4>
+          <h4 class="clickable-header">
+            <span>📈 Акції</span>
+            <span class="plus-icon" onclick="openJournalAddModal('stock')">+</span>
+          </h4>
           <div id="journal-stocks" class="journal-list"></div>
         </div>
         <div class="journal-col">
-          <h4>🪙 Криптовалюта (Клікніть для додавання прибутку)</h4>
+          <h4>🪙 Криптовалюта</h4>
           <div id="journal-crypto" class="journal-list"></div>
         </div>
       </div>
@@ -353,11 +350,11 @@
       <div class="modal-content">
         <h3 id="journal-modal-title">Додати прибуток до угоди</h3>
         <div class="form-group" id="journal-name-group">
-          <label>Назва активу:</label>
-          <input type="text" id="journal-input-name" placeholder="Наприклад: Meta Platforms">
+          <label>Назва акції:</label>
+          <input type="text" id="journal-input-name" placeholder="Наприклад: Apple Inc.">
         </div>
         <div class="form-group">
-          <label>Сума прибутку (€/$):</label>
+          <label>Сума прибутку (€):</label>
           <input type="number" id="journal-input-profit" placeholder="Наприклад: 30" step="any">
         </div>
         <div class="modal-actions">
