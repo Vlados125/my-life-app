@@ -47,6 +47,32 @@ html, body {
 .category-block { margin-bottom: 18px; }
 .category-block h3, .journal-col h4 { color: #8e8e93; font-size: 0.9rem; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
 
+/* Стиль для заголовка акцій з плюсиком */
+.clickable-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #1c1c1e;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #2c2c2e;
+  color: #8e8e93 !important;
+}
+.plus-icon {
+  background: #30d158;
+  color: #000;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+.plus-icon:hover { opacity: 0.85; }
+
 .asset-card { background: #1c1c1e; border: 1px solid #2c2c2e; border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; cursor: pointer; }
 .asset-info { display: flex; align-items: center; gap: 14px; }
 .real-logo { width: 36px; height: 36px; object-fit: contain; border-radius: 50%; background: #2c2c2e; }
@@ -72,7 +98,6 @@ html, body {
 .yellow { color: #ffd60a; font-weight: 600; }
 .red { color: #ff453a; font-weight: 600; }
 
-.journal-add-buttons { display: flex; gap: 10px; margin-bottom: 10px; }
 .journal-item { background: #1c1c1e; border: 1px solid #2c2c2e; padding: 12px 14px; border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; cursor: pointer; }
 .journal-item:hover { border-color: #0a84ff; }
 .journal-name { font-weight: 500; color: #ffffff; }
