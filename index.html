@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Personal Management WebApp</title>
-  <link rel="stylesheet" href="style.css?v=15">
+  <!-- Зверніть увагу: тут підключається файл стилів style.css -->
+  <link rel="stylesheet" href="style.css">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
@@ -42,6 +43,18 @@
           <span class="icon">🚫</span>
           <span class="label">Шкідливі звички</span>
         </button>
+      </div>
+
+      <!-- БЛОК ЕКСПОРТУ / ІМПОРТУ -->
+      <div class="stats-card" style="margin-top: 20px;">
+        <h4>💾 Резервна копія даних</h4>
+        <div style="display: flex; gap: 10px; margin-top: 10px;">
+          <button class="btn-save" onclick="exportData()" style="background: #0a84ff; color: #fff;">📤 Експорт (Бекап)</button>
+          <label class="btn-save" style="background: #2c2c2e; color: #30d158; border: 1px solid #30d158; text-align: center; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+            📥 Імпорт
+            <input type="file" id="import-file-input" accept=".json" style="display: none;" onchange="importData(event)">
+          </label>
+        </div>
       </div>
     </section>
 
@@ -378,6 +391,7 @@
 
   </div>
 
+  <!-- Зверніть увагу: тут підключається файл скриптів app.js -->
   <script src="app.js"></script>
 </body>
 </html>
