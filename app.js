@@ -22,10 +22,10 @@ let defaultCrypto = [
   { id: 'eth', name: "Ethereum", ticker: "ETH", logo: "https://assets.coingecko.com/coins/images/279/large/ethereum.png", invested: 0, amount: 0 }
 ];
 
-let stocksData = JSON.parse(localStorage.getItem('user_stocks_v5')) || defaultStocks;
-let cryptoData = JSON.parse(localStorage.getItem('user_crypto_v5')) || defaultCrypto;
+let stocksData = JSON.parse(localStorage.getItem('user_stocks_v6')) || defaultStocks;
+let cryptoData = JSON.parse(localStorage.getItem('user_crypto_v6')) || defaultCrypto;
 
-let journalStocks = JSON.parse(localStorage.getItem('journal_stocks_v5')) || [
+let journalStocks = JSON.parse(localStorage.getItem('journal_stocks_v6')) || [
   { name: "Meta Platforms", profit: 22.00 },
   { name: "Coinbase Global", profit: 45.00 },
   { name: "Netflix Inc.", profit: 9.65 },
@@ -33,7 +33,7 @@ let journalStocks = JSON.parse(localStorage.getItem('journal_stocks_v5')) || [
   { name: "DAX Index", profit: 7.47 }
 ];
 
-let journalCrypto = JSON.parse(localStorage.getItem('journal_crypto_v5')) || [
+let journalCrypto = JSON.parse(localStorage.getItem('journal_crypto_v6')) || [
   { name: "Gram (Toncoin)", profit: 67.80 },
   { name: "Bitcoin", profit: 58.35 },
   { name: "Solana", profit: 102.61 },
@@ -41,7 +41,7 @@ let journalCrypto = JSON.parse(localStorage.getItem('journal_crypto_v5')) || [
 ];
 
 let selectedAsset = null;
-let journalEditTarget = null; // Змінна для редагування існуючої угоди в щоденнику
+let journalEditTarget = null;
 
 let screenHistory = ['main-menu'];
 
@@ -77,7 +77,6 @@ function closeModal() {
   document.getElementById('trade-modal').style.display = 'none';
 }
 
-// Покупка/продаж акцій у портфелі
 function submitTrade() {
   const type = document.getElementById('trade-type').value;
   const inputAmount = parseFloat(document.getElementById('trade-amount').value) || 0;
@@ -102,7 +101,6 @@ function submitTrade() {
       currentAsset.amount = (currentAsset.amount || 0) + inputAmount;
     } 
     else if (type === 'sell') {
-      // ПРОДАЖ: віднімається тільки від інвестицій та кількості акцій, НЕ йде в прибуток
       currentAsset.invested = Math.max(0, (currentAsset.invested || 0) - totalPrice);
       currentAsset.amount = Math.max(0, (currentAsset.amount || 0) - inputAmount);
     } 
@@ -111,19 +109,19 @@ function submitTrade() {
       if (inputAmount >= 0) currentAsset.amount = inputAmount;
     }
 
-    localStorage.setItem('user_stocks_v5', JSON.stringify(stocksData));
-    localStorage.setItem('user_crypto_v5', JSON.stringify(cryptoData));
+    localStorage.setItem('user_stocks_v6', JSON.stringify(stocksData));
+    localStorage.setItem('user_crypto_v6', JSON.stringify(cryptoData));
   }
 
   closeModal();
   initUI();
 }
 
-// --- УПРАВЛІННЯ ЩОДЕННИКОМ УГОД (ПРИБУТКИ) ---
+// --- УПРАВЛІННЯ ЩОДЕННИКОМ УГОД ---
 
 function openJournalAddModal(type) {
   journalEditTarget = { type: type, isNew: true };
-  document.getElementById('journal-modal-title').innerText = type === 'stock' ? '➕ Нова угода (Акції)' : '➕ Нова угода (Крипта)';
+  document.getElementById('journal-modal-title').innerText = '➕ Додати нову акцію (угоду)';
   document.getElementById('journal-name-group').style.display = 'block';
   document.getElementById('journal-input-name').value = '';
   document.getElementById('journal-input-profit').value = '';
@@ -155,15 +153,14 @@ function submitJournalAdd() {
   const targetList = journalEditTarget.type === 'stock' ? journalStocks : journalCrypto;
 
   if (journalEditTarget.isNew) {
-    const nameInput = document.getElementById('journal-input-name').value.trim() || 'Новий актив';
+    const nameInput = document.getElementById('journal-input-name').value.trim() || 'Нова акція';
     targetList.unshift({ name: nameInput, profit: profitInput });
   } else {
-    // Додаємо новий прибуток до вже існуючого зафіксованого
     targetList[journalEditTarget.index].profit += profitInput;
   }
 
-  localStorage.setItem('journal_stocks_v5', JSON.stringify(journalStocks));
-  localStorage.setItem('journal_crypto_v5', JSON.stringify(journalCrypto));
+  localStorage.setItem('journal_stocks_v6', JSON.stringify(journalStocks));
+  localStorage.setItem('journal_crypto_v6', JSON.stringify(journalCrypto));
 
   closeJournalModal();
   initUI();
