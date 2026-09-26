@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Personal Management WebApp</title>
-  <!-- Зверніть увагу: тут підключається файл стилів style.css -->
   <link rel="stylesheet" href="style.css">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
@@ -163,6 +162,171 @@
       <div class="category-block">
         <h3>🍎 Перекус</h3>
         <div id="snack-list" class="custom-ingredients-list"></div>
+      </div>
+    </section>
+
+    <!-- СЕКЦІЯ: ТРЕНУВАННЯ -->
+    <section id="workout-screen" class="screen">
+      <header class="screen-header">
+        <h2>Тренування Full Body</h2>
+        <p>Контроль ваги та програма занять</p>
+      </header>
+
+      <!-- Блок актуальної ваги та відсотка жиру -->
+      <div class="stats-card">
+        <h4>Параметри тіла</h4>
+        <div class="form-group" style="margin-bottom: 8px;">
+          <label for="current-weight-input">Актуальна вага (кг):</label>
+          <input type="number" id="current-weight-input" value="100" step="0.5" min="40" max="200" oninput="updateBodyFat()">
+        </div>
+        <div class="stats-grid">
+          <div><span>Орієнтовний жир:</span> <strong id="body-fat-display" class="yellow">26%</strong></div>
+          <div><span>Зріст:</span> <strong>185 см</strong></div>
+        </div>
+      </div>
+
+      <!-- Блок вибору вправ для Фулбаді -->
+      <div class="category-block">
+        <h3>Виберіть вправи на сьогодні</h3>
+        
+        <div id="workout-exercises-container">
+          <!-- Груди -->
+          <div class="asset-card workout-exercise-card" style="flex-direction: column; align-items: stretch; gap: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="ticker">Груди</span>
+              <select class="exercise-select" data-group="chest">
+                <option value="Жим лежачи">Жим лежачи</option>
+                <option value="Розводка (бабочка)">Розводка (бабочка)</option>
+              </select>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <select class="sets-select" style="flex:1; padding:6px; background:#2c2c2e; color:#fff; border-radius:6px; border:1px solid #3a3a3c;">
+                <option value="" disabled selected>Підходи</option>
+                <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
+              </select>
+              <select class="reps-select" style="flex:1; padding:6px; background:#2c2c2e; color:#fff; border-radius:6px; border:1px solid #3a3a3c;">
+                <option value="" disabled selected>Повторення</option>
+                <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Плечі -->
+          <div class="asset-card workout-exercise-card" style="flex-direction: column; align-items: stretch; gap: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="ticker">Плечі</span>
+              <select class="exercise-select" data-group="shoulders">
+                <option value="Руки в сторони (апарат)">Руки в сторони (апарат)</option>
+                <option value="Жим гантелей вгору">Жим гантелей вгору</option>
+              </select>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <select class="sets-select" style="flex:1; padding:6px; background:#2c2c2e; color:#fff; border-radius:6px; border:1px solid #3a3a3c;">
+                <option value="" disabled selected>Підходи</option>
+                <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
+              </select>
+              <select class="reps-select" style="flex:1; padding:6px; background:#2c2c2e; color:#fff; border-radius:6px; border:1px solid #3a3a3c;">
+                <option value="" disabled selected>Повторення</option>
+                <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Тріцепс -->
+          <div class="asset-card workout-exercise-card" style="flex-direction: column; align-items: stretch; gap: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="ticker">Тріцепс</span>
+              <select class="exercise-select" data-group="triceps">
+                <option value="Тріцепс на апараті вниз">Тріцепс на апараті вниз</option>
+                <option value="Косичка на блоці">Косичка на блоці</option>
+              </select>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <select class="sets-select" style="flex:1; padding:6px; background:#2c2c2e; color:#fff; border-radius:6px; border:1px solid #3a3a3c;">
+                <option value="" disabled selected>Підходи</option>
+                <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
+              </select>
+              <select class="reps-select" style="flex:1; padding:6px; background:#2c2c2e; color:#fff; border-radius:6px; border:1px solid #3a3a3c;">
+                <option value="" disabled selected>Повторення</option>
+                <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Біцепс -->
+          <div class="asset-card workout-exercise-card" style="flex-direction: column; align-items: stretch; gap: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="ticker">Біцепс</span>
+              <select class="exercise-select" data-group="biceps">
+                <option value="Молотки з гантелями">Молотки з гантелями</option>
+                <option value="Біцепс на апараті сидячи">Біцепс на апараті сидячи</option>
+              </select>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <select class="sets-select" style="flex:1; padding:6px; background:#2c2c2e; color:#fff; border-radius:6px; border:1px solid #3a3a3c;">
+                <option value="" disabled selected>Підходи</option>
+                <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
+              </select>
+              <select class="reps-select" style="flex:1; padding:6px; background:#2c2c2e; color:#fff; border-radius:6px; border:1px solid #3a3a3c;">
+                <option value="" disabled selected>Повторення</option>
+                <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Спина -->
+          <div class="asset-card workout-exercise-card" style="flex-direction: column; align-items: stretch; gap: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="ticker">Спина</span>
+              <select class="exercise-select" data-group="back">
+                <option value="Тяга сидячи на себе">Тяга сидячи на себе</option>
+                <option value="Тяга згори до поясу">Тяга згори до поясу</option>
+              </select>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <select class="sets-select" style="flex:1; padding:6px; background:#2c2c2e; color:#fff; border-radius:6px; border:1px solid #3a3a3c;">
+                <option value="" disabled selected>Підходи</option>
+                <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
+              </select>
+              <select class="reps-select" style="flex:1; padding:6px; background:#2c2c2e; color:#fff; border-radius:6px; border:1px solid #3a3a3c;">
+                <option value="" disabled selected>Повторення</option>
+                <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Ноги -->
+          <div class="asset-card workout-exercise-card" style="flex-direction: column; align-items: stretch; gap: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="ticker">Ноги</span>
+              <select class="exercise-select" data-group="legs">
+                <option value="Присідання на апараті">Присідання на апараті</option>
+                <option value="Ноги вперед на апараті">Ноги вперед на апараті</option>
+              </select>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <select class="sets-select" style="flex:1; padding:6px; background:#2c2c2e; color:#fff; border-radius:6px; border:1px solid #3a3a3c;">
+                <option value="" disabled selected>Підходи</option>
+                <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
+              </select>
+              <select class="reps-select" style="flex:1; padding:6px; background:#2c2c2e; color:#fff; border-radius:6px; border:1px solid #3a3a3c;">
+                <option value="" disabled selected>Повторення</option>
+                <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Кнопка завершення тренування -->
+        <button class="journal-link-btn" style="background: #30d158; color: #000; margin-top: 16px;" onclick="finishWorkout()">Завершити тренування</button>
+      </div>
+
+      <!-- Архів тренувань -->
+      <div class="category-block" style="margin-top: 24px;">
+        <h3>Архів тренувань</h3>
+        <div id="workouts-history-list" class="history-list">
+          <div class="placeholder" style="margin-top: 10px; font-size: 0.85rem;">Ще немає завершених тренувань</div>
+        </div>
       </div>
     </section>
 
@@ -328,7 +492,6 @@
     </section>
 
     <!-- ІНШІ РОЗДІЛИ -->
-    <section id="workout-screen" class="screen"><header class="screen-header"><h2>🏋️‍♂️ Тренування</h2></header><p class="placeholder">Розділ у розробці...</p></section>
     <section id="habits-screen" class="screen"><header class="screen-header"><h2>🚫 Шкідливі звички</h2></header><p class="placeholder">Розділ у розробці...</p></section>
 
     <!-- МОДАЛЬНЕ ВІКНО КУПІВЛІ/ПРОДАЖУ/КОРИГУВАННЯ -->
@@ -391,7 +554,6 @@
 
   </div>
 
-  <!-- Зверніть увагу: тут підключається файл скриптів app.js -->
   <script src="app.js"></script>
 </body>
 </html>
