@@ -73,7 +73,7 @@ html, body {
 }
 .plus-icon:hover { opacity: 0.85; }
 
-.asset-card { background: #1c1c1e; border: 1px solid #2c2c2e; border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; cursor: pointer; }
+.asset-card { background: #1c1c1e; border: 1px solid #2c2c2e; border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
 .asset-info { display: flex; align-items: center; gap: 14px; }
 .real-logo { width: 36px; height: 36px; object-fit: contain; border-radius: 50%; background: #2c2c2e; }
 .ticker { font-weight: bold; font-size: 1rem; color: #fff; display: block; }
