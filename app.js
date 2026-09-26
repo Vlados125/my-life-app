@@ -7,7 +7,7 @@ function exportData() {
   const keys = [
     'user_stocks_v6', 'user_crypto_v6', 'journal_stocks_v6', 'journal_crypto_v6',
     'current_month_days', 'discipline_history', 'user_termine', 'user_year_goals',
-    'user_step_goals', 'user_plans_archive'
+    'user_step_goals', 'user_plans_archive', 'user_workouts_history'
   ];
   
   const backupData = {};
@@ -375,6 +375,86 @@ function renderNutrition() {
   }
 }
 
+// --- РОЗДІЛ: ТРЕНУВАННЯ ---
+
+let workoutsHistory = JSON.parse(localStorage.getItem('user_workouts_history')) || [];
+
+function updateBodyFat() {
+  const weightInput = document.getElementById('current-weight-input');
+  const fatDisplay = document.getElementById('body-fat-display');
+  if (!weightInput || !fatDisplay) return;
+
+  const weight = parseFloat(weightInput.value) || 100;
+  let estimatedFat = 26 - (100 - weight) * 0.95;
+  
+  if (estimatedFat < 8) estimatedFat = 8;
+  if (estimatedFat > 40) estimatedFat = 40;
+
+  fatDisplay.innerText = estimatedFat.toFixed(1) + '%';
+}
+
+function finishWorkout() {
+  const exerciseCards = document.querySelectorAll('#workout-exercises-container .workout-exercise-card');
+  let summaryDetails = [];
+
+  exerciseCards.forEach(card => {
+    const exerciseSelect = card.querySelector('.exercise-select');
+    const setsSelect = card.querySelector('.sets-select');
+    const repsSelect = card.querySelector('.reps-select');
+
+    const exName = exerciseSelect ? exerciseSelect.value : '';
+    const sets = setsSelect ? setsSelect.value : '';
+    const reps = repsSelect ? repsSelect.value : '';
+
+    if (sets && reps) {
+      summaryDetails.push(`${exName}: ${sets} підх. по ${reps} пов.`);
+    }
+  });
+
+  if (summaryDetails.length === 0) {
+    alert('Будь ласка, оберіть підходи та повторення хоча б для деяких вправ!');
+    return;
+  }
+
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' + now.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' });
+  const weightVal = document.getElementById('current-weight-input').value;
+  
+  const description = `Вага: ${weightVal} кг. ` + summaryDetails.join(' | ');
+
+  workoutsHistory.unshift({ date: dateStr, desc: description });
+  localStorage.setItem('user_workouts_history', JSON.stringify(workoutsHistory));
+
+  renderWorkoutsHistory();
+
+  // Очищення вибору підходів/повторень
+  exerciseCards.forEach(card => {
+    const setsSelect = card.querySelector('.sets-select');
+    const repsSelect = card.querySelector('.reps-select');
+    if (setsSelect) setsSelect.selectedIndex = 0;
+    if (repsSelect) repsSelect.selectedIndex = 0;
+  });
+
+  alert('Тренування успішно завершено та додано до архіву!');
+}
+
+function renderWorkoutsHistory() {
+  const container = document.getElementById('workouts-history-list');
+  if (!container) return;
+
+  if (workoutsHistory.length === 0) {
+    container.innerHTML = `<div class="placeholder" style="margin-top: 10px; font-size: 0.85rem;">Ще немає завершених тренувань</div>`;
+    return;
+  }
+
+  container.innerHTML = workoutsHistory.map(item => `
+    <div class="history-item" style="flex-direction: column; align-items: flex-start; gap: 4px;">
+      <strong style="color: #30d158; font-size: 0.85rem;">${item.date}</strong>
+      <span style="color: #d1d1d6; font-size: 0.8rem; line-height: 1.3;">${item.desc}</span>
+    </div>
+  `).join('');
+}
+
 // --- РОЗДІЛ: РУТИНА ТА ДИСЦИПЛІНА ---
 
 function switchRoutineTab(tab) {
@@ -664,6 +744,7 @@ function initUI() {
   renderNutrition();
   renderDisciplineCalendar();
   renderPlans();
+  renderWorkoutsHistory();
 }
 
 document.addEventListener('DOMContentLoaded', initUI);
