@@ -3,571 +3,441 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Personal Management WebApp</title>
-  <link rel="stylesheet" href="style_6.css">
+  <title>Life OS App</title>
+  <link rel="stylesheet" href="style_7.css">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-  <div class="app-container">
-    
-    <!-- ГОЛОВНЕ МЕНЮ -->
-    <section id="main-menu" class="screen active">
-      <header class="header">
-        <h1>Мій Помічник</h1>
-        <p>Система управління життям</p>
-      </header>
 
-      <div class="menu-grid">
-        <button class="card-btn" onclick="navigateTo('finance-screen')">
-          <span class="icon">📈</span>
-          <span class="label">Фінанси та Активи</span>
-        </button>
-        <button class="card-btn" onclick="navigateTo('nutrition-screen')">
-          <span class="icon">🥗</span>
-          <span class="label">Харчування</span>
-        </button>
-        <button class="card-btn" onclick="navigateTo('workout-screen')">
-          <span class="icon">🏋️‍♂️</span>
-          <span class="label">Тренування</span>
-        </button>
-        <button class="card-btn" onclick="navigateTo('tasks-screen')">
-          <span class="icon">📅</span>
-          <span class="label">Плани: день / тиждень / рік</span>
-        </button>
-        <button class="card-btn" onclick="navigateTo('notes-screen')">
-          <span class="icon">⏰</span>
-          <span class="label">Рутина дня</span>
-        </button>
-        <button class="card-btn" onclick="navigateTo('habits-screen')">
-          <span class="icon">🚫</span>
-          <span class="label">Шкідливі звички</span>
-        </button>
+  <!-- ГОЛОВНЕ МЕНЮ -->
+  <div id="main-menu" class="screen active">
+    <header class="main-header">
+      <h1>Life OS</h1>
+      <p>Твоя персональна система продуктивності</p>
+    </header>
+
+    <div class="menu-grid">
+      <div class="menu-card" onclick="navigateTo('finance-screen')">
+        <span class="menu-icon">💰</span>
+        <h3>Фінанси та Інвестиції</h3>
+        <p>Портфель, активи та журнал</p>
       </div>
 
-      <!-- БЛОК ЕКСПОРТУ / ІМПОРТУ -->
-      <div class="stats-card" style="margin-top: 20px;">
-        <h4>💾 Резервна копія даних</h4>
-        <div style="display: flex; gap: 10px; margin-top: 10px;">
-          <button class="btn-save" onclick="exportData()" style="background: #0a84ff; color: #fff;">📤 Експорт (Бекап)</button>
-          <label class="btn-save" style="background: #2c2c2e; color: #30d158; border: 1px solid #30d158; text-align: center; cursor: pointer; display: flex; align-items: center; justify-content: center;">
-            📥 Імпорт
-            <input type="file" id="import-file-input" accept=".json" style="display: none;" onchange="importData(event)">
-          </label>
-        </div>
-      </div>
-    </section>
-
-    <!-- СЕКЦІЯ: ФІНАНСИ -->
-    <section id="finance-screen" class="screen">
-      <header class="screen-header">
-        <h2>Фінанси та Активи</h2>
-        <div class="total-badge">
-          <span>Загальний капітал / Інвестиції</span>
-          <h3 id="total-invested-sum">0.00 €</h3>
-        </div>
-        <button class="action-btn journal-link-btn" onclick="navigateTo('journal-screen')">
-          📜 Відкрити Щоденник Угод
-        </button>
-      </header>
-
-      <div class="category-block">
-        <h3>📊 Акції (Stocks)</h3>
-        <div class="assets-list" id="stocks-list"></div>
+      <div class="menu-card" onclick="navigateTo('nutrition-screen')">
+        <span class="menu-icon">🥗</span>
+        <h3>Харчування</h3>
+        <p>Калорії, БЖУ та раціон</p>
       </div>
 
-      <div class="category-block">
-        <h3>🪙 Криптовалюта (Crypto)</h3>
-        <div class="assets-list" id="crypto-list"></div>
-      </div>
-    </section>
-
-    <!-- ЕКРАН: ЩОДЕННИК УГОД -->
-    <section id="journal-screen" class="screen">
-      <header class="screen-header">
-        <h2>📜 Щоденник Угод</h2>
-      </header>
-
-      <div class="stats-card">
-        <h4>📊 Статистика за рік</h4>
-        <div class="stats-grid">
-          <div><span>Угод:</span> <strong id="stat-count">0</strong></div>
-          <div><span>Успішність:</span> <strong id="stat-rate">100%</strong></div>
-          <div><span>Прибуток:</span> <strong id="stat-profit" class="green">+0.00€</strong></div>
-          <div><span>Збиток:</span> <strong id="stat-loss" class="red">-0.00€</strong></div>
-        </div>
+      <div class="menu-card" onclick="navigateTo('workout-screen')">
+        <span class="menu-icon">🏋️‍♂️</span>
+        <h3>Тренування</h3>
+        <p>Програма та історія занять</p>
       </div>
 
-      <div class="journal-columns">
-        <div class="journal-col">
-          <h4 class="clickable-header">
-            <span>📈 Акції</span>
-            <span class="plus-icon" onclick="openJournalAddModal('stock')">+</span>
-          </h4>
-          <div id="journal-stocks" class="journal-list"></div>
-        </div>
-        <div class="journal-col">
-          <h4>🪙 Криптовалюта</h4>
-          <div id="journal-crypto" class="journal-list"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- СЕКЦІЯ: ХАРЧУВАННЯ -->
-    <section id="nutrition-screen" class="screen">
-      <header class="screen-header">
-        <h2>🥗 Харчування</h2>
-        <div class="target-select-wrapper">
-          <label for="calorie-target">Цільовий калораж:</label>
-          <select id="calorie-target" onchange="changeCalorieTarget(this.value)">
-            <option value="2500" selected>🟢 2500 ккал (Базовий)</option>
-            <option value="2400">🟡 2400 ккал (При вазі 95 кг)</option>
-            <option value="2300">🟠 2300 ккал (При вазі 90 кг)</option>
-            <option value="2200">🔴 2200 ккал (При вазі &lt;90 кг)</option>
-          </select>
-        </div>
-      </header>
-
-      <div class="stats-card">
-        <h4 id="nutrition-title">🟢 2500 ккал (Базовий)</h4>
-        <p id="nutrition-bju" class="subtitle" style="color: #30d158; font-weight: 600; margin-top: 4px;"></p>
+      <div class="menu-card" onclick="navigateTo('routine-screen')">
+        <span class="menu-icon">⚡</span>
+        <h3>Рутина та Диципліна</h3>
+        <p>План дня та календар місяця</p>
       </div>
 
-      <div class="stats-card">
-        <h4>📦 Розрахунок раціону на декілька днів</h4>
-        <div class="servings-control">
-          <span>Кількість порцій / днів:</span>
-          <div class="counter-btn-group">
-            <button type="button" onclick="changeServings(-1)">-</button>
-            <strong id="servings-count">1</strong>
-            <button type="button" onclick="changeServings(1)">+</button>
-          </div>
-        </div>
+      <div class="menu-card" onclick="navigateTo('plans-screen')">
+        <span class="menu-icon">🎯</span>
+        <h3>Плани та Цілі</h3>
+        <p>Терміни, цілі на рік і кроки</p>
       </div>
 
-      <div class="category-block">
-        <h3>🥣 Сніданок — Пиріг з вівсянкою</h3>
-        <div id="breakfast-list" class="custom-ingredients-list"></div>
-      </div>
-
-      <div class="category-block">
-        <h3>🍲 Вечеря №1 — Курка Карі з рисом</h3>
-        <div id="dinner1-list" class="custom-ingredients-list"></div>
-      </div>
-
-      <div class="category-block">
-        <h3>🥘 Вечеря №2 — Гречка з фаршем</h3>
-        <div id="dinner2-list" class="custom-ingredients-list"></div>
-      </div>
-
-      <div class="category-block">
-        <h3>🍎 Перекус</h3>
-        <div id="snack-list" class="custom-ingredients-list"></div>
-      </div>
-    </section>
-
-    <!-- СЕКЦІЯ: ТРЕНУВАННЯ -->
-    <section id="workout-screen" class="screen">
-      <header class="screen-header">
-        <h2>Тренування Full Body</h2>
-        <p>Контроль ваги та програма занять</p>
-      </header>
-
-      <div class="stats-card">
-        <h4>Параметри тіла</h4>
-        <div class="form-group" style="margin-bottom: 8px;">
-          <label for="current-weight-input">Актуальна вага (кг):</label>
-          <input type="number" id="current-weight-input" value="100" step="0.5" min="40" max="200" oninput="updateBodyFat()">
-        </div>
-        <div class="stats-grid">
-          <div><span>Орієнтовний жир:</span> <strong id="body-fat-display" class="yellow">26%</strong></div>
-          <div><span>Зріст:</span> <strong>185 см</strong></div>
-        </div>
-      </div>
-
-      <div class="category-block">
-        <h3>Виберіть вправи на сьогодні</h3>
-        
-        <div id="workout-exercises-container">
-          <div class="asset-card workout-exercise-card" style="flex-direction: column; align-items: stretch; gap: 8px;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span class="ticker">Груди</span>
-              <select class="exercise-select" data-group="chest">
-                <option value="Жим лежачи">Жим лежачи</option>
-                <option value="Розводка (бабочка)">Розводка (бабочка)</option>
-              </select>
-            </div>
-            <div style="display: flex; gap: 8px;">
-              <select class="sets-select" style="flex:1; padding:6px; background:#2c2c2e; color:#fff; border-radius:6px; border:1px solid #3a3a3c;">
-                <option value="" disabled selected>Підходи</option>
-                <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
-              </select>
-              <select class="reps-select" style="flex:1; padding:6px; background:#2c2c2e; color:#fff; border-radius:6px; border:1px solid #3a3a3c;">
-                <option value="" disabled selected>Повторення</option>
-                <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="asset-card workout-exercise-card" style="flex-direction: column; align-items: stretch; gap: 8px;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span class="ticker">Плечі</span>
-              <select class="exercise-select" data-group="shoulders">
-                <option value="Руки в сторони (апарат)">Руки в сторони (апарат)</option>
-                <option value="Жим гантелей вгору">Жим гантелей вгору</option>
-              </select>
-            </div>
-            <div style="display: flex; gap: 8px;">
-              <select class="sets-select" style="flex:1; padding:6px; background:#2c2c2e; color:#fff; border-radius:6px; border:1px solid #3a3a3c;">
-                <option value="" disabled selected>Підходи</option>
-                <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
-              </select>
-              <select class="reps-select" style="flex:1; padding:6px; background:#2c2c2e; color:#fff; border-radius:6px; border:1px solid #3a3a3c;">
-                <option value="" disabled selected>Повторення</option>
-                <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="asset-card workout-exercise-card" style="flex-direction: column; align-items: stretch; gap: 8px;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span class="ticker">Тріцепс</span>
-              <select class="exercise-select" data-group="triceps">
-                <option value="Тріцепс на апараті вниз">Тріцепс на апараті вниз</option>
-                <option value="Косичка на блоці">Косичка на блоці</option>
-              </select>
-            </div>
-            <div style="display: flex; gap: 8px;">
-              <select class="sets-select" style="flex:1; padding:6px; background:#2c2c2e; color:#fff; border-radius:6px; border:1px solid #3a3a3c;">
-                <option value="" disabled selected>Підходи</option>
-                <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
-              </select>
-              <select class="reps-select" style="flex:1; padding:6px; background:#2c2c2e; color:#fff; border-radius:6px; border:1px solid #3a3a3c;">
-                <option value="" disabled selected>Повторення</option>
-                <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="asset-card workout-exercise-card" style="flex-direction: column; align-items: stretch; gap: 8px;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span class="ticker">Біцепс</span>
-              <select class="exercise-select" data-group="biceps">
-                <option value="Молотки з гантелями">Молотки з гантелями</option>
-                <option value="Біцепс на апараті сидячи">Біцепс на апараті сидячи</option>
-              </select>
-            </div>
-            <div style="display: flex; gap: 8px;">
-              <select class="sets-select" style="flex:1; padding:6px; background:#2c2c2e; color:#fff; border-radius:6px; border:1px solid #3a3a3c;">
-                <option value="" disabled selected>Підходи</option>
-                <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
-              </select>
-              <select class="reps-select" style="flex:1; padding:6px; background:#2c2c2e; color:#fff; border-radius:6px; border:1px solid #3a3a3c;">
-                <option value="" disabled selected>Повторення</option>
-                <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="asset-card workout-exercise-card" style="flex-direction: column; align-items: stretch; gap: 8px;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span class="ticker">Спина</span>
-              <select class="exercise-select" data-group="back">
-                <option value="Тяга сидячи на себе">Тяга сидячи на себе</option>
-                <option value="Тяга згори до поясу">Тяга згори до поясу</option>
-              </select>
-            </div>
-            <div style="display: flex; gap: 8px;">
-              <select class="sets-select" style="flex:1; padding:6px; background:#2c2c2e; color:#fff; border-radius:6px; border:1px solid #3a3a3c;">
-                <option value="" disabled selected>Підходи</option>
-                <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
-              </select>
-              <select class="reps-select" style="flex:1; padding:6px; background:#2c2c2e; color:#fff; border-radius:6px; border:1px solid #3a3a3c;">
-                <option value="" disabled selected>Повторення</option>
-                <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="asset-card workout-exercise-card" style="flex-direction: column; align-items: stretch; gap: 8px;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span class="ticker">Ноги</span>
-              <select class="exercise-select" data-group="legs">
-                <option value="Присідання на апараті">Присідання на апараті</option>
-                <option value="Ноги вперед на апараті">Ноги вперед на апараті</option>
-              </select>
-            </div>
-            <div style="display: flex; gap: 8px;">
-              <select class="sets-select" style="flex:1; padding:6px; background:#2c2c2e; color:#fff; border-radius:6px; border:1px solid #3a3a3c;">
-                <option value="" disabled selected>Підходи</option>
-                <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
-              </select>
-              <select class="reps-select" style="flex:1; padding:6px; background:#2c2c2e; color:#fff; border-radius:6px; border:1px solid #3a3a3c;">
-                <option value="" disabled selected>Повторення</option>
-                <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <button class="journal-link-btn" style="background: #30d158; color: #000; margin-top: 16px;" onclick="finishWorkout()">Завершити тренування</button>
-      </div>
-
-      <div class="category-block" style="margin-top: 24px;">
-        <h3>Архів тренувань</h3>
-        <div id="workouts-history-list" class="history-list">
-          <div class="placeholder" style="margin-top: 10px; font-size: 0.85rem;">Ще немає завершених тренувань</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- СЕКЦІЯ: РУТИНА ДНЯ -->
-    <section id="notes-screen" class="screen">
-      <header class="screen-header">
-        <h2>⏰ Рутина та Дисципліна</h2>
-      </header>
-
-      <div class="stats-card">
-        <h4>📊 Баланс часу (24 години)</h4>
-        <div class="chart-container">
-          <div class="pie-chart"></div>
-          <div class="chart-legend">
-            <div><span class="dot sleep"></span> Сон: 33% (8 год)</div>
-            <div><span class="dot work"></span> Робота: 35% (8.5 год)</div>
-            <div><span class="dot learn"></span> Навчання (Кухня/Мова): 6%</div>
-            <div><span class="dot sport"></span> Спорт: 6%</div>
-            <div><span class="dot projects"></span> Проєкти / PWA: 5%</div>
-            <div><span class="dot self"></span> На себе: 3%</div>
-            <div><span class="dot road"></span> Дорога / Побут: 12%</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="routine-toggle-container">
-        <button id="tab-a-btn" class="toggle-btn active" onclick="switchRoutineTab('A')">🏋️‍♂️ Варіант А (З залом)</button>
-        <button id="tab-b-btn" class="toggle-btn" onclick="switchRoutineTab('B')">🧘‍♂️ Варіант Б (Без залу)</button>
-      </div>
-
-      <div id="routine-plan-a" class="routine-plan-block active">
-        <div class="custom-ingredients-list">
-          <div><input type="checkbox"> <b>05:50 - 06:10</b> — Підйом, гігієна, D3 + Omega-3</div>
-          <div><input type="checkbox"> <b>06:10 - 06:40</b> — Сніданок (Пиріг з вівсянкою + кава)</div>
-          <div><input type="checkbox"> <b>06:40 - 07:30</b> — Дорога на роботу (подкаст / мова)</div>
-          <div><input type="checkbox"> <b>07:30 - 16:00</b> — Робота</div>
-          <div><input type="checkbox"> <b>16:00 - 16:15</b> — Дорога в зал</div>
-          <div><input type="checkbox"> <b>16:15 - 17:45</b> — Тренування в залі (1.5 год)</div>
-          <div><input type="checkbox"> <b>17:45 - 18:15</b> — Дорога додому / душ</div>
-          <div><input type="checkbox"> <b>18:15 - 18:45</b> — Вечеря (одразу після залу)</div>
-          <div><input type="checkbox"> <b>18:45 - 19:45</b> — Навчання: Кухня + Німецька</div>
-          <div><input type="checkbox"> <b>19:45 - 20:30</b> — Проєкти / PWA-розробка</div>
-          <div><input type="checkbox"> <b>20:30 - 21:15</b> — Час на себе (книга, прогулянка)</div>
-          <div><input type="checkbox"> <b>21:15 - 21:50</b> — Підготовка до завтра / буфер</div>
-          <div><input type="checkbox"> <b>21:50 - 05:50</b> — Сон (8 годин)</div>
-        </div>
-      </div>
-
-      <div id="routine-plan-b" class="routine-plan-block">
-        <div class="custom-ingredients-list">
-          <div><input type="checkbox"> <b>05:50 - 06:10</b> — Підйом, гігієна, D3 + Omega-3</div>
-          <div><input type="checkbox"> <b>06:10 - 06:40</b> — Сніданок</div>
-          <div><input type="checkbox"> <b>06:40 - 07:30</b> — Дорога на роботу</div>
-          <div><input type="checkbox"> <b>07:30 - 16:00</b> — Робота</div>
-          <div><input type="checkbox"> <b>16:00 - 16:50</b> — Дорога додому (Feierabend)</div>
-          <div><input type="checkbox"> <b>16:50 - 17:20</b> — Вечеря (одразу після роботи)</div>
-          <div><input type="checkbox"> <b>17:20 - 18:50</b> — Навчання: Кухня + Мова (1.5 год)</div>
-          <div><input type="checkbox"> <b>18:50 - 20:00</b> — Проєкти / PWA-розробка</div>
-          <div><input type="checkbox"> <b>20:00 - 20:45</b> — Час на себе (відпочинок)</div>
-          <div><input type="checkbox"> <b>20:45 - 21:50</b> — Вільний буферний час</div>
-          <div><input type="checkbox"> <b>21:50 - 05:50</b> — Сон (8 годин)</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- СЕКЦІЯ: ПЛАНИ ТА ЦІЛІ -->
-    <section id="tasks-screen" class="screen">
-      <header class="screen-header">
-        <h2>📅 Плани та Цілі</h2>
-      </header>
-
-      <div class="plans-toggle-container">
-        <button id="plan-tab-termine-btn" class="toggle-btn active" onclick="switchPlansTab('termine')">📌 Терміни</button>
-        <button id="plan-tab-year-btn" class="toggle-btn" onclick="switchPlansTab('year')">🏆 Цілі Рік</button>
-        <button id="plan-tab-step-btn" class="toggle-btn" onclick="switchPlansTab('step')">🗓 Тиждень/Місяць</button>
-        <button id="plan-tab-archive-btn" class="toggle-btn" onclick="switchPlansTab('archive')">📦 Архів</button>
-      </div>
-
-      <div id="plans-tab-termine" class="plans-tab-block active">
-        <div class="stats-card">
-          <h4>➕ Додати новий Termine</h4>
-          <div class="form-group">
-            <label>Назва зустрічі / події:</label>
-            <input type="text" id="termine-title" placeholder="напр. Візит в Jobcenter / Лікар">
-          </div>
-          <div class="form-group">
-            <label>Дата та час:</label>
-            <input type="datetime-local" id="termine-date">
-          </div>
-          <div class="form-group">
-            <label>Примітка (необов'язково):</label>
-            <input type="text" id="termine-note" placeholder="Адреса, кабінет або що взяти">
-          </div>
-          <button class="btn-save" onclick="addTermine()">Зберегти Termine</button>
-        </div>
-
-        <div class="category-block">
-          <h3>📌 Майбутні терміни</h3>
-          <div id="termine-list" class="plans-list"></div>
-        </div>
-      </div>
-
-      <div id="plans-tab-year" class="plans-tab-block">
-        <div class="stats-card">
-          <h4>➕ Додати ціль на рік</h4>
-          <div class="add-goal-inline">
-            <input type="text" id="year-goal-input" placeholder="напр. Отримати диплом кухаря...">
-            <button onclick="addGoal('year')">+</button>
-          </div>
-        </div>
-        <div class="category-block">
-          <h3>🏆 Основні цілі на РІК</h3>
-          <div id="year-goals-list" class="goals-list"></div>
-        </div>
-      </div>
-
-      <div id="plans-tab-step" class="plans-tab-block">
-        <div class="stats-card">
-          <h4>➕ Додати крок (тиждень/місяць)</h4>
-          <div class="add-goal-inline">
-            <input type="text" id="step-goal-input" placeholder="напр. Вивчити 100 слів з кулінарії...">
-            <button onclick="addGoal('step')">+</button>
-          </div>
-        </div>
-        <div class="category-block">
-          <h3>🗓 Кроки до цілей (Тиждень / Місяць)</h3>
-          <div id="step-goals-list" class="goals-list"></div>
-        </div>
-      </div>
-
-      <div id="plans-tab-archive" class="plans-tab-block">
-        <div class="stats-card">
-          <h4>📦 Архів виконаних завдань та термінів</h4>
-          <div id="plans-archive-list" class="plans-list"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- СЕКЦІЯ: ШКІДЛИВІ ЗВИЧКИ ТА КАЛЕНДАР ДИСЦИПЛІНИ -->
-    <section id="habits-screen" class="screen">
-      <header class="screen-header">
-        <h2>🚫 Шкідливі звички & Дисципліна</h2>
-        <p>Контроль звичок та календар місяця</p>
-      </header>
-
-      <!-- Блок додавання нової звички -->
-      <div class="stats-card">
-        <h4>➕ Додати нову звичку</h4>
-        <div class="form-group">
-          <label>Назва звички:</label>
-          <input type="text" id="habit-name" placeholder="напр. Куріння / Солодке / Енергетики">
-        </div>
-        <div class="form-group">
-          <label>Вартість на день (€):</label>
-          <input type="number" id="habit-cost" placeholder="напр. 7.5" step="any">
-        </div>
-        <button class="btn-save" onclick="addHabit()">Створити звичку</button>
-      </div>
-
-      <!-- Список активних звичок -->
-      <div class="category-block">
-        <h3>Мої звички та прогрес</h3>
-        <div id="habits-list" class="habits-container"></div>
-      </div>
-
-      <!-- КАЛЕНДАР ДИСЦИПЛІНИ -->
-      <div class="stats-card discipline-card" style="margin-top: 24px;">
-        <h4>📅 Поточний місяць дисципліни</h4>
-        <p class="subtitle" style="margin-bottom: 10px;">Клікніть на день, щоб змінити статус:</p>
-        
-        <div class="status-legend">
-          <span><i class="dot status-green-dot"></i> 100%</span>
-          <span><i class="dot status-yellow-dot"></i> 50%</span>
-          <span><i class="dot status-red-dot"></i> 0%</span>
-          <span><i class="dot status-gray-dot"></i> Вихідний</span>
-        </div>
-
-        <div id="discipline-grid" class="calendar-grid"></div>
-
-        <button class="reset-month-btn" onclick="archiveCurrentMonthManually()">
-          💾 Архівувати місяць зараз
-        </button>
-      </div>
-
-      <!-- АРХІВ МІСЯЦІВ -->
-      <div class="stats-card">
-        <h4>📦 Архів місяців дисципліни</h4>
-        <div id="discipline-archive-list" class="history-list"></div>
-      </div>
-    </section>
-
-    <!-- МОДАЛЬНЕ ВІКНО КУПІВЛІ/ПРОДАЖУ/КОРИГУВАННЯ -->
-    <div id="trade-modal" class="modal">
-      <div class="modal-content">
-        <h3 id="modal-title">Операція з активом</h3>
-        <div class="form-group">
-          <label>Тип операції:</label>
-          <select id="trade-type">
-            <option value="buy">🟢 Купівля (Додати до інвестицій)</option>
-            <option value="sell">🔴 Продаж (Зменшити інвестиції)</option>
-            <option value="set">⚙️ Пряме коригування (Ввести точні значення)</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Кількість (монет/акцій):</label>
-          <input type="number" id="trade-amount" placeholder="Наприклад: 2.574" step="any">
-        </div>
-        <div class="form-group">
-          <label>Загальна сума (€) або ціна за 1:</label>
-          <input type="number" id="trade-price" placeholder="Наприклад: 601 або 233.5" step="any">
-        </div>
-        <div class="modal-actions">
-          <button onclick="submitTrade()" class="btn-save">Зберегти</button>
-          <button onclick="closeModal()" class="btn-cancel">Скасувати</button>
-        </div>
+      <div class="menu-card" onclick="navigateTo('habits-screen')">
+        <span class="menu-icon">🚫</span>
+        <h3>Шкідливі звички</h3>
+        <p>Контроль та економія</p>
       </div>
     </div>
 
-    <!-- МОДАЛЬНЕ ВІКНО ДОДАВАННЯ/ДОДАТКОВОГО ПРИБУТКУ В ЩОДЕННИК -->
-    <div id="journal-modal" class="modal">
-      <div class="modal-content">
-        <h3 id="journal-modal-title">Додати прибуток до угоди</h3>
-        <div class="form-group" id="journal-name-group">
-          <label>Назва акції:</label>
-          <input type="text" id="journal-input-name" placeholder="Наприклад: Apple Inc.">
-        </div>
-        <div class="form-group">
-          <label>Сума прибутку (€):</label>
-          <input type="number" id="journal-input-profit" placeholder="Наприклад: 30" step="any">
-        </div>
-        <div class="modal-actions">
-          <button onclick="submitJournalAdd()" class="btn-save">Зберегти</button>
-          <button onclick="closeJournalModal()" class="btn-cancel">Скасувати</button>
-        </div>
-      </div>
+    <!-- КНОПКИ ЕКСПОРТУ / ІМПОРТУ -->
+    <div class="backup-section" style="margin-top: 30px; display: flex; gap: 10px;">
+      <button class="btn-save" style="background: #2c2c2e; color: #fff;" onclick="exportData()">💾 Експорт даних</button>
+      <button class="btn-save" style="background: #2c2c2e; color: #fff;" onclick="document.getElementById('import-file').click()">📂 Імпорт</button>
+      <input type="file" id="import-file" style="display: none;" accept=".json" onchange="importData(event)">
     </div>
-
-    <!-- НИЖНЯ ПАНЕЛЬ НАВІГАЦІЇ -->
-    <nav class="bottom-nav">
-      <button class="nav-btn" onclick="goBack()">
-        <span class="nav-icon">⬅️</span>
-        <span class="nav-text">Назад</span>
-      </button>
-      <button class="nav-btn" onclick="navigateTo('main-menu')">
-        <span class="nav-icon">🏠</span>
-        <span class="nav-text">Головне меню</span>
-      </button>
-    </nav>
-
   </div>
 
-  <script src="app_6.js"></script>
+  <!-- ЕКРАН 1: ФІНАНСИ -->
+  <section id="finance-screen" class="screen">
+    <header class="screen-header">
+      <button class="back-btn" onclick="goBack()">← Назад</button>
+      <h2>💰 Фінанси та Інвестиції</h2>
+    </header>
+
+    <div class="total-card">
+      <span>Загальний інвест-капітал</span>
+      <h2 id="total-invested-sum">0.00 €</h2>
+    </div>
+
+    <div class="category-block">
+      <h3>📈 Акції (Stocks)</h3>
+      <div id="stocks-list" class="assets-grid"></div>
+    </div>
+
+    <div class="category-block" style="margin-top: 24px;">
+      <h3>🪙 Криптовалюта (Crypto)</h3>
+      <div id="crypto-list" class="assets-grid"></div>
+    </div>
+
+    <!-- ЖУРНАЛ УГОД -->
+    <div class="category-block" style="margin-top: 24px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <h3>📊 Журнал угод (Прибуток)</h3>
+        <div>
+          <button class="btn-add-mini" onclick="openJournalAddModal('stock')">+ Акція</button>
+          <button class="btn-add-mini" onclick="openJournalAddModal('crypto')" style="margin-left: 6px;">+ Крипта</button>
+        </div>
+      </div>
+
+      <div class="stats-summary-card">
+        <div class="stat-row"><span>Всього угод:</span> <strong id="stat-count">0</strong></div>
+        <div class="stat-row"><span>Загальний плюс:</span> <strong id="stat-profit" class="green">0 €</strong></div>
+        <div class="stat-row"><span>Загальний мінус:</span> <strong id="stat-loss" class="red">0 €</strong></div>
+        <div class="stat-row"><span>Вінрейт:</span> <strong id="stat-rate" class="green">100%</strong></div>
+      </div>
+
+      <div style="margin-top: 14px;">
+        <h4 style="font-size: 0.9rem; color: #8e8e93; margin-bottom: 6px;">Акції</h4>
+        <div id="journal-stocks" class="journal-list"></div>
+      </div>
+
+      <div style="margin-top: 14px;">
+        <h4 style="font-size: 0.9rem; color: #8e8e93; margin-bottom: 6px;">Криптовалюта</h4>
+        <div id="journal-crypto" class="journal-list"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ЕКРАН 2: ХАРЧУВАННЯ -->
+  <section id="nutrition-screen" class="screen">
+    <header class="screen-header">
+      <button class="back-btn" onclick="goBack()">← Назад</button>
+      <h2>🥗 Харчування та Раціон</h2>
+    </header>
+
+    <div class="calories-selector">
+      <button class="cal-btn" onclick="changeCalorieTarget(2500)">2500</button>
+      <button class="cal-btn" onclick="changeCalorieTarget(2400)">2400</button>
+      <button class="cal-btn" onclick="changeCalorieTarget(2300)">2300</button>
+      <button class="cal-btn" onclick="changeCalorieTarget(2200)">2200</button>
+    </div>
+
+    <div class="servings-control">
+      <span>Кількість порцій:</span>
+      <div class="servings-btns">
+        <button onclick="changeServings(-1)">-</button>
+        <span id="servings-count">1</span>
+        <button onclick="changeServings(1)">+</button>
+      </div>
+    </div>
+
+    <div class="stats-card" style="margin-bottom: 16px;">
+      <h3 id="nutrition-title">🟢 2500 ккал (Базовий)</h3>
+      <p id="nutrition-bju" style="font-size: 0.85rem; color: #8e8e93; margin-top: 4px;"></p>
+    </div>
+
+    <div class="nutrition-block">
+      <h4>🍳 Сніданок</h4>
+      <div id="breakfast-list" class="nutrition-items"></div>
+    </div>
+
+    <div class="nutrition-block">
+      <h4>🍲 Вечеря №1</h4>
+      <div id="dinner1-list" class="nutrition-items"></div>
+    </div>
+
+    <div class="nutrition-block">
+      <h4>🍛 Вечеря №2</h4>
+      <div id="dinner2-list" class="nutrition-items"></div>
+    </div>
+
+    <div class="nutrition-block">
+      <h4>🍎 Перекус</h4>
+      <div id="snack-list" class="nutrition-items"></div>
+    </div>
+  </section>
+
+  <!-- ЕКРАН 3: ТРЕНУВАННЯ -->
+  <section id="workout-screen" class="screen">
+    <header class="screen-header">
+      <button class="back-btn" onclick="goBack()">← Назад</button>
+      <h2>🏋️‍♂️ Тренування</h2>
+    </header>
+
+    <div class="stats-card">
+      <h4>⚖️ Поточна вага та відсоток жиру</h4>
+      <div class="form-group" style="margin-top: 10px;">
+        <label>Вага (кг):</label>
+        <input type="number" id="current-weight-input" value="100" step="0.1" oninput="updateBodyFat()">
+      </div>
+      <div style="margin-top: 8px; font-size: 0.9rem;">
+        Орієнтовний % жиру: <strong id="body-fat-display" class="green">16.0%</strong>
+      </div>
+    </div>
+
+    <div class="category-block" style="margin-top: 16px;">
+      <h3>💪 Конструктор тренування</h3>
+      <div id="workout-exercises-container">
+        <div class="workout-exercise-card">
+          <select class="exercise-select">
+            <option>Жим штанги лежачи</option>
+            <option>Тяга верхнього блоку</option>
+            <option>Жим гантелей сидячи</option>
+            <option>Присідання зі штангою</option>
+            <option>Підтягування</option>
+          </select>
+          <div class="workout-sets-row">
+            <select class="sets-select">
+              <option value="" disabled selected>Підходи</option>
+              <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+            </select>
+            <select class="reps-select">
+              <option value="" disabled selected>Повторення</option>
+              <option>6-8</option><option>8-10</option><option>10-12</option><option>12-15</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="workout-exercise-card" style="margin-top: 10px;">
+          <select class="exercise-select">
+            <option>Підтягування</option>
+            <option>Жим штанги лежачи</option>
+            <option>Тяга верхнього блоку</option>
+            <option>Жим гантелей сидячи</option>
+            <option>Присідання зі штангою</option>
+          </select>
+          <div class="workout-sets-row">
+            <select class="sets-select">
+              <option value="" disabled selected>Підходи</option>
+              <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+            </select>
+            <select class="reps-select">
+              <option value="" disabled selected>Повторення</option>
+              <option>6-8</option><option>8-10</option><option>10-12</option><option>12-15</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-save" style="margin-top: 14px;" onclick="finishWorkout()">Завершити тренування ✅</button>
+    </div>
+
+    <div class="category-block" style="margin-top: 20px;">
+      <h3>📜 Історія тренувань</h3>
+      <div id="workouts-history-list" class="history-list" style="margin-top: 10px;"></div>
+    </div>
+  </section>
+
+  <!-- ЕКРАН 4: РУТИНА ТА ДИСЦИПЛІНА -->
+  <section id="routine-screen" class="screen">
+    <header class="screen-header">
+      <button class="back-btn" onclick="goBack()">← Назад</button>
+      <h2>⚡ Рутина та Дисципліна</h2>
+    </header>
+
+    <div class="routine-tabs">
+      <button id="tab-a-btn" class="routine-tab-btn active" onclick="switchRoutineTab('A')">План A (Робочий)</button>
+      <button id="tab-b-btn" class="routine-tab-btn" onclick="switchRoutineTab('B')">План B (Вихідний)</button>
+    </div>
+
+    <div id="routine-plan-a" class="routine-content active">
+      <div class="routine-item"><span>07:00</span> Підйом, склянка води, зарядка</div>
+      <div class="routine-item"><span>08:00</span> Сніданок та кава</div>
+      <div class="routine-item"><span>09:00 - 13:00</span> Фокус-сесія (робота / проєкти)</div>
+      <div class="routine-item"><span>13:00</span> Обід та прогулянка</div>
+      <div class="routine-item"><span>15:00 - 18:00</span> Друга робоча сесія</div>
+      <div class="routine-item"><span>19:00</span> Тренування / спорт</div>
+      <div class="routine-item"><span>21:00</span> Вечеря, відпочинок, читання</div>
+      <div class="routine-item"><span>23:00</span> Сон</div>
+    </div>
+
+    <div id="routine-plan-b" class="routine-content">
+      <div class="routine-item"><span>08:30</span> Спокійний підйом</div>
+      <div class="routine-item"><span>10:00</span> Великий сніданок</div>
+      <div class="routine-item"><span>12:00</span> Домашні справи, покупки</div>
+      <div class="routine-item"><span>15:00</span> Прогулянка на свіжому повітрі</div>
+      <div class="routine-item"><span>19:00</span> Зустріч з друзями / відпочинок</div>
+      <div class="routine-item"><span>23:30</span> Сон</div>
+    </div>
+
+    <div class="category-block" style="margin-top: 20px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <h3>📅 Календар дисципліни</h3>
+        <span id="discipline-rate" class="green" style="font-weight: bold; font-size: 1rem;">100%</span>
+      </div>
+      <p style="font-size: 0.75rem; color: #8e8e93; margin-bottom: 10px;">Натискайте на день для зміни статусу (🟢 зелений, 🟡 жовтий, 🔴 червоний, ⚫ сірий)</p>
+      
+      <div id="discipline-calendar" class="calendar-grid"></div>
+
+      <button class="reset-month-btn" onclick="archiveCurrentMonth()">Завершити місяць та зберегти в архів</button>
+    </div>
+
+    <div class="stats-card" style="margin-top: 20px;">
+      <h4>📜 Архів місяців дисципліни</h4>
+      <div id="history-list" class="history-list" style="margin-top: 10px;"></div>
+    </div>
+  </section>
+
+  <!-- ЕКРАН 5: ПЛАНИ ТА ЦІЛІ -->
+  <section id="plans-screen" class="screen">
+    <header class="screen-header">
+      <button class="back-btn" onclick="goBack()">← Назад</button>
+      <h2>🎯 Плани та Цілі</h2>
+    </header>
+
+    <div class="routine-tabs" style="grid-template-columns: repeat(4, 1fr);">
+      <button id="plan-tab-termine-btn" class="routine-tab-btn active" onclick="switchPlansTab('termine')">Termine</button>
+      <button id="plan-tab-year-btn" class="routine-tab-btn" onclick="switchPlansTab('year')">Рік</button>
+      <button id="plan-tab-step-btn" class="routine-tab-btn" onclick="switchPlansTab('step')">Кроки</button>
+      <button id="plan-tab-archive-btn" class="routine-tab-btn" onclick="switchPlansTab('archive')">Архів</button>
+    </div>
+
+    <!-- ТЕРМІНИ -->
+    <div id="plans-tab-termine" class="plans-tab-content active" style="margin-top: 16px;">
+      <div class="stats-card" style="margin-bottom: 16px;">
+        <h4>📌 Додати зустріч / Termine</h4>
+        <div class="form-group" style="margin-top: 8px;">
+          <label>Назва:</label>
+          <input type="text" id="termine-title" placeholder="напр. Лікар / Зустріч">
+        </div>
+        <div class="form-group">
+          <label>Дата і час:</label>
+          <input type="datetime-local" id="termine-date">
+        </div>
+        <div class="form-group">
+          <label>Нотатка:</label>
+          <input type="text" id="termine-note" placeholder="Додатково...">
+        </div>
+        <button class="btn-save" onclick="addTermine()">Додати Termine</button>
+      </div>
+      <div id="termine-list" class="plans-container"></div>
+    </div>
+
+    <!-- ЦІЛІ НА РІК -->
+    <div id="plans-tab-year" class="plans-tab-content" style="margin-top: 16px;">
+      <div class="stats-card" style="margin-bottom: 16px;">
+        <h4>🏆 Додати ціль на рік</h4>
+        <div class="form-group" style="margin-top: 8px;">
+          <label>Ціль:</label>
+          <input type="text" id="year-goal-input" placeholder="напр. Прочитати 20 книг">
+        </div>
+        <button class="btn-save" onclick="addGoal('year')">Додати ціль</button>
+      </div>
+      <div id="year-goals-list" class="plans-container"></div>
+    </div>
+
+    <!-- КРОКИ -->
+    <div id="plans-tab-step" class="plans-tab-content" style="margin-top: 16px;">
+      <div class="stats-card" style="margin-bottom: 16px;">
+        <h4>🗓 Додати крок / плани</h4>
+        <div class="form-group" style="margin-top: 8px;">
+          <label>Завдання:</label>
+          <input type="text" id="step-goal-input" placeholder="напр. Купити квитки">
+        </div>
+        <button class="btn-save" onclick="addGoal('step')">Додати крок</button>
+      </div>
+      <div id="step-goals-list" class="plans-container"></div>
+    </div>
+
+    <!-- АРХІВ ПЛАНІВ -->
+    <div id="plans-tab-archive" class="plans-tab-content" style="margin-top: 16px;">
+      <div id="plans-archive-list" class="plans-container"></div>
+    </div>
+  </section>
+
+  <!-- ЕКРАН 6: ШКІДЛИВІ ЗВИЧКИ -->
+  <section id="habits-screen" class="screen">
+    <header class="screen-header">
+      <button class="back-btn" onclick="goBack()">← Назад</button>
+      <h2>🚫 Шкідливі звички</h2>
+    </header>
+
+    <div class="stats-card">
+      <h4>➕ Додати нову звичку</h4>
+      <div class="form-group" style="margin-top: 8px;">
+        <label>Назва звички:</label>
+        <input type="text" id="habit-name" placeholder="напр. Куріння / Солодке">
+      </div>
+      <div class="form-group">
+        <label>Вартість на день (€):</label>
+        <input type="number" id="habit-cost" placeholder="напр. 8.0" step="any">
+      </div>
+      <button class="btn-save" onclick="addHabit()">Створити звичку</button>
+    </div>
+
+    <div class="category-block" style="margin-top: 16px;">
+      <h3>Мої звички та прогрес (31 день)</h3>
+      <div id="habits-list" class="habits-container" style="margin-top: 10px;"></div>
+      
+      <button class="reset-month-btn" style="margin-top: 16px;" onclick="archiveHabitsMonth()">
+        📦 Заархівувати все і почати знову
+      </button>
+    </div>
+
+    <div class="stats-card" style="margin-top: 20px;">
+      <h4>📜 Архів звичок</h4>
+      <div id="habits-archive-list" class="history-list" style="margin-top: 10px;"></div>
+    </div>
+  </section>
+
+  <!-- МОДАЛЬНЕ ВІКНО: ТОРГІВЛЯ АКТИВАМИ -->
+  <div id="trade-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+      <h3 id="modal-title">Операція з активом</h3>
+      
+      <div class="form-group" style="margin-top: 12px;">
+        <label>Тип операції:</label>
+        <select id="trade-type">
+          <option value="buy">Купити (додати до портфеля)</option>
+          <option value="sell">Продати (зменшити портфель)</option>
+          <option value="set">Встановити точні значення</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Кількість / Частка:</label>
+        <input type="number" id="trade-amount" placeholder="0.00" step="any">
+      </div>
+
+      <div class="form-group">
+        <label>Сума в євро/доларах (€/$):</label>
+        <input type="number" id="trade-price" placeholder="0.00" step="any">
+      </div>
+
+      <div class="modal-buttons">
+        <button class="btn-cancel" onclick="closeModal()">Скасувати</button>
+        <button class="btn-save" onclick="submitTrade()">Зберегти</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- МОДАЛЬНЕ ВІКНО: ЖУРНАЛ УГОД -->
+  <div id="journal-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+      <h3 id="journal-modal-title">Додати прибуток</h3>
+      
+      <div class="form-group" id="journal-name-group" style="margin-top: 12px; display: none;">
+        <label>Назва акції / активу:</label>
+        <input type="text" id="journal-input-name" placeholder="напр. Apple">
+      </div>
+
+      <div class="form-group" style="margin-top: 12px;">
+        <label>Сума прибутку (€):</label>
+        <input type="number" id="journal-input-profit" placeholder="0.00" step="any">
+      </div>
+
+      <div class="modal-buttons">
+        <button class="btn-cancel" onclick="closeJournalModal()">Скасувати</button>
+        <button class="btn-save" onclick="submitJournalAdd()">Додати</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
 </body>
 </html>
