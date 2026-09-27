@@ -170,3 +170,14 @@ html, body {
 .plan-card-content { flex: 1; }
 .plan-card-title { font-weight: 600; color: #fff; }
 .plan-card-sub { font-size: 0.75rem; color: #8e8e93; margin-top: 2px; }
+
+/* Стилі для розділу шкідливих звичок */
+.habits-container { display: flex; flex-direction: column; gap: 12px; }
+.habit-card { background: #1c1c1e; border: 1px solid #2c2c2e; border-radius: 14px; padding: 14px; }
+.habit-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.habit-title { font-size: 1rem; font-weight: bold; color: #fff; }
+.habit-delete { background: none; border: none; color: #ff453a; font-size: 1.1rem; cursor: pointer; }
+.habit-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; font-size: 0.85rem; }
+.habit-actions { display: flex; gap: 8px; }
+.habit-btn-clean { flex: 1; background: #30d158; color: #000; border: none; padding: 10px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.85rem; }
+.habit-btn-reset { flex: 1; background: #ff453a; color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.85rem; }
