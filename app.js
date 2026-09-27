@@ -7,7 +7,7 @@ function exportData() {
   const keys = [
     'user_stocks_v6', 'user_crypto_v6', 'journal_stocks_v6', 'journal_crypto_v6',
     'current_month_days', 'discipline_history', 'user_termine', 'user_year_goals',
-    'user_step_goals', 'user_plans_archive', 'user_workouts_history', 'user_habits_v2', 'user_habits_archive_v2'
+    'user_step_goals', 'user_plans_archive', 'user_workouts_history'
   ];
   
   const backupData = {};
@@ -427,6 +427,7 @@ function finishWorkout() {
 
   renderWorkoutsHistory();
 
+  // Очищення вибору підходів/повторень
   exerciseCards.forEach(card => {
     const setsSelect = card.querySelector('.sets-select');
     const repsSelect = card.querySelector('.reps-select');
@@ -704,136 +705,6 @@ function renderPlans() {
   }
 }
 
-// --- РОЗДІЛ: ШКІДЛИВІ ЗВИЧКИ (ОНОВЛЕНО З 31 ДНЕМ ТА АРХІВОМ) ---
-
-let habitsList = JSON.parse(localStorage.getItem('user_habits_v2')) || [
-  { id: 1, name: "Куріння / Сигарети", costPerDay: 8.0, days: Array(31).fill('neutral') }
-];
-let habitsArchive = JSON.parse(localStorage.getItem('user_habits_archive_v2')) || [];
-
-function addHabit() {
-  const nameInput = document.getElementById('habit-name').value.trim();
-  const costInput = parseFloat(document.getElementById('habit-cost').value) || 0;
-
-  if (!nameInput) {
-    alert("Будь ласка, введіть назву звички!");
-    return;
-  }
-
-  habitsList.push({
-    id: Date.now(),
-    name: nameInput,
-    costPerDay: costInput,
-    days: Array(31).fill('neutral')
-  });
-
-  localStorage.setItem('user_habits_v2', JSON.stringify(habitsList));
-
-  document.getElementById('habit-name').value = '';
-  document.getElementById('habit-cost').value = '';
-
-  renderHabits();
-}
-
-function cycleHabitDay(habitId, dayIndex) {
-  const habit = habitsList.find(h => h.id === habitId);
-  if (!habit) return;
-
-  // 'neutral' (сірий) -> 'green' (зелений) -> 'red' (червоний) -> 'neutral'
-  const current = habit.days[dayIndex] || 'neutral';
-  let next = 'neutral';
-  if (current === 'neutral') next = 'green';
-  else if (current === 'green') next = 'red';
-  else if (current === 'red') next = 'neutral';
-
-  habit.days[dayIndex] = next;
-  localStorage.setItem('user_habits_v2', JSON.stringify(habitsList));
-  renderHabits();
-}
-
-function archiveHabitsMonth() {
-  if (!confirm("Заархівувати поточний прогрес звичок (31 день) і почати знову?")) return;
-
-  const dateStr = new Date().toLocaleDateString('uk-UA', { month: 'long', year: 'numeric' });
-  
-  // Зберігаємо копію поточних звичок в архів
-  habitsArchive.unshift({
-    title: `Архів звичок (${dateStr})`,
-    habits: JSON.parse(JSON.stringify(habitsList))
-  });
-
-  localStorage.setItem('user_habits_archive_v2', JSON.stringify(habitsArchive));
-
-  // Очищаємо дні назад до нейтральних
-  habitsList.forEach(h => {
-    h.days = Array(31).fill('neutral');
-  });
-
-  localStorage.setItem('user_habits_v2', JSON.stringify(habitsList));
-  renderHabits();
-}
-
-function deleteHabit(id) {
-  if (!confirm("Видалити цю звичку остаточно?")) return;
-  habitsList = habitsList.filter(h => h.id !== id);
-  localStorage.setItem('user_habits_v2', JSON.stringify(habitsList));
-  renderHabits();
-}
-
-function renderHabits() {
-  const container = document.getElementById('habits-list');
-  if (!container) return;
-
-  if (habitsList.length === 0) {
-    container.innerHTML = `<div class="placeholder" style="margin-top: 10px; font-size: 0.85rem;">Ще немає доданих шкідливих звичок. Додайте першу вище!</div>`;
-  } else {
-    container.innerHTML = habitsList.map(habit => {
-      // Рахуємо кількість зелених днів для економії
-      const greenDays = habit.days.filter(d => d === 'green').length;
-      const savedMoney = (greenDays * (habit.costPerDay || 0)).toFixed(2);
-
-      // Генеруємо 31 клітинку
-      const daysGridHtml = habit.days.map((status, index) => `
-        <div class="habit-day-circle status-${status}" onclick="cycleHabitDay(${habit.id}, ${index})">
-          ${index + 1}
-        </div>
-      `).join('');
-
-      return `
-        <div class="habit-card">
-          <div class="habit-header">
-            <span class="habit-title">🚫 ${habit.name}</span>
-            <button class="habit-delete" onclick="deleteHabit(${habit.id})" title="Видалити">🗑</button>
-          </div>
-          <div class="habit-stats-grid">
-            <div><span>Успішних днів:</span> <strong class="green">${greenDays} / 31</strong></div>
-            <div><span>Заощаджено:</span> <strong class="green">${savedMoney} €</strong></div>
-          </div>
-          <div class="habit-days-label">Відмічайте дні (натискайте для зміни кольору):</div>
-          <div class="habit-days-grid">
-            ${daysGridHtml}
-          </div>
-        </div>
-      `;
-    }).join('');
-  }
-
-  // Рендеримо блок архіву звичок нижче
-  const archiveContainer = document.getElementById('habits-archive-list');
-  if (archiveContainer) {
-    if (habitsArchive.length === 0) {
-      archiveContainer.innerHTML = `<div style="color: #8e8e93; font-size: 0.85rem; text-align: center;">Архів звичок порожній.</div>`;
-    } else {
-      archiveContainer.innerHTML = habitsArchive.map(arch => `
-        <div class="history-item" style="flex-direction: column; align-items: flex-start; gap: 6px;">
-          <strong style="color: #0a84ff; font-size: 0.9rem;">${arch.title}</strong>
-          <div style="font-size: 0.8rem; color: #8e8e93;">Звичок у звіті: ${arch.habits.length}</div>
-        </div>
-      `).join('');
-    }
-  }
-}
-
 // --- ІНІЦІАЛІЗАЦІЯ ІНТЕРФЕЙСУ ---
 
 function initUI() {
@@ -874,7 +745,6 @@ function initUI() {
   renderDisciplineCalendar();
   renderPlans();
   renderWorkoutsHistory();
-  renderHabits();
 }
 
 document.addEventListener('DOMContentLoaded', initUI);
