@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Personal Management WebApp</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style_6.css">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
@@ -172,7 +172,6 @@
         <p>Контроль ваги та програма занять</p>
       </header>
 
-      <!-- Блок актуальної ваги та відсотка жиру -->
       <div class="stats-card">
         <h4>Параметри тіла</h4>
         <div class="form-group" style="margin-bottom: 8px;">
@@ -185,12 +184,10 @@
         </div>
       </div>
 
-      <!-- Блок вибору вправ для Фулбаді -->
       <div class="category-block">
         <h3>Виберіть вправи на сьогодні</h3>
         
         <div id="workout-exercises-container">
-          <!-- Груди -->
           <div class="asset-card workout-exercise-card" style="flex-direction: column; align-items: stretch; gap: 8px;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
               <span class="ticker">Груди</span>
@@ -211,7 +208,6 @@
             </div>
           </div>
 
-          <!-- Плечі -->
           <div class="asset-card workout-exercise-card" style="flex-direction: column; align-items: stretch; gap: 8px;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
               <span class="ticker">Плечі</span>
@@ -232,7 +228,6 @@
             </div>
           </div>
 
-          <!-- Тріцепс -->
           <div class="asset-card workout-exercise-card" style="flex-direction: column; align-items: stretch; gap: 8px;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
               <span class="ticker">Тріцепс</span>
@@ -253,7 +248,6 @@
             </div>
           </div>
 
-          <!-- Біцепс -->
           <div class="asset-card workout-exercise-card" style="flex-direction: column; align-items: stretch; gap: 8px;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
               <span class="ticker">Біцепс</span>
@@ -274,7 +268,6 @@
             </div>
           </div>
 
-          <!-- Спина -->
           <div class="asset-card workout-exercise-card" style="flex-direction: column; align-items: stretch; gap: 8px;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
               <span class="ticker">Спина</span>
@@ -295,7 +288,6 @@
             </div>
           </div>
 
-          <!-- Ноги -->
           <div class="asset-card workout-exercise-card" style="flex-direction: column; align-items: stretch; gap: 8px;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
               <span class="ticker">Ноги</span>
@@ -317,11 +309,9 @@
           </div>
         </div>
 
-        <!-- Кнопка завершення тренування -->
         <button class="journal-link-btn" style="background: #30d158; color: #000; margin-top: 16px;" onclick="finishWorkout()">Завершити тренування</button>
       </div>
 
-      <!-- Архів тренувань -->
       <div class="category-block" style="margin-top: 24px;">
         <h3>Архів тренувань</h3>
         <div id="workouts-history-list" class="history-list">
@@ -389,32 +379,6 @@
           <div><input type="checkbox"> <b>20:45 - 21:50</b> — Вільний буферний час</div>
           <div><input type="checkbox"> <b>21:50 - 05:50</b> — Сон (8 годин)</div>
         </div>
-      </div>
-
-      <div class="stats-card" style="margin-top: 20px;">
-        <h4>📅 Поточний місяць дисципліни</h4>
-        <p class="subtitle">Клікніть на день, щоб змінити статус:</p>
-        <div class="status-legend">
-          <span>🟢 100%</span>
-          <span>🟡 50%</span>
-          <span>🔴 0%</span>
-          <span>⚪ Вихідний</span>
-        </div>
-        
-        <div id="discipline-calendar" class="calendar-grid"></div>
-
-        <div class="discipline-stats">
-          Успішність за цей місяць: <strong id="discipline-rate" class="green">100%</strong>
-        </div>
-
-        <button class="reset-month-btn" onclick="archiveCurrentMonth()">
-          💾 Завершити місяць та зберегти в Архів
-        </button>
-      </div>
-
-      <div class="stats-card">
-        <h4>📜 Історія та статистика за рік</h4>
-        <div id="history-list" class="history-list"></div>
       </div>
     </section>
 
@@ -491,11 +455,11 @@
       </div>
     </section>
 
-    <!-- СЕКЦІЯ: ШКІДЛИВІ ЗВИЧКИ (НОВЕ) -->
+    <!-- СЕКЦІЯ: ШКІДЛИВІ ЗВИЧКИ ТА КАЛЕНДАР ДИСЦИПЛІНИ -->
     <section id="habits-screen" class="screen">
       <header class="screen-header">
-        <h2>🚫 Шкідливі звички</h2>
-        <p>Контроль, вільні дні та економія</p>
+        <h2>🚫 Шкідливі звички & Дисципліна</h2>
+        <p>Контроль звичок та календар місяця</p>
       </header>
 
       <!-- Блок додавання нової звички -->
@@ -516,6 +480,31 @@
       <div class="category-block">
         <h3>Мої звички та прогрес</h3>
         <div id="habits-list" class="habits-container"></div>
+      </div>
+
+      <!-- КАЛЕНДАР ДИСЦИПЛІНИ -->
+      <div class="stats-card discipline-card" style="margin-top: 24px;">
+        <h4>📅 Поточний місяць дисципліни</h4>
+        <p class="subtitle" style="margin-bottom: 10px;">Клікніть на день, щоб змінити статус:</p>
+        
+        <div class="status-legend">
+          <span><i class="dot status-green-dot"></i> 100%</span>
+          <span><i class="dot status-yellow-dot"></i> 50%</span>
+          <span><i class="dot status-red-dot"></i> 0%</span>
+          <span><i class="dot status-gray-dot"></i> Вихідний</span>
+        </div>
+
+        <div id="discipline-grid" class="calendar-grid"></div>
+
+        <button class="reset-month-btn" onclick="archiveCurrentMonthManually()">
+          💾 Архівувати місяць зараз
+        </button>
+      </div>
+
+      <!-- АРХІВ МІСЯЦІВ -->
+      <div class="stats-card">
+        <h4>📦 Архів місяців дисципліни</h4>
+        <div id="discipline-archive-list" class="history-list"></div>
       </div>
     </section>
 
@@ -579,6 +568,6 @@
 
   </div>
 
-  <script src="app.js"></script>
+  <script src="app_6.js"></script>
 </body>
 </html>
