@@ -6,8 +6,8 @@ if (tg) { tg.ready(); tg.expand(); }
 function exportData() {
   const keys = [
     'user_stocks_v6', 'user_crypto_v6', 'journal_stocks_v6', 'journal_crypto_v6',
-    'user_discipline_v1', 'user_discipline_archive_v1', 'user_termine', 'user_year_goals',
-    'user_step_goals', 'user_plans_archive', 'user_workouts_history', 'user_habits_v1'
+    'current_month_days', 'discipline_history', 'user_termine', 'user_year_goals',
+    'user_step_goals', 'user_plans_archive', 'user_workouts_history', 'user_habits_v2', 'user_habits_archive_v2'
   ];
   
   const backupData = {};
@@ -454,13 +454,98 @@ function renderWorkoutsHistory() {
   `).join('');
 }
 
-// --- РОЗДІЛ: РУТИНА ---
+// --- РОЗДІЛ: РУТИНА ТА ДИСЦИПЛІНА ---
 
 function switchRoutineTab(tab) {
   document.getElementById('tab-a-btn').classList.toggle('active', tab === 'A');
   document.getElementById('tab-b-btn').classList.toggle('active', tab === 'B');
   document.getElementById('routine-plan-a').classList.toggle('active', tab === 'A');
   document.getElementById('routine-plan-b').classList.toggle('active', tab === 'B');
+}
+
+let daysStatus = JSON.parse(localStorage.getItem('current_month_days')) || Array(30).fill('green');
+let monthHistory = JSON.parse(localStorage.getItem('discipline_history')) || [];
+const statusCycle = ['green', 'yellow', 'red', 'gray'];
+
+function renderDisciplineCalendar() {
+  const container = document.getElementById('discipline-calendar');
+  if (!container) return;
+
+  container.innerHTML = daysStatus.map((status, index) => `
+    <div class="day-square status-${status}" onclick="cycleDayStatus(${index})">
+      ${index + 1}
+    </div>
+  `).join('');
+
+  calculateDisciplineRate();
+  renderHistory();
+}
+
+function cycleDayStatus(index) {
+  const currentIdx = statusCycle.indexOf(daysStatus[index]);
+  const nextIdx = (currentIdx + 1) % statusCycle.length;
+  daysStatus[index] = statusCycle[nextIdx];
+  localStorage.setItem('current_month_days', JSON.stringify(daysStatus));
+  renderDisciplineCalendar();
+}
+
+function calculateDisciplineRate() {
+  const activeDays = daysStatus.filter(s => s !== 'gray');
+  if (activeDays.length === 0) {
+    document.getElementById('discipline-rate').innerText = '100%';
+    return '100%';
+  }
+
+  let totalPoints = 0;
+  activeDays.forEach(s => {
+    if (s === 'green') totalPoints += 100;
+    if (s === 'yellow') totalPoints += 50;
+    if (s === 'red') totalPoints += 0;
+  });
+
+  const rate = Math.round(totalPoints / activeDays.length);
+  const rateElem = document.getElementById('discipline-rate');
+  if (rateElem) {
+    rateElem.innerText = `${rate}%`;
+    rateElem.className = rate >= 80 ? 'green' : (rate >= 50 ? 'yellow' : 'red');
+  }
+  return `${rate}%`;
+}
+
+function archiveCurrentMonth() {
+  if (!confirm("Завершити поточний місяць та зберегти результат в Архів?")) return;
+
+  const currentRate = calculateDisciplineRate();
+  const dateStr = new Date().toLocaleDateString('uk-UA', { month: 'long', year: 'numeric' });
+
+  monthHistory.unshift({
+    title: `Місяць #${monthHistory.length + 1} (${dateStr})`,
+    rate: currentRate
+  });
+
+  localStorage.setItem('discipline_history', JSON.stringify(monthHistory));
+
+  daysStatus = Array(30).fill('green');
+  localStorage.setItem('current_month_days', JSON.stringify(daysStatus));
+
+  renderDisciplineCalendar();
+}
+
+function renderHistory() {
+  const container = document.getElementById('history-list');
+  if (!container) return;
+
+  if (monthHistory.length === 0) {
+    container.innerHTML = `<div style="color: #8e8e93; font-size: 0.85rem; text-align: center;">Архів поки порожній.</div>`;
+    return;
+  }
+
+  container.innerHTML = monthHistory.map(item => `
+    <div class="history-item">
+      <span>${item.title}</span>
+      <strong class="${parseInt(item.rate) >= 80 ? 'green' : 'yellow'}">${item.rate}</strong>
+    </div>
+  `).join('');
 }
 
 // --- РОЗДІЛ: ПЛАНИ ---
@@ -619,11 +704,12 @@ function renderPlans() {
   }
 }
 
-// --- РОЗДІЛ: ШКІДЛИВІ ЗВИЧКИ ---
+// --- РОЗДІЛ: ШКІДЛИВІ ЗВИЧКИ (ОНОВЛЕНО З 31 ДНЕМ ТА АРХІВОМ) ---
 
-let habitsList = JSON.parse(localStorage.getItem('user_habits_v1')) || [
-  { id: 1, name: "Куріння / Сигарети", costPerDay: 8.0, startDate: new Date().getTime(), resetsCount: 0 }
+let habitsList = JSON.parse(localStorage.getItem('user_habits_v2')) || [
+  { id: 1, name: "Куріння / Сигарети", costPerDay: 8.0, days: Array(31).fill('neutral') }
 ];
+let habitsArchive = JSON.parse(localStorage.getItem('user_habits_archive_v2')) || [];
 
 function addHabit() {
   const nameInput = document.getElementById('habit-name').value.trim();
@@ -638,11 +724,10 @@ function addHabit() {
     id: Date.now(),
     name: nameInput,
     costPerDay: costInput,
-    startDate: new Date().getTime(),
-    resetsCount: 0
+    days: Array(31).fill('neutral')
   });
 
-  localStorage.setItem('user_habits_v1', JSON.stringify(habitsList));
+  localStorage.setItem('user_habits_v2', JSON.stringify(habitsList));
 
   document.getElementById('habit-name').value = '';
   document.getElementById('habit-cost').value = '';
@@ -650,22 +735,48 @@ function addHabit() {
   renderHabits();
 }
 
-function resetHabit(id) {
-  if (!confirm("Скинути прогрес цієї звички (це означає, що стався зрив)?")) return;
+function cycleHabitDay(habitId, dayIndex) {
+  const habit = habitsList.find(h => h.id === habitId);
+  if (!habit) return;
 
-  const habit = habitsList.find(h => h.id === id);
-  if (habit) {
-    habit.startDate = new Date().getTime();
-    habit.resetsCount = (habit.resetsCount || 0) + 1;
-    localStorage.setItem('user_habits_v1', JSON.stringify(habitsList));
-    renderHabits();
-  }
+  // 'neutral' (сірий) -> 'green' (зелений) -> 'red' (червоний) -> 'neutral'
+  const current = habit.days[dayIndex] || 'neutral';
+  let next = 'neutral';
+  if (current === 'neutral') next = 'green';
+  else if (current === 'green') next = 'red';
+  else if (current === 'red') next = 'neutral';
+
+  habit.days[dayIndex] = next;
+  localStorage.setItem('user_habits_v2', JSON.stringify(habitsList));
+  renderHabits();
+}
+
+function archiveHabitsMonth() {
+  if (!confirm("Заархівувати поточний прогрес звичок (31 день) і почати знову?")) return;
+
+  const dateStr = new Date().toLocaleDateString('uk-UA', { month: 'long', year: 'numeric' });
+  
+  // Зберігаємо копію поточних звичок в архів
+  habitsArchive.unshift({
+    title: `Архів звичок (${dateStr})`,
+    habits: JSON.parse(JSON.stringify(habitsList))
+  });
+
+  localStorage.setItem('user_habits_archive_v2', JSON.stringify(habitsArchive));
+
+  // Очищаємо дні назад до нейтральних
+  habitsList.forEach(h => {
+    h.days = Array(31).fill('neutral');
+  });
+
+  localStorage.setItem('user_habits_v2', JSON.stringify(habitsList));
+  renderHabits();
 }
 
 function deleteHabit(id) {
   if (!confirm("Видалити цю звичку остаточно?")) return;
   habitsList = habitsList.filter(h => h.id !== id);
-  localStorage.setItem('user_habits_v1', JSON.stringify(habitsList));
+  localStorage.setItem('user_habits_v2', JSON.stringify(habitsList));
   renderHabits();
 }
 
@@ -675,147 +786,52 @@ function renderHabits() {
 
   if (habitsList.length === 0) {
     container.innerHTML = `<div class="placeholder" style="margin-top: 10px; font-size: 0.85rem;">Ще немає доданих шкідливих звичок. Додайте першу вище!</div>`;
-    return;
+  } else {
+    container.innerHTML = habitsList.map(habit => {
+      // Рахуємо кількість зелених днів для економії
+      const greenDays = habit.days.filter(d => d === 'green').length;
+      const savedMoney = (greenDays * (habit.costPerDay || 0)).toFixed(2);
+
+      // Генеруємо 31 клітинку
+      const daysGridHtml = habit.days.map((status, index) => `
+        <div class="habit-day-circle status-${status}" onclick="cycleHabitDay(${habit.id}, ${index})">
+          ${index + 1}
+        </div>
+      `).join('');
+
+      return `
+        <div class="habit-card">
+          <div class="habit-header">
+            <span class="habit-title">🚫 ${habit.name}</span>
+            <button class="habit-delete" onclick="deleteHabit(${habit.id})" title="Видалити">🗑</button>
+          </div>
+          <div class="habit-stats-grid">
+            <div><span>Успішних днів:</span> <strong class="green">${greenDays} / 31</strong></div>
+            <div><span>Заощаджено:</span> <strong class="green">${savedMoney} €</strong></div>
+          </div>
+          <div class="habit-days-label">Відмічайте дні (натискайте для зміни кольору):</div>
+          <div class="habit-days-grid">
+            ${daysGridHtml}
+          </div>
+        </div>
+      `;
+    }).join('');
   }
 
-  const now = new Date().getTime();
-
-  container.innerHTML = habitsList.map(habit => {
-    const diffMs = now - habit.startDate;
-    const daysClean = Math.max(0, Math.floor(diffMs / (1000 * 60 * 60 * 24)));
-    const savedMoney = (daysClean * habit.costPerDay).toFixed(2);
-
-    return `
-      <div class="habit-card">
-        <div class="habit-header">
-          <span class="habit-title">🚫 ${habit.name}</span>
-          <button class="habit-delete" onclick="deleteHabit(${habit.id})" title="Видалити">🗑</button>
+  // Рендеримо блок архіву звичок нижче
+  const archiveContainer = document.getElementById('habits-archive-list');
+  if (archiveContainer) {
+    if (habitsArchive.length === 0) {
+      archiveContainer.innerHTML = `<div style="color: #8e8e93; font-size: 0.85rem; text-align: center;">Архів звичок порожній.</div>`;
+    } else {
+      archiveContainer.innerHTML = habitsArchive.map(arch => `
+        <div class="history-item" style="flex-direction: column; align-items: flex-start; gap: 6px;">
+          <strong style="color: #0a84ff; font-size: 0.9rem;">${arch.title}</strong>
+          <div style="font-size: 0.8rem; color: #8e8e93;">Звичок у звіті: ${arch.habits.length}</div>
         </div>
-        <div class="habit-stats-grid">
-          <div><span>Днів без зриву:</span> <strong class="green">${daysClean} дн.</strong></div>
-          <div><span>Заощаджено:</span> <strong class="green">${savedMoney} €</strong></div>
-          <div><span>Витрати/день:</span> <strong>${habit.costPerDay.toFixed(2)} €</strong></div>
-          <div><span>Зривів (скидань):</span> <strong class="yellow">${habit.resetsCount}</strong></div>
-        </div>
-        <div class="habit-actions">
-          <button class="habit-btn-clean" onclick="alert('Чудово тримаєтеся! Продовжуйте в тому ж дусі 💪')">💪 Тримаюся</button>
-          <button class="habit-btn-reset" onclick="resetHabit(${habit.id})">⚠️ Стався зрив</button>
-        </div>
-      </div>
-    `;
-  }).join('');
-}
-
-// --- КАЛЕНДАР ДИСЦИПЛІНИ ТА АРХІВУВАННЯ РАЗ НА МІСЯЦЬ ---
-
-const statusCycle = ['status-green', 'status-yellow', 'status-red', 'status-gray'];
-
-let disciplineData = JSON.parse(localStorage.getItem('user_discipline_v1')) || {
-    monthYear: getCurrentMonthYearKey(),
-    days: {}
-};
-
-let disciplineArchive = JSON.parse(localStorage.getItem('user_discipline_archive_v1')) || [];
-
-function getCurrentMonthYearKey() {
-    const d = new Date();
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-}
-
-function checkMonthlyArchive() {
-    const currentKey = getCurrentMonthYearKey();
-    if (disciplineData.monthYear !== currentKey) {
-        disciplineArchive.push({
-            monthYear: disciplineData.monthYear,
-            days: { ...disciplineData.days }
-        });
-        localStorage.setItem('user_discipline_archive_v1', JSON.stringify(disciplineArchive));
-
-        disciplineData = {
-            monthYear: currentKey,
-            days: {}
-        };
-        localStorage.setItem('user_discipline_v1', JSON.stringify(disciplineData));
+      `).join('');
     }
-}
-
-function renderDisciplineCalendar() {
-    checkMonthlyArchive();
-    
-    const grid = document.getElementById('discipline-grid');
-    if (!grid) return;
-    grid.innerHTML = '';
-
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth() + 1;
-    const daysInMonth = new Date(year, month, 0).getDate();
-
-    for (let day = 1; day <= daysInMonth; day++) {
-        const cell = document.createElement('div');
-        cell.className = 'day-square';
-        cell.innerText = day;
-
-        const currentStatus = disciplineData.days[day] || 'status-green';
-        cell.classList.add(currentStatus);
-
-        cell.onclick = () => {
-            let activeStatus = disciplineData.days[day] || 'status-green';
-            let currentIndex = statusCycle.indexOf(activeStatus);
-            let nextIndex = (currentIndex + 1) % statusCycle.length;
-            
-            disciplineData.days[day] = statusCycle[nextIndex];
-            
-            localStorage.setItem('user_discipline_v1', JSON.stringify(disciplineData));
-            renderDisciplineCalendar();
-        };
-
-        grid.appendChild(cell);
-    }
-
-    renderDisciplineArchiveList();
-}
-
-function archiveCurrentMonthManually() {
-    if (confirm("Архівувати поточний місяць та розпочати новий?")) {
-        disciplineArchive.push({
-            monthYear: disciplineData.monthYear,
-            days: { ...disciplineData.days }
-        });
-        localStorage.setItem('user_discipline_archive_v1', JSON.stringify(disciplineArchive));
-
-        disciplineData = {
-            monthYear: getCurrentMonthYearKey(),
-            days: {}
-        };
-        localStorage.setItem('user_discipline_v1', JSON.stringify(disciplineData));
-        renderDisciplineCalendar();
-        alert("Місяць успішно архівовано!");
-    }
-}
-
-function renderDisciplineArchiveList() {
-    const archiveContainer = document.getElementById('discipline-archive-list');
-    if (!archiveContainer) return;
-    
-    if (disciplineArchive.length === 0) {
-        archiveContainer.innerHTML = `<div style="color: #8e8e93; font-size: 0.85rem; text-align: center;">Архів місяців поки порожній.</div>`;
-        return;
-    }
-
-    archiveContainer.innerHTML = disciplineArchive.map((item, index) => `
-        <div class="history-item">
-          <span>Період: <b>${item.monthYear}</b></span>
-          <button onclick="deleteDisciplineArchive(${index})" style="background:#ff453a; border:none; color:#fff; padding:4px 8px; border-radius:6px; cursor:pointer; font-size:0.75rem;">Видалити</button>
-        </div>
-    `).join('');
-}
-
-function deleteDisciplineArchive(index) {
-    if (!confirm("Видалити цей запис з архіву?")) return;
-    disciplineArchive.splice(index, 1);
-    localStorage.setItem('user_discipline_archive_v1', JSON.stringify(disciplineArchive));
-    renderDisciplineArchiveList();
+  }
 }
 
 // --- ІНІЦІАЛІЗАЦІЯ ІНТЕРФЕЙСУ ---
