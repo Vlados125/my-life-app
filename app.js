@@ -7,7 +7,7 @@ function exportData() {
   const keys = [
     'user_stocks_v6', 'user_crypto_v6', 'journal_stocks_v6', 'journal_crypto_v6',
     'current_month_days', 'discipline_history', 'user_termine', 'user_year_goals',
-    'user_step_goals', 'user_plans_archive', 'user_workouts_history'
+    'user_step_goals', 'user_plans_archive', 'user_workouts_history', 'user_habits_v1'
   ];
   
   const backupData = {};
@@ -705,6 +705,93 @@ function renderPlans() {
   }
 }
 
+// --- РОЗДІЛ: ШКІДЛИВІ ЗВИЧКИ (НОВЕ) ---
+
+let habitsList = JSON.parse(localStorage.getItem('user_habits_v1')) || [
+  { id: 1, name: "Куріння / Сигарети", costPerDay: 8.0, startDate: new Date().getTime(), resetsCount: 0 }
+];
+
+function addHabit() {
+  const nameInput = document.getElementById('habit-name').value.trim();
+  const costInput = parseFloat(document.getElementById('habit-cost').value) || 0;
+
+  if (!nameInput) {
+    alert("Будь ласка, введіть назву звички!");
+    return;
+  }
+
+  habitsList.push({
+    id: Date.now(),
+    name: nameInput,
+    costPerDay: costInput,
+    startDate: new Date().getTime(),
+    resetsCount: 0
+  });
+
+  localStorage.setItem('user_habits_v1', JSON.stringify(habitsList));
+
+  document.getElementById('habit-name').value = '';
+  document.getElementById('habit-cost').value = '';
+
+  renderHabits();
+}
+
+function resetHabit(id) {
+  if (!confirm("Скинути прогрес цієї звички (це означає, що стався зрив)?")) return;
+
+  const habit = habitsList.find(h => h.id === id);
+  if (habit) {
+    habit.startDate = new Date().getTime();
+    habit.resetsCount = (habit.resetsCount || 0) + 1;
+    localStorage.setItem('user_habits_v1', JSON.stringify(habitsList));
+    renderHabits();
+  }
+}
+
+function deleteHabit(id) {
+  if (!confirm("Видалити цю звичку остаточно?")) return;
+  habitsList = habitsList.filter(h => h.id !== id);
+  localStorage.setItem('user_habits_v1', JSON.stringify(habitsList));
+  renderHabits();
+}
+
+function renderHabits() {
+  const container = document.getElementById('habits-list');
+  if (!container) return;
+
+  if (habitsList.length === 0) {
+    container.innerHTML = `<div class="placeholder" style="margin-top: 10px; font-size: 0.85rem;">Ще немає доданих шкідливих звичок. Додайте першу вище!</div>`;
+    return;
+  }
+
+  const now = new Date().getTime();
+
+  container.innerHTML = habitsList.map(habit => {
+    const diffMs = now - habit.startDate;
+    const daysClean = Math.max(0, Math.floor(diffMs / (1000 * 60 * 60 * 24)));
+    const savedMoney = (daysClean * habit.costPerDay).toFixed(2);
+
+    return `
+      <div class="habit-card">
+        <div class="habit-header">
+          <span class="habit-title">🚫 ${habit.name}</span>
+          <button class="habit-delete" onclick="deleteHabit(${habit.id})" title="Видалити">🗑</button>
+        </div>
+        <div class="habit-stats-grid">
+          <div><span>Днів без зриву:</span> <strong class="green">${daysClean} дн.</strong></div>
+          <div><span>Заощаджено:</span> <strong class="green">${savedMoney} €</strong></div>
+          <div><span>Витрати/день:</span> <strong>${habit.costPerDay.toFixed(2)} €</strong></div>
+          <div><span>Зривів (скидань):</span> <strong class="yellow">${habit.resetsCount}</strong></div>
+        </div>
+        <div class="habit-actions">
+          <button class="habit-btn-clean" onclick="alert('Чудово тримаєтеся! Продовжуйте в тому ж дусі 💪')">💪 Тримаюся</>
+          <button class="habit-btn-reset" onclick="resetHabit(${habit.id})">⚠️ Стався зрив</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
 // --- ІНІЦІАЛІЗАЦІЯ ІНТЕРФЕЙСУ ---
 
 function initUI() {
@@ -745,6 +832,7 @@ function initUI() {
   renderDisciplineCalendar();
   renderPlans();
   renderWorkoutsHistory();
+  renderHabits();
 }
 
 document.addEventListener('DOMContentLoaded', initUI);
