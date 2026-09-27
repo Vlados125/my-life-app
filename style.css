@@ -47,7 +47,6 @@ html, body {
 .category-block { margin-bottom: 18px; }
 .category-block h3, .journal-col h4 { color: #8e8e93; font-size: 0.9rem; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
 
-/* Стиль для заголовка акцій з плюсиком */
 .clickable-header {
   display: flex;
   justify-content: space-between;
@@ -149,13 +148,20 @@ html, body {
 
 .status-legend { display: flex; justify-content: space-between; font-size: 0.75rem; color: #8e8e93; margin: 8px 0; }
 .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 10px; }
-.day-square { aspect-ratio: 1; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold; cursor: pointer; border: 1px solid #2c2c2e; }
+.day-square { aspect-ratio: 1; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold; cursor: pointer; border: 1px solid #2c2c2e; user-select: none; }
+
+/* Кольори статусів календаря дисципліни */
 .day-square.status-green { background: #30d158; color: #000; }
 .day-square.status-yellow { background: #ffd60a; color: #000; }
 .day-square.status-red { background: #ff453a; color: #fff; }
 .day-square.status-gray { background: #3a3a3c; color: #8e8e93; }
 
-.discipline-stats { margin-top: 12px; font-size: 0.85rem; text-align: center; color: #8e8e93; }
+/* Крапки для легенди */
+.dot.status-green-dot { background: #30d158; }
+.dot.status-yellow-dot { background: #ffd60a; }
+.dot.status-red-dot { background: #ff453a; }
+.dot.status-gray-dot { background: #3a3a3c; }
+
 .reset-month-btn { width: 100%; margin-top: 14px; padding: 12px; background: #2c2c2e; color: #30d158; border: 1px solid #30d158; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 0.85rem; }
 .history-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
 .history-item { background: #2c2c2e; padding: 10px 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; }
