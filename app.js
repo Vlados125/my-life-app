@@ -7,7 +7,7 @@ function exportData() {
   const keys = [
     'user_stocks_v6', 'user_crypto_v6', 'journal_stocks_v6', 'journal_crypto_v6',
     'current_month_days', 'discipline_history', 'user_termine', 'user_year_goals',
-    'user_step_goals', 'user_plans_archive', 'user_workouts_history', 'user_habits_v1'
+    'user_step_goals', 'user_plans_archive', 'user_workouts_history', 'user_habits_v2'
   ];
   
   const backupData = {};
@@ -427,7 +427,6 @@ function finishWorkout() {
 
   renderWorkoutsHistory();
 
-  // Очищення вибору підходів/повторень
   exerciseCards.forEach(card => {
     const setsSelect = card.querySelector('.sets-select');
     const repsSelect = card.querySelector('.reps-select');
@@ -705,15 +704,16 @@ function renderPlans() {
   }
 }
 
-// --- РОЗДІЛ: ШКІДЛИВІ ЗВИЧКИ (НОВЕ) ---
+// --- РОЗДІЛ: ШКІДЛИВІ ЗВИЧКИ (ОНОВЛЕНО) ---
 
-let habitsList = JSON.parse(localStorage.getItem('user_habits_v1')) || [
-  { id: 1, name: "Куріння / Сигарети", costPerDay: 8.0, startDate: new Date().getTime(), resetsCount: 0 }
+let habitsList = JSON.parse(localStorage.getItem('user_habits_v2')) || [
+  { id: 1, name: "Куріння / Сигарети", habitType: "💰 Гроші", comment: "8 € на день", startDate: new Date().getTime(), resetsCount: 0 }
 ];
 
 function addHabit() {
   const nameInput = document.getElementById('habit-name').value.trim();
-  const costInput = parseFloat(document.getElementById('habit-cost').value) || 0;
+  const habitType = document.getElementById('habit-type').value;
+  const commentInput = document.getElementById('habit-comment').value.trim();
 
   if (!nameInput) {
     alert("Будь ласка, введіть назву звички!");
@@ -723,15 +723,16 @@ function addHabit() {
   habitsList.push({
     id: Date.now(),
     name: nameInput,
-    costPerDay: costInput,
+    habitType: habitType,
+    comment: commentInput,
     startDate: new Date().getTime(),
     resetsCount: 0
   });
 
-  localStorage.setItem('user_habits_v1', JSON.stringify(habitsList));
+  localStorage.setItem('user_habits_v2', JSON.stringify(habitsList));
 
   document.getElementById('habit-name').value = '';
-  document.getElementById('habit-cost').value = '';
+  document.getElementById('habit-comment').value = '';
 
   renderHabits();
 }
@@ -743,7 +744,7 @@ function resetHabit(id) {
   if (habit) {
     habit.startDate = new Date().getTime();
     habit.resetsCount = (habit.resetsCount || 0) + 1;
-    localStorage.setItem('user_habits_v1', JSON.stringify(habitsList));
+    localStorage.setItem('user_habits_v2', JSON.stringify(habitsList));
     renderHabits();
   }
 }
@@ -751,7 +752,7 @@ function resetHabit(id) {
 function deleteHabit(id) {
   if (!confirm("Видалити цю звичку остаточно?")) return;
   habitsList = habitsList.filter(h => h.id !== id);
-  localStorage.setItem('user_habits_v1', JSON.stringify(habitsList));
+  localStorage.setItem('user_habits_v2', JSON.stringify(habitsList));
   renderHabits();
 }
 
@@ -769,7 +770,6 @@ function renderHabits() {
   container.innerHTML = habitsList.map(habit => {
     const diffMs = now - habit.startDate;
     const daysClean = Math.max(0, Math.floor(diffMs / (1000 * 60 * 60 * 24)));
-    const savedMoney = (daysClean * habit.costPerDay).toFixed(2);
 
     return `
       <div class="habit-card">
@@ -779,12 +779,12 @@ function renderHabits() {
         </div>
         <div class="habit-stats-grid">
           <div><span>Днів без зриву:</span> <strong class="green">${daysClean} дн.</strong></div>
-          <div><span>Заощаджено:</span> <strong class="green">${savedMoney} €</strong></div>
-          <div><span>Витрати/день:</span> <strong>${habit.costPerDay.toFixed(2)} €</strong></div>
+          <div><span>Тип втрати:</span> <strong class="yellow">${habit.habitType}</strong></div>
+          <div style="grid-column: span 2;"><span>Коментар:</span> <strong style="color: #fff;">${habit.comment || 'не вказано'}</strong></div>
           <div><span>Зривів (скидань):</span> <strong class="yellow">${habit.resetsCount}</strong></div>
         </div>
         <div class="habit-actions">
-          <button class="habit-btn-clean" onclick="alert('Чудово тримаєтеся! Продовжуйте в тому ж дусі 💪')">💪 Тримаюся</>
+          <button class="habit-btn-clean" onclick="alert('Чудово тримаєтеся! Продовжуйте в тому ж дусі 💪')">💪 Тримаюся</button>
           <button class="habit-btn-reset" onclick="resetHabit(${habit.id})">⚠️ Стався зрив</button>
         </div>
       </div>
