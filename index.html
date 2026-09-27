@@ -446,7 +446,7 @@
             <label>Примітка (необов'язково):</label>
             <input type="text" id="termine-note" placeholder="Адреса, кабінет або що взяти">
           </div>
-            <button class="btn-save" onclick="addTermine()">Зберегти Termine</button>
+          <button class="btn-save" onclick="addTermine()">Зберегти Termine</button>
         </div>
 
         <div class="category-block">
@@ -491,11 +491,11 @@
       </div>
     </section>
 
-    <!-- СЕКЦІЯ: ШКІДЛИВІ ЗВИЧКИ (ОНОВЛЕНО) -->
+    <!-- СЕКЦІЯ: ШКІДЛИВІ ЗВИЧКИ (НОВЕ) -->
     <section id="habits-screen" class="screen">
       <header class="screen-header">
         <h2>🚫 Шкідливі звички</h2>
-        <p>Контроль, вільні дні та вибір</p>
+        <p>Контроль, вільні дні та економія</p>
       </header>
 
       <!-- Блок додавання нової звички -->
@@ -503,19 +503,11 @@
         <h4>➕ Додати нову звичку</h4>
         <div class="form-group">
           <label>Назва звички:</label>
-          <input type="text" id="habit-name" placeholder="напр. Соцмережі / Куріння / Солодке">
+          <input type="text" id="habit-name" placeholder="напр. Куріння / Солодке / Енергетики">
         </div>
         <div class="form-group">
-          <label>Що забирає звичка (вибір):</label>
-          <select id="habit-type">
-            <option value="💰 Гроші">💰 Гроші</option>
-            <option value="⏳ Час">⏳ Час</option>
-            <option value="❤️ Здоров'я">❤️ Здоров'я</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Коментар (деталі втрати / вартість):</label>
-          <input type="text" id="habit-comment" placeholder="напр. 2 години на день або 7.5 € на день">
+          <label>Вартість на день (€):</label>
+          <input type="number" id="habit-cost" placeholder="напр. 7.5" step="any">
         </div>
         <button class="btn-save" onclick="addHabit()">Створити звичку</button>
       </div>
