@@ -491,8 +491,33 @@
       </div>
     </section>
 
-    <!-- ІНШІ РОЗДІЛИ -->
-    <section id="habits-screen" class="screen"><header class="screen-header"><h2>🚫 Шкідливі звички</h2></header><p class="placeholder">Розділ у розробці...</p></section>
+    <!-- СЕКЦІЯ: ШКІДЛИВІ ЗВИЧКИ (НОВЕ) -->
+    <section id="habits-screen" class="screen">
+      <header class="screen-header">
+        <h2>🚫 Шкідливі звички</h2>
+        <p>Контроль, вільні дні та економія</p>
+      </header>
+
+      <!-- Блок додавання нової звички -->
+      <div class="stats-card">
+        <h4>➕ Додати нову звичку</h4>
+        <div class="form-group">
+          <label>Назва звички:</label>
+          <input type="text" id="habit-name" placeholder="напр. Куріння / Солодке / Енергетики">
+        </div>
+        <div class="form-group">
+          <label>Вартість на день (€):</label>
+          <input type="number" id="habit-cost" placeholder="напр. 7.5" step="any">
+        </div>
+        <button class="btn-save" onclick="addHabit()">Створити звичку</button>
+      </div>
+
+      <!-- Список активних звичок -->
+      <div class="category-block">
+        <h3>Мої звички та прогрес</h3>
+        <div id="habits-list" class="habits-container"></div>
+      </div>
+    </section>
 
     <!-- МОДАЛЬНЕ ВІКНО КУПІВЛІ/ПРОДАЖУ/КОРИГУВАННЯ -->
     <div id="trade-modal" class="modal">
