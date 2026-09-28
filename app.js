@@ -7,7 +7,7 @@ function exportData() {
   const keys = [
     'user_stocks_v6', 'user_crypto_v6', 'journal_stocks_v6', 'journal_crypto_v6',
     'current_month_days', 'discipline_history', 'user_termine', 'user_year_goals',
-    'user_step_goals', 'user_plans_archive', 'user_workouts_history'
+    'user_step_goals', 'user_plans_archive', 'user_workouts_history', 'user_habits_list'
   ];
   
   const backupData = {};
@@ -427,7 +427,6 @@ function finishWorkout() {
 
   renderWorkoutsHistory();
 
-  // Очищення вибору підходів/повторень
   exerciseCards.forEach(card => {
     const setsSelect = card.querySelector('.sets-select');
     const repsSelect = card.querySelector('.reps-select');
@@ -545,6 +544,96 @@ function renderHistory() {
     <div class="history-item">
       <span>${item.title}</span>
       <strong class="${parseInt(item.rate) >= 80 ? 'green' : 'yellow'}">${item.rate}</strong>
+    </div>
+  `).join('');
+}
+
+// --- РОЗДІЛ: ШКІДЛИВІ ЗВИЧКИ ---
+
+let habitsList = JSON.parse(localStorage.getItem('user_habits_list')) || [
+  { id: 1, name: "Солодке після обіду", reason: "Різкі скачки цукру, набір ваги та втрата енергії.", days: Array(30).fill('green') }
+];
+const habitStatusCycle = ['green', 'red', 'gray']; // green = тримаюсь, red = здався, gray = нейтрально/не заповнено
+
+function addHabit() {
+  const nameInput = document.getElementById('habit-name-input');
+  const reasonInput = document.getElementById('habit-reason-input');
+  
+  const name = nameInput.value.trim();
+  const reason = reasonInput.value.trim();
+
+  if (!name) {
+    alert("Будь ласка, введіть назву звички!");
+    return;
+  }
+
+  habitsList.push({
+    id: Date.now(),
+    name: name,
+    reason: reason || "Шкідливо для здоров'я та продуктивності.",
+    days: Array(30).fill('gray')
+  });
+
+  localStorage.setItem('user_habits_list', JSON.stringify(habitsList));
+  
+  nameInput.value = '';
+  reasonInput.value = '';
+  renderHabits();
+}
+
+function deleteHabit(id) {
+  if (!confirm("Видалити цю звичку?")) return;
+  habitsList = habitsList.filter(h => h.id !== id);
+  localStorage.setItem('user_habits_list', JSON.stringify(habitsList));
+  renderHabits();
+}
+
+function cycleHabitDay(habitId, dayIndex) {
+  const habit = habitsList.find(h => h.id === habitId);
+  if (!habit) return;
+
+  const currentStatus = habit.days[dayIndex] || 'gray';
+  const currentIdx = habitStatusCycle.indexOf(currentStatus);
+  const nextIdx = (currentIdx + 1) % habitStatusCycle.length;
+  
+  habit.days[dayIndex] = habitStatusCycle[nextIdx];
+  localStorage.setItem('user_habits_list', JSON.stringify(habitsList));
+  renderHabits();
+}
+
+function renderHabits() {
+  const container = document.getElementById('habits-list-container');
+  if (!container) return;
+
+  if (habitsList.length === 0) {
+    container.innerHTML = `<div style="color: #8e8e93; font-size: 0.85rem; text-align: center; margin-top: 20px;">Немає доданих шкідливих звичок. Додайте першу вище!</div>`;
+    return;
+  }
+
+  container.innerHTML = habitsList.map(habit => `
+    <div class="stats-card habit-card-item">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+        <h4 style="margin-bottom: 0; color: #ff453a;">🚫 ${habit.name}</h4>
+        <button onclick="deleteHabit(${habit.id})" style="background: none; border: none; color: #ff453a; cursor: pointer; font-size: 0.8rem; font-weight: bold;">Видалити</button>
+      </div>
+      
+      <div class="status-legend" style="margin: 6px 0;">
+        <span>🟢 Тримаюсь</span>
+        <span>🔴 Здався</span>
+        <span>⚪ Нейтрально</span>
+      </div>
+
+      <div class="calendar-grid">
+        ${habit.days.map((status, dayIndex) => `
+          <div class="day-square status-${status}" onclick="cycleHabitDay(${habit.id},${dayIndex})">
+            ${dayIndex + 1}
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="habit-reason-footer">
+        💡 <b>Чому шкідливо:</b> ${habit.reason}
+      </div>
     </div>
   `).join('');
 }
@@ -745,6 +834,7 @@ function initUI() {
   renderDisciplineCalendar();
   renderPlans();
   renderWorkoutsHistory();
+  renderHabits();
 }
 
 document.addEventListener('DOMContentLoaded', initUI);
