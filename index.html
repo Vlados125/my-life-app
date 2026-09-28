@@ -514,6 +514,20 @@
         <h3>Список звичок та календар прогресу</h3>
         <div id="habits-list-container"></div>
       </div>
+
+      <!-- Кнопка архівування місяця звичок -->
+      <div class="stats-card" style="margin-top: 20px;">
+        <h4>📦 Архів успішності звичок</h4>
+        <p class="subtitle" style="margin-bottom: 12px;">Збережіть результати поточного місяця до загального архіву та розпочніть новий місяць.</p>
+        <button class="reset-month-btn" onclick="archiveHabitsMonth()">
+          💾 Завершити місяць звичок та зберегти в Архів
+        </button>
+      </div>
+
+      <div class="category-block" style="margin-top: 16px;">
+        <h3>📜 Історія та архів місяців</h3>
+        <div id="habits-history-list" class="history-list"></div>
+      </div>
     </section>
 
     <!-- МОДАЛЬНЕ ВІКНО КУПІВЛІ/ПРОДАЖУ/КОРИГУВАННЯ -->
