@@ -7,7 +7,7 @@ function exportData() {
   const keys = [
     'user_stocks_v6', 'user_crypto_v6', 'journal_stocks_v6', 'journal_crypto_v6',
     'current_month_days', 'discipline_history', 'user_termine', 'user_year_goals',
-    'user_step_goals', 'user_plans_archive', 'user_workouts_history', 'user_habits_list'
+    'user_step_goals', 'user_plans_archive', 'user_workouts_history', 'user_habits_list', 'habits_history'
   ];
   
   const backupData = {};
@@ -553,6 +553,7 @@ function renderHistory() {
 let habitsList = JSON.parse(localStorage.getItem('user_habits_list')) || [
   { id: 1, name: "Солодке після обіду", reason: "Різкі скачки цукру, набір ваги та втрата енергії.", days: Array(30).fill('green') }
 ];
+let habitsHistory = JSON.parse(localStorage.getItem('habits_history')) || [];
 const habitStatusCycle = ['green', 'red', 'gray']; // green = тримаюсь, red = здався, gray = нейтрально/не заповнено
 
 function addHabit() {
@@ -601,12 +602,76 @@ function cycleHabitDay(habitId, dayIndex) {
   renderHabits();
 }
 
+function archiveHabitsMonth() {
+  if (habitsList.length === 0) {
+    alert("Немає активних звичок для архівування.");
+    return;
+  }
+  if (!confirm("Завершити поточний місяць для всіх звичок, зберегти статистику в архів та очистити календар?")) return;
+
+  const dateStr = new Date().toLocaleDateString('uk-UA', { month: 'long', year: 'numeric' });
+  
+  // Розраховуємо загальну успішність по звичках за місяць
+  let totalCheckable = 0;
+  let totalSuccess = 0;
+
+  habitsList.forEach(h => {
+    h.days.forEach(d => {
+      if (d === 'green' || d === 'red') {
+        totalCheckable++;
+        if (d === 'green') totalSuccess++;
+      }
+    });
+  });
+
+  const rate = totalCheckable > 0 ? Math.round((totalSuccess / totalCheckable) * 100) : 100;
+
+  habitsHistory.unshift({
+    title: `Місяць звичок (${dateStr})`,
+    rate: `${rate}%`,
+    details: `${habitsList.length} звич.`
+  });
+
+  localStorage.setItem('habits_history', JSON.stringify(habitsHistory));
+
+  // Очищаємо дні для нового місяця
+  habitsList.forEach(h => {
+    h.days = Array(30).fill('gray');
+  });
+  localStorage.setItem('user_habits_list', JSON.stringify(habitsList));
+
+  renderHabits();
+  renderHabitsHistory();
+  alert("Місяць успішно архівовано!");
+}
+
+function renderHabitsHistory() {
+  const container = document.getElementById('habits-history-list');
+  if (!container) return;
+
+  if (habitsHistory.length === 0) {
+    container.innerHTML = `<div style="color: #8e8e93; font-size: 0.85rem; text-align: center;">Архів звичок порожній.</div>`;
+    return;
+  }
+
+  container.innerHTML = habitsHistory.map(item => `
+    <div class="history-item">
+      <div>
+        <span>${item.title}</span>
+        <span class="subtitle" style="display: block; font-size: 0.75rem;">${item.details}</span>
+      </div>
+      <strong class="${parseInt(item.rate) >= 80 ? 'green' : 'yellow'}">${item.rate}</strong>
+    </div>
+  `).join('');
+}
+
 function renderHabits() {
   const container = document.getElementById('habits-list-container');
   if (!container) return;
 
   if (habitsList.length === 0) {
     container.innerHTML = `<div style="color: #8e8e93; font-size: 0.85rem; text-align: center; margin-top: 20px;">Немає доданих шкідливих звичок. Додайте першу вище!</div>`;
+    renderHabitsHistory();
     return;
   }
 
@@ -636,6 +701,8 @@ function renderHabits() {
       </div>
     </div>
   `).join('');
+
+  renderHabitsHistory();
 }
 
 // --- РОЗДІЛ: ПЛАНИ ---
