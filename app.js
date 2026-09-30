@@ -1,56 +1,77 @@
 const tg = window.Telegram?.WebApp;
 if (tg) { tg.ready(); tg.expand(); }
 
-// --- ФУНКЦІЇ ЕКСПОРТУ ТА ІМПОРТУ ДАНИХ ---
+// --- ДОПОМІЖНІ ФУНКЦІЇ ---
+const CUR = '€';
+const FALLBACK_LOGO = "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 48 48%27%3E%3Ccircle cx=%2724%27 cy=%2724%27 r=%2724%27 fill=%27%232c2c2e%27/%3E%3C/svg%3E";
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad = n => String(n).padStart(2, '0');
+const dKey = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const mKey = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}`;
+const todayKey = () => dKey(new Date());
+const MONTHS = ['січень','лютий','березень','квітень','травень','червень','липень','серпень','вересень','жовтень','листопад','грудень'];
+const monthTitle = (y, m) => `${MONTHS[m]} ${y}`;
+const load = (k, def) => { try { const v = JSON.parse(localStorage.getItem(k)); return v ?? def; } catch (e) { return def; } };
+const save = (k, v) => localStorage.setItem(k, JSON.stringify(v));
+
+// Календарна сітка з реальними датами (Пн — перший день тижня)
+function buildMonthGrid(y, m, startKey, getStatus, onclickFn) {
+  const offset = (new Date(y, m, 1).getDay() + 6) % 7;
+  const days = new Date(y, m + 1, 0).getDate();
+  const today = todayKey();
+  let html = ['Пн','Вт','Ср','Чт','Пт','Сб','Нд'].map(d => `<div class="weekday-label">${d}</div>`).join('');
+  html += '<div></div>'.repeat(offset);
+  for (let d = 1; d <= days; d++) {
+    const key = `${y}-${pad(m + 1)}-${pad(d)}`;
+    const locked = key > today || key < startKey;
+    const cls = locked ? 'locked' : `status-${getStatus(key)}`;
+    html += `<div class="day-square ${cls}${key === today ? ' today' : ''}" ${locked ? '' : `onclick="${onclickFn}('${key}')"`}>${d}</div>`;
+  }
+  return html;
+}
+
+// --- ЕКСПОРТ ТА ІМПОРТ ДАНИХ ---
+const ALL_KEYS = [
+  'user_stocks_v6', 'user_crypto_v6', 'journal_stocks_v6', 'journal_crypto_v6',
+  'current_month_days', 'discipline_history', 'discipline_log', 'discipline_started',
+  'user_termine', 'user_year_goals', 'user_step_goals', 'user_plans_archive',
+  'user_workouts_history', 'user_habits_list', 'user_habits_v2', 'current_weight', 'routine_checks'
+];
 
 function exportData() {
-  const keys = [
-    'user_stocks_v6', 'user_crypto_v6', 'journal_stocks_v6', 'journal_crypto_v6',
-    'current_month_days', 'discipline_history', 'user_termine', 'user_year_goals',
-    'user_step_goals', 'user_plans_archive', 'user_workouts_history', 'user_habits_list', 'habits_history'
-  ];
-  
   const backupData = {};
-  keys.forEach(key => {
+  ALL_KEYS.forEach(key => {
     const item = localStorage.getItem(key);
-    if (item) {
-      try {
-        backupData[key] = JSON.parse(item);
-      } catch (e) {
-        backupData[key] = item;
-      }
+    if (item !== null) {
+      try { backupData[key] = JSON.parse(item); } catch (e) { backupData[key] = item; }
     }
   });
-
-  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
-  const downloadAnchor = document.createElement('a');
-  downloadAnchor.setAttribute("href", dataStr);
-  downloadAnchor.setAttribute("download", `my_life_app_backup_${new Date().toISOString().slice(0, 10)}.json`);
-  document.body.appendChild(downloadAnchor);
-  downloadAnchor.click();
-  downloadAnchor.remove();
+  const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `my_life_app_backup_${todayKey()}.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 function importData(event) {
   const file = event.target.files[0];
   if (!file) return;
-
   const reader = new FileReader();
-  reader.onload = function(e) {
+  reader.onload = function (e) {
     try {
-      const parsedData = JSON.parse(e.target.result);
-      if (typeof parsedData !== 'object' || parsedData === null) {
-        throw new Error("Невірний формат");
-      }
-
-      for (const key in parsedData) {
-        localStorage.setItem(key, JSON.stringify(parsedData[key]));
-      }
-
-      alert("Дані успішно імпортовано! Додаток буде перезавантажено.");
+      const parsed = JSON.parse(e.target.result);
+      if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) throw new Error('format');
+      const keys = Object.keys(parsed).filter(k => ALL_KEYS.includes(k));
+      if (keys.length === 0) throw new Error('empty');
+      keys.forEach(k => localStorage.setItem(k, JSON.stringify(parsed[k])));
+      alert('Дані успішно імпортовано! Додаток буде перезавантажено.');
       window.location.reload();
     } catch (err) {
-      alert("Помилка при читанні файлу бекапу. Перевірте формат JSON.");
+      alert('Помилка при читанні файлу бекапу. Перевірте формат JSON.');
     }
   };
   reader.readAsText(file);
@@ -119,11 +140,13 @@ function renderScreen(screenId) {
   window.scrollTo(0, 0);
 }
 
-function openTradeModal(asset) {
-  selectedAsset = asset;
-  document.getElementById('modal-title').innerText = `Операція: ${asset.name}`;
+function openTradeModal(id) {
+  selectedAsset = [...stocksData, ...cryptoData].find(a => a.id === id) || null;
+  if (!selectedAsset) return;
+  document.getElementById('modal-title').innerText = `Операція: ${selectedAsset.name}`;
   document.getElementById('trade-amount').value = '';
   document.getElementById('trade-price').value = '';
+  document.getElementById('trade-price-mode').value = 'total';
   document.getElementById('trade-modal').style.display = 'flex';
 }
 
@@ -133,40 +156,33 @@ function closeModal() {
 
 function submitTrade() {
   const type = document.getElementById('trade-type').value;
-  const inputAmount = parseFloat(document.getElementById('trade-amount').value) || 0;
-  const priceInput = parseFloat(document.getElementById('trade-price').value) || 0;
-  
-  if (!selectedAsset) {
-    closeModal();
-    return;
-  }
+  const qty = parseFloat(document.getElementById('trade-amount').value) || 0;
+  const price = parseFloat(document.getElementById('trade-price').value) || 0;
+  const mode = document.getElementById('trade-price-mode').value; // total | unit
+  if (!selectedAsset) { closeModal(); return; }
 
-  let totalPrice = priceInput;
-  if (inputAmount > 0 && priceInput > 0 && priceInput < 10000) {
-    totalPrice = inputAmount * priceInput;
-  }
+  const total = mode === 'unit' ? qty * price : price;
+  const asset = [...stocksData, ...cryptoData].find(a => a.id === selectedAsset.id);
 
-  let targetArray = stocksData.some(s => s.id === selectedAsset.id) ? stocksData : cryptoData;
-  let currentAsset = targetArray.find(s => s.id === selectedAsset.id);
-
-  if (currentAsset) {
+  if (asset) {
+    asset.invested = asset.invested || 0;
+    asset.amount = asset.amount || 0;
     if (type === 'buy') {
-      currentAsset.invested = (currentAsset.invested || 0) + totalPrice;
-      currentAsset.amount = (currentAsset.amount || 0) + inputAmount;
-    } 
-    else if (type === 'sell') {
-      currentAsset.invested = Math.max(0, (currentAsset.invested || 0) - totalPrice);
-      currentAsset.amount = Math.max(0, (currentAsset.amount || 0) - inputAmount);
-    } 
-    else if (type === 'set') {
-      if (priceInput >= 0) currentAsset.invested = priceInput;
-      if (inputAmount >= 0) currentAsset.amount = inputAmount;
+      asset.invested += total;
+      asset.amount += qty;
+    } else if (type === 'sell') {
+      // при продажу зменшуємо вкладену суму за середньою ціною купівлі
+      const avg = asset.amount > 0 ? asset.invested / asset.amount : 0;
+      const sellQty = Math.min(qty, asset.amount);
+      asset.invested = Math.max(0, asset.invested - avg * sellQty);
+      asset.amount = Math.max(0, asset.amount - sellQty);
+    } else if (type === 'set') {
+      asset.invested = total;
+      asset.amount = qty;
     }
-
-    localStorage.setItem('user_stocks_v6', JSON.stringify(stocksData));
-    localStorage.setItem('user_crypto_v6', JSON.stringify(cryptoData));
+    save('user_stocks_v6', stocksData);
+    save('user_crypto_v6', cryptoData);
   }
-
   closeModal();
   initUI();
 }
@@ -175,7 +191,7 @@ function submitTrade() {
 
 function openJournalAddModal(type) {
   journalEditTarget = { type: type, isNew: true };
-  document.getElementById('journal-modal-title').innerText = '➕ Додати нову акцію (угоду)';
+  document.getElementById('journal-modal-title').innerText = type === 'stock' ? '➕ Додати нову акцію (угоду)' : '➕ Додати нову угоду (крипто)';
   document.getElementById('journal-name-group').style.display = 'block';
   document.getElementById('journal-input-name').value = '';
   document.getElementById('journal-input-profit').value = '';
@@ -207,7 +223,7 @@ function submitJournalAdd() {
   const targetList = journalEditTarget.type === 'stock' ? journalStocks : journalCrypto;
 
   if (journalEditTarget.isNew) {
-    const nameInput = document.getElementById('journal-input-name').value.trim() || 'Нова акція';
+    const nameInput = document.getElementById('journal-input-name').value.trim() || (journalEditTarget.type === 'stock' ? 'Нова акція' : 'Нова угода');
     targetList.unshift({ name: nameInput, profit: profitInput });
   } else {
     targetList[journalEditTarget.index].profit += profitInput;
@@ -251,26 +267,21 @@ function updateTotals() {
   }
 }
 
-function renderJournals() {
-  const jStocks = document.getElementById('journal-stocks');
-  if (jStocks) {
-    jStocks.innerHTML = journalStocks.map((j, index) => `
-      <div class="journal-item" onclick="openJournalEditModal('stock', ${index})">
-        <span class="journal-name">${j.name}</span>
-        <span class="green">+${j.profit.toFixed(2)}€</span>
-      </div>
-    `).join('');
-  }
+function fmtProfit(p) { return `${p >= 0 ? '+' : '−'}${Math.abs(p).toFixed(2)}${CUR}`; }
 
-  const jCrypto = document.getElementById('journal-crypto');
-  if (jCrypto) {
-    jCrypto.innerHTML = journalCrypto.map((j, index) => `
-      <div class="journal-item" onclick="openJournalEditModal('crypto', ${index})">
-        <span class="journal-name">${j.name}</span>
-        <span class="green">+${j.profit.toFixed(2)}$</span>
+function renderJournals() {
+  const draw = (id, list, type) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = list.map((j, index) => `
+      <div class="journal-item" onclick="openJournalEditModal('${type}', ${index})">
+        <span class="journal-name">${esc(j.name)}</span>
+        <span class="${j.profit >= 0 ? 'green' : 'red'}">${fmtProfit(j.profit)}</span>
       </div>
     `).join('');
-  }
+  };
+  draw('journal-stocks', journalStocks, 'stock');
+  draw('journal-crypto', journalCrypto, 'crypto');
 }
 
 // --- РОЗДІЛ: ХАРЧУВАННЯ ---
@@ -391,6 +402,7 @@ function updateBodyFat() {
   if (estimatedFat > 40) estimatedFat = 40;
 
   fatDisplay.innerText = estimatedFat.toFixed(1) + '%';
+  localStorage.setItem('current_weight', weight);
 }
 
 function finishWorkout() {
@@ -448,8 +460,8 @@ function renderWorkoutsHistory() {
 
   container.innerHTML = workoutsHistory.map(item => `
     <div class="history-item" style="flex-direction: column; align-items: flex-start; gap: 4px;">
-      <strong style="color: #30d158; font-size: 0.85rem;">${item.date}</strong>
-      <span style="color: #d1d1d6; font-size: 0.8rem; line-height: 1.3;">${item.desc}</span>
+      <strong style="color: #30d158; font-size: 0.85rem;">${esc(item.date)}</strong>
+      <span style="color: #d1d1d6; font-size: 0.8rem; line-height: 1.3;">${esc(item.desc)}</span>
     </div>
   `).join('');
 }
@@ -463,246 +475,205 @@ function switchRoutineTab(tab) {
   document.getElementById('routine-plan-b').classList.toggle('active', tab === 'B');
 }
 
-let daysStatus = JSON.parse(localStorage.getItem('current_month_days')) || Array(30).fill('green');
-let monthHistory = JSON.parse(localStorage.getItem('discipline_history')) || [];
 const statusCycle = ['green', 'yellow', 'red', 'gray'];
+let discLog = load('discipline_log', {});          // { 'YYYY-MM-DD': status } — зберігається назавжди
+let discStarted = localStorage.getItem('discipline_started');
+if (!discStarted) {
+  const now = new Date();
+  discStarted = dKey(new Date(now.getFullYear(), now.getMonth(), 1));
+  localStorage.setItem('discipline_started', discStarted);
+  const old = load('current_month_days', null);      // міграція зі старого формату
+  if (Array.isArray(old)) old.forEach((s, i) => { if (s !== 'green') discLog[`${mKey(now)}-${pad(i + 1)}`] = s; });
+  save('discipline_log', discLog);
+}
+let discView = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+const discStatus = k => discLog[k] || 'green';
+const rateClass = r => r >= 80 ? 'green' : (r >= 50 ? 'yellow' : 'red');
+
+function discMonthStats(y, m) {
+  const c = { green: 0, yellow: 0, red: 0, gray: 0 };
+  const today = todayKey();
+  for (let d = 1, n = new Date(y, m + 1, 0).getDate(); d <= n; d++) {
+    const k = `${y}-${pad(m + 1)}-${pad(d)}`;
+    if (k < discStarted || k > today) continue;
+    c[discStatus(k)]++;
+  }
+  const active = c.green + c.yellow + c.red;
+  c.rate = active ? Math.round((c.green * 100 + c.yellow * 50) / active) : 100;
+  return c;
+}
 
 function renderDisciplineCalendar() {
-  const container = document.getElementById('discipline-calendar');
-  if (!container) return;
-
-  container.innerHTML = daysStatus.map((status, index) => `
-    <div class="day-square status-${status}" onclick="cycleDayStatus(${index})">
-      ${index + 1}
-    </div>
-  `).join('');
-
-  calculateDisciplineRate();
+  const el = document.getElementById('discipline-calendar');
+  if (!el) return;
+  const y = discView.getFullYear(), m = discView.getMonth(), now = new Date();
+  el.innerHTML = buildMonthGrid(y, m, discStarted, discStatus, 'cycleDayStatus');
+  document.getElementById('discipline-month-title').innerText = monthTitle(y, m);
+  const s = discMonthStats(y, m);
+  const r = document.getElementById('discipline-rate');
+  r.innerText = `${s.rate}%`;
+  r.className = rateClass(s.rate);
+  document.getElementById('disc-next-btn').disabled = (y === now.getFullYear() && m === now.getMonth());
+  document.getElementById('disc-prev-btn').disabled = mKey(discView) <= discStarted.slice(0, 7);
   renderHistory();
 }
 
-function cycleDayStatus(index) {
-  const currentIdx = statusCycle.indexOf(daysStatus[index]);
-  const nextIdx = (currentIdx + 1) % statusCycle.length;
-  daysStatus[index] = statusCycle[nextIdx];
-  localStorage.setItem('current_month_days', JSON.stringify(daysStatus));
+function shiftDiscMonth(delta) {
+  discView = new Date(discView.getFullYear(), discView.getMonth() + delta, 1);
   renderDisciplineCalendar();
 }
 
-function calculateDisciplineRate() {
-  const activeDays = daysStatus.filter(s => s !== 'gray');
-  if (activeDays.length === 0) {
-    document.getElementById('discipline-rate').innerText = '100%';
-    return '100%';
-  }
-
-  let totalPoints = 0;
-  activeDays.forEach(s => {
-    if (s === 'green') totalPoints += 100;
-    if (s === 'yellow') totalPoints += 50;
-    if (s === 'red') totalPoints += 0;
-  });
-
-  const rate = Math.round(totalPoints / activeDays.length);
-  const rateElem = document.getElementById('discipline-rate');
-  if (rateElem) {
-    rateElem.innerText = `${rate}%`;
-    rateElem.className = rate >= 80 ? 'green' : (rate >= 50 ? 'yellow' : 'red');
-  }
-  return `${rate}%`;
+function openDiscMonth(y, m) {
+  discView = new Date(y, m, 1);
+  renderDisciplineCalendar();
+  document.getElementById('discipline-calendar').scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
-function archiveCurrentMonth() {
-  if (!confirm("Завершити поточний місяць та зберегти результат в Архів?")) return;
-
-  const currentRate = calculateDisciplineRate();
-  const dateStr = new Date().toLocaleDateString('uk-UA', { month: 'long', year: 'numeric' });
-
-  monthHistory.unshift({
-    title: `Місяць #${monthHistory.length + 1} (${dateStr})`,
-    rate: currentRate
-  });
-
-  localStorage.setItem('discipline_history', JSON.stringify(monthHistory));
-
-  daysStatus = Array(30).fill('green');
-  localStorage.setItem('current_month_days', JSON.stringify(daysStatus));
-
+function cycleDayStatus(key) {
+  discLog[key] = statusCycle[(statusCycle.indexOf(discStatus(key)) + 1) % statusCycle.length];
+  save('discipline_log', discLog);
   renderDisciplineCalendar();
 }
 
+// Архів формується автоматично з журналу днів: кожен минулий місяць зберігається з результатом
 function renderHistory() {
-  const container = document.getElementById('history-list');
-  if (!container) return;
-
-  if (monthHistory.length === 0) {
-    container.innerHTML = `<div style="color: #8e8e93; font-size: 0.85rem; text-align: center;">Архів поки порожній.</div>`;
-    return;
+  const box = document.getElementById('history-list');
+  if (!box) return;
+  const now = new Date();
+  const s0 = new Date(discStarted + 'T00:00:00');
+  const rows = [];
+  for (let y = s0.getFullYear(), m = s0.getMonth(); y < now.getFullYear() || (y === now.getFullYear() && m <= now.getMonth());) {
+    rows.push({ y, m, s: discMonthStats(y, m) });
+    if (++m > 11) { m = 0; y++; }
   }
-
-  container.innerHTML = monthHistory.map(item => `
-    <div class="history-item">
-      <span>${item.title}</span>
-      <strong class="${parseInt(item.rate) >= 80 ? 'green' : 'yellow'}">${item.rate}</strong>
-    </div>
-  `).join('');
+  rows.reverse();
+  const yr = rows.filter(r => r.y === now.getFullYear());
+  const avg = yr.length ? Math.round(yr.reduce((a, r) => a + r.s.rate, 0) / yr.length) : 0;
+  let html = `<div class="history-item"><span>Середня успішність за ${now.getFullYear()} рік</span><strong class="${rateClass(avg)}">${avg}%</strong></div>`;
+  html += rows.map(r => `
+    <div class="history-item" onclick="openDiscMonth(${r.y}, ${r.m})" style="cursor:pointer">
+      <span>${monthTitle(r.y, r.m)}${(r.y === now.getFullYear() && r.m === now.getMonth()) ? ' (поточний)' : ''}<br>
+        <small class="subtitle">🟢 ${r.s.green} · 🟡 ${r.s.yellow} · 🔴 ${r.s.red} · ⚪ ${r.s.gray}</small></span>
+      <strong class="${rateClass(r.s.rate)}">${r.s.rate}%</strong>
+    </div>`).join('');
+  html += load('discipline_history', []).map(i => `<div class="history-item"><span>${esc(i.title)}</span><strong class="yellow">${esc(i.rate)}</strong></div>`).join('');
+  box.innerHTML = html;
 }
 
 // --- РОЗДІЛ: ШКІДЛИВІ ЗВИЧКИ ---
-
-let habitsList = JSON.parse(localStorage.getItem('user_habits_list')) || [
-  { id: 1, name: "Солодке після обіду", reason: "Різкі скачки цукру, набір ваги та втрата енергії.", days: Array(30).fill('green') }
-];
-let habitsHistory = JSON.parse(localStorage.getItem('habits_history')) || [];
-const habitStatusCycle = ['green', 'red', 'gray']; // green = тримаюсь, red = здався, gray = нейтрально/не заповнено
+// Кожна звичка: { id, name, reason, created: 'YYYY-MM-DD', log: { 'YYYY-MM-DD': 'green'|'red'|'gray' } }
+// green = тримаюсь (за замовчуванням від дня створення), red = здався, gray = нейтрально
+let habitsList = load('user_habits_v2', null);
+if (!habitsList) {
+  const now = new Date();
+  const first = dKey(new Date(now.getFullYear(), now.getMonth(), 1));
+  habitsList = load('user_habits_list', []).map(h => {
+    const log = {};
+    (h.days || []).forEach((s, i) => { if (s !== 'green') log[`${mKey(now)}-${pad(i + 1)}`] = s; });
+    return { id: h.id, name: h.name, reason: h.reason, created: first, log };
+  });
+  save('user_habits_v2', habitsList);
+}
+const habitStatusCycle = ['green', 'red', 'gray'];
+let habitView = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+const habitStatus = (h, k) => h.log[k] || 'green';
 
 function addHabit() {
   const nameInput = document.getElementById('habit-name-input');
   const reasonInput = document.getElementById('habit-reason-input');
-  
   const name = nameInput.value.trim();
-  const reason = reasonInput.value.trim();
-
-  if (!name) {
-    alert("Будь ласка, введіть назву звички!");
-    return;
-  }
-
-  habitsList.push({
-    id: Date.now(),
-    name: name,
-    reason: reason || "Шкідливо для здоров'я та продуктивності.",
-    days: Array(30).fill('gray')
-  });
-
-  localStorage.setItem('user_habits_list', JSON.stringify(habitsList));
-  
+  if (!name) { alert('Будь ласка, введіть назву звички!'); return; }
+  habitsList.push({ id: Date.now(), name, reason: reasonInput.value.trim() || "Шкідливо для здоров'я та продуктивності.", created: todayKey(), log: {} });
+  save('user_habits_v2', habitsList);
   nameInput.value = '';
   reasonInput.value = '';
   renderHabits();
 }
 
 function deleteHabit(id) {
-  if (!confirm("Видалити цю звичку?")) return;
+  if (!confirm('Видалити цю звичку разом з історією?')) return;
   habitsList = habitsList.filter(h => h.id !== id);
-  localStorage.setItem('user_habits_list', JSON.stringify(habitsList));
+  save('user_habits_v2', habitsList);
   renderHabits();
 }
 
-function cycleHabitDay(habitId, dayIndex) {
-  const habit = habitsList.find(h => h.id === habitId);
-  if (!habit) return;
-
-  const currentStatus = habit.days[dayIndex] || 'gray';
-  const currentIdx = habitStatusCycle.indexOf(currentStatus);
-  const nextIdx = (currentIdx + 1) % habitStatusCycle.length;
-  
-  habit.days[dayIndex] = habitStatusCycle[nextIdx];
-  localStorage.setItem('user_habits_list', JSON.stringify(habitsList));
+function cycleHabitDay(habitId, key) {
+  const h = habitsList.find(x => x.id === habitId);
+  if (!h) return;
+  h.log[key] = habitStatusCycle[(habitStatusCycle.indexOf(habitStatus(h, key)) + 1) % habitStatusCycle.length];
+  save('user_habits_v2', habitsList);
   renderHabits();
 }
 
-function archiveHabitsMonth() {
-  if (habitsList.length === 0) {
-    alert("Немає активних звичок для архівування.");
-    return;
+function shiftHabitMonth(delta) {
+  habitView = new Date(habitView.getFullYear(), habitView.getMonth() + delta, 1);
+  renderHabits();
+}
+
+function habitStreaks(h) {
+  let cur = 0, best = 0;
+  const end = new Date(); end.setHours(0, 0, 0, 0);
+  for (let d = new Date(h.created + 'T00:00:00'); d <= end; d.setDate(d.getDate() + 1)) {
+    const s = habitStatus(h, dKey(d));
+    if (s === 'green') { cur++; best = Math.max(best, cur); } else if (s === 'red') cur = 0;
   }
-  if (!confirm("Завершити поточний місяць для всіх звичок, зберегти статистику в архів та очистити календар?")) return;
-
-  const dateStr = new Date().toLocaleDateString('uk-UA', { month: 'long', year: 'numeric' });
-  
-  // Розраховуємо загальну успішність по звичках за місяць
-  let totalCheckable = 0;
-  let totalSuccess = 0;
-
-  habitsList.forEach(h => {
-    h.days.forEach(d => {
-      if (d === 'green' || d === 'red') {
-        totalCheckable++;
-        if (d === 'green') totalSuccess++;
-      }
-    });
-  });
-
-  const rate = totalCheckable > 0 ? Math.round((totalSuccess / totalCheckable) * 100) : 100;
-
-  habitsHistory.unshift({
-    title: `Місяць звичок (${dateStr})`,
-    rate: `${rate}%`,
-    details: `${habitsList.length} звич.`
-  });
-
-  localStorage.setItem('habits_history', JSON.stringify(habitsHistory));
-
-  // Очищаємо дні для нового місяця
-  habitsList.forEach(h => {
-    h.days = Array(30).fill('gray');
-  });
-  localStorage.setItem('user_habits_list', JSON.stringify(habitsList));
-
-  renderHabits();
-  renderHabitsHistory();
-  alert("Місяць успішно архівовано!");
+  return { cur, best };
 }
 
-function renderHabitsHistory() {
-  const container = document.getElementById('habits-history-list');
-  if (!container) return;
-
-  if (habitsHistory.length === 0) {
-    container.innerHTML = `<div style="color: #8e8e93; font-size: 0.85rem; text-align: center;">Архів звичок порожній.</div>`;
-    return;
+function habitMonthCounts(h, y, m) {
+  const c = { green: 0, red: 0, gray: 0 };
+  const today = todayKey();
+  for (let d = 1, n = new Date(y, m + 1, 0).getDate(); d <= n; d++) {
+    const k = `${y}-${pad(m + 1)}-${pad(d)}`;
+    if (k < h.created || k > today) continue;
+    c[habitStatus(h, k)]++;
   }
+  return c;
+}
 
-  container.innerHTML = habitsHistory.map(item => `
-    <div class="history-item">
-      <div>
-        <span>${item.title}</span>
-        <span class="subtitle" style="display: block; font-size: 0.75rem;">${item.details}</span>
-      </div>
-      <strong class="${parseInt(item.rate) >= 80 ? 'green' : 'yellow'}">${item.rate}</strong>
-    </div>
-  `).join('');
+function habitArchiveHtml(h) {
+  const now = new Date(), s0 = new Date(h.created + 'T00:00:00'), rows = [];
+  for (let y = s0.getFullYear(), m = s0.getMonth(); y < now.getFullYear() || (y === now.getFullYear() && m <= now.getMonth());) {
+    const c = habitMonthCounts(h, y, m);
+    rows.push(`<div class="history-item"><span>${monthTitle(y, m)}</span><span>🟢 ${c.green} · 🔴 ${c.red} · ⚪ ${c.gray}</span></div>`);
+    if (++m > 11) { m = 0; y++; }
+  }
+  return rows.reverse().join('');
 }
 
 function renderHabits() {
   const container = document.getElementById('habits-list-container');
   if (!container) return;
+  const y = habitView.getFullYear(), m = habitView.getMonth(), now = new Date();
+  const t = document.getElementById('habit-month-title');
+  if (t) t.innerText = monthTitle(y, m);
+  const nx = document.getElementById('habit-next-btn');
+  if (nx) nx.disabled = (y === now.getFullYear() && m === now.getMonth());
 
   if (habitsList.length === 0) {
     container.innerHTML = `<div style="color: #8e8e93; font-size: 0.85rem; text-align: center; margin-top: 20px;">Немає доданих шкідливих звичок. Додайте першу вище!</div>`;
-    renderHabitsHistory();
     return;
   }
-
-  container.innerHTML = habitsList.map(habit => `
+  container.innerHTML = habitsList.map(h => {
+    const st = habitStreaks(h);
+    return `
     <div class="stats-card habit-card-item">
       <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-        <h4 style="margin-bottom: 0; color: #ff453a;">🚫 ${habit.name}</h4>
-        <button onclick="deleteHabit(${habit.id})" style="background: none; border: none; color: #ff453a; cursor: pointer; font-size: 0.8rem; font-weight: bold;">Видалити</button>
+        <h4 style="margin-bottom: 0; color: #ff453a;">🚫 ${esc(h.name)}</h4>
+        <button onclick="deleteHabit(${h.id})" style="background: none; border: none; color: #ff453a; cursor: pointer; font-size: 0.8rem; font-weight: bold;">Видалити</button>
       </div>
-      
+      <div class="subtitle" style="margin-bottom: 6px;">🔥 Серія: <b class="green">${st.cur} дн.</b> · 🏆 Рекорд: <b>${st.best} дн.</b> · з ${h.created.split('-').reverse().join('.')}</div>
       <div class="status-legend" style="margin: 6px 0;">
-        <span>🟢 Тримаюсь</span>
-        <span>🔴 Здався</span>
-        <span>⚪ Нейтрально</span>
+        <span>🟢 Тримаюсь</span><span>🔴 Здався</span><span>⚪ Нейтрально</span>
       </div>
-
-      <div class="calendar-grid">
-        ${habit.days.map((status, dayIndex) => `
-          <div class="day-square status-${status}" onclick="cycleHabitDay(${habit.id},${dayIndex})">
-            ${dayIndex + 1}
-          </div>
-        `).join('')}
-      </div>
-
-      <div class="habit-reason-footer">
-        💡 <b>Чому шкідливо:</b> ${habit.reason}
-      </div>
-    </div>
-  `).join('');
-
-  renderHabitsHistory();
+      <div class="calendar-grid">${buildMonthGrid(y, m, h.created, k => habitStatus(h, k), `cycleHabitDay.bind(null,${h.id})`)}</div>
+      <details style="margin-top: 10px;">
+        <summary class="subtitle" style="cursor: pointer;">📦 Архів по місяцях</summary>
+        <div class="history-list">${habitArchiveHtml(h)}</div>
+      </details>
+      <div class="habit-reason-footer">💡 <b>Чому шкідливо:</b> ${esc(h.reason)}</div>
+    </div>`;
+  }).join('');
 }
 
 // --- РОЗДІЛ: ПЛАНИ ---
@@ -800,12 +771,12 @@ function renderPlans() {
     if (termineList.length === 0) {
       tContainer.innerHTML = `<div style="color: #8e8e93; font-size: 0.85rem;">Немає запланованих термінів.</div>`;
     } else {
-      tContainer.innerHTML = termineList.map(t => `
+      tContainer.innerHTML = [...termineList].sort((a, b) => a.date.localeCompare(b.date)).map(t => `
         <div class="plan-card">
           <input type="checkbox" onclick="completePlanItem('termine', ${t.id})">
           <div class="plan-card-content">
-            <div class="plan-card-title">${t.title}</div>
-            <div class="plan-card-sub">📅 ${t.date.replace('T', ' ')} ${t.note ? ' | ' + t.note : ''}</div>
+            <div class="plan-card-title">${esc(t.title)}</div>
+            <div class="plan-card-sub">📅 ${t.date.replace('T', ' ')} ${t.note ? ' | ' + esc(t.note) : ''}</div>
           </div>
         </div>
       `).join('');
@@ -821,7 +792,7 @@ function renderPlans() {
         <div class="plan-card">
           <input type="checkbox" onclick="completePlanItem('year', ${g.id})">
           <div class="plan-card-content">
-            <div class="plan-card-title">${g.title}</div>
+            <div class="plan-card-title">${esc(g.title)}</div>
           </div>
         </div>
       `).join('');
@@ -837,7 +808,7 @@ function renderPlans() {
         <div class="plan-card">
           <input type="checkbox" onclick="completePlanItem('step', ${g.id})">
           <div class="plan-card-content">
-            <div class="plan-card-title">${g.title}</div>
+            <div class="plan-card-title">${esc(g.title)}</div>
           </div>
         </div>
       `).join('');
@@ -852,8 +823,8 @@ function renderPlans() {
       aContainer.innerHTML = plansArchive.map(a => `
         <div class="plan-card" style="opacity: 0.7;">
           <div class="plan-card-content">
-            <div class="plan-card-title" style="text-decoration: line-through;">${a.title}</div>
-            <div class="plan-card-sub">Завершено: ${a.completedAt} (${a.sub})</div>
+            <div class="plan-card-title" style="text-decoration: line-through;">${esc(a.title)}</div>
+            <div class="plan-card-sub">Завершено: ${esc(a.completedAt)} (${esc(a.sub)})</div>
           </div>
         </div>
       `).join('');
@@ -869,15 +840,14 @@ function initUI() {
     if (!container) return;
     
     container.innerHTML = data.map(item => {
-      const safeItem = JSON.stringify(item).replace(/'/g, "&#39;");
       const invested = item.invested || 0;
       const amount = item.amount || 0;
       const avgPrice = amount > 0 ? (invested / amount).toFixed(2) : '0.00';
       
       return `
-        <div class="asset-card" onclick='openTradeModal(${safeItem})'>
+        <div class="asset-card" onclick="openTradeModal('${item.id}')">
           <div class="asset-info">
-            <img class="real-logo" src="${item.logo}" alt="${item.ticker}" onerror="this.src='https://img.icons8.com/color/48/coins.png'" />
+            <img class="real-logo" src="${item.logo}" alt="${item.ticker}" onerror="this.onerror=null;this.src=FALLBACK_LOGO" />
             <div class="asset-names">
               <span class="ticker">${item.ticker}</span>
               <span class="subtitle">${item.name}</span>
@@ -892,8 +862,8 @@ function initUI() {
     }).join('');
   };
 
-  renderList(stocksData, 'stocks-list', '€');
-  renderList(cryptoData, 'crypto-list', '$');
+  renderList(stocksData, 'stocks-list', CUR);
+  renderList(cryptoData, 'crypto-list', CUR);
 
   renderJournals();
   updateTotals();
@@ -902,6 +872,26 @@ function initUI() {
   renderPlans();
   renderWorkoutsHistory();
   renderHabits();
+  const w = localStorage.getItem('current_weight');
+  const wi = document.getElementById('current-weight-input');
+  if (w && wi) wi.value = w;
+  updateBodyFat();
 }
 
-document.addEventListener('DOMContentLoaded', initUI);
+function initRoutineChecks() {
+  let data = load('routine_checks', {});
+  if (data.date !== todayKey()) data = { date: todayKey(), checked: {} }; // нова доба — чек-лист скидається
+  document.querySelectorAll('#notes-screen .custom-ingredients-list input[type=checkbox]').forEach((cb, i) => {
+    cb.checked = !!data.checked[i];
+    cb.onchange = () => { data.checked[i] = cb.checked; save('routine_checks', data); };
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  initUI();
+  initRoutineChecks();
+  if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+});
+// після півночі / повернення в додаток — оновити «сьогодні»
+document.addEventListener('visibilitychange', () => { if (!document.hidden) { initUI(); initRoutineChecks(); } });

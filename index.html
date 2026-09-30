@@ -3,7 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Personal Management WebApp</title>
+  <title>Мій Помічник</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#121214">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Помічник">
+  <link rel="apple-touch-icon" href="icons/icon-180.png">
   <link rel="stylesheet" href="style.css">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
@@ -106,7 +113,10 @@
           <div id="journal-stocks" class="journal-list"></div>
         </div>
         <div class="journal-col">
-          <h4>🪙 Криптовалюта</h4>
+          <h4 class="clickable-header">
+            <span>🪙 Криптовалюта</span>
+            <span class="plus-icon" onclick="openJournalAddModal('crypto')">+</span>
+          </h4>
           <div id="journal-crypto" class="journal-list"></div>
         </div>
       </div>
@@ -392,28 +402,29 @@
       </div>
 
       <div class="stats-card" style="margin-top: 20px;">
-        <h4>📅 Поточний місяць дисципліни</h4>
-        <p class="subtitle">Клікніть на день, щоб змінити статус:</p>
+        <h4>📅 Календар дисципліни</h4>
+        <div class="month-nav">
+          <button id="disc-prev-btn" onclick="shiftDiscMonth(-1)">‹</button>
+          <strong id="discipline-month-title"></strong>
+          <button id="disc-next-btn" onclick="shiftDiscMonth(1)">›</button>
+        </div>
+        <p class="subtitle">Клікніть на день, щоб змінити статус (майбутні дні заблоковані):</p>
         <div class="status-legend">
           <span>🟢 100%</span>
           <span>🟡 50%</span>
           <span>🔴 0%</span>
           <span>⚪ Вихідний</span>
         </div>
-        
+
         <div id="discipline-calendar" class="calendar-grid"></div>
 
         <div class="discipline-stats">
-          Успішність за цей місяць: <strong id="discipline-rate" class="green">100%</strong>
+          Успішність за місяць: <strong id="discipline-rate" class="green">100%</strong>
         </div>
-
-        <button class="reset-month-btn" onclick="archiveCurrentMonth()">
-          💾 Завершити місяць та зберегти в Архів
-        </button>
       </div>
 
       <div class="stats-card">
-        <h4>📜 Історія та статистика за рік</h4>
+        <h4>📦 Архів місяців (зберігається автоматично)</h4>
         <div id="history-list" class="history-list"></div>
       </div>
     </section>
@@ -512,21 +523,12 @@
 
       <div class="category-block">
         <h3>Список звичок та календар прогресу</h3>
+        <div class="month-nav">
+          <button id="habit-prev-btn" onclick="shiftHabitMonth(-1)">‹</button>
+          <strong id="habit-month-title"></strong>
+          <button id="habit-next-btn" onclick="shiftHabitMonth(1)">›</button>
+        </div>
         <div id="habits-list-container"></div>
-      </div>
-
-      <!-- Кнопка архівування місяця звичок -->
-      <div class="stats-card" style="margin-top: 20px;">
-        <h4>📦 Архів успішності звичок</h4>
-        <p class="subtitle" style="margin-bottom: 12px;">Збережіть результати поточного місяця до загального архіву та розпочніть новий місяць.</p>
-        <button class="reset-month-btn" onclick="archiveHabitsMonth()">
-          💾 Завершити місяць звичок та зберегти в Архів
-        </button>
-      </div>
-
-      <div class="category-block" style="margin-top: 16px;">
-        <h3>📜 Історія та архів місяців</h3>
-        <div id="habits-history-list" class="history-list"></div>
       </div>
     </section>
 
@@ -547,8 +549,15 @@
           <input type="number" id="trade-amount" placeholder="Наприклад: 2.574" step="any">
         </div>
         <div class="form-group">
-          <label>Загальна сума (€) або ціна за 1:</label>
-          <input type="number" id="trade-price" placeholder="Наприклад: 601 або 233.5" step="any">
+          <label>Що ви вводите нижче:</label>
+          <select id="trade-price-mode">
+            <option value="total">Загальну суму угоди (€)</option>
+            <option value="unit">Ціну за 1 шт. (€)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Сума / ціна (€):</label>
+          <input type="number" id="trade-price" placeholder="Наприклад: 601" step="any">
         </div>
         <div class="modal-actions">
           <button onclick="submitTrade()" class="btn-save">Зберегти</button>
@@ -566,7 +575,7 @@
           <input type="text" id="journal-input-name" placeholder="Наприклад: Apple Inc.">
         </div>
         <div class="form-group">
-          <label>Сума прибутку (€):</label>
+          <label>Прибуток / збиток (€, для збитку — мінус):</label>
           <input type="number" id="journal-input-profit" placeholder="Наприклад: 30" step="any">
         </div>
         <div class="modal-actions">

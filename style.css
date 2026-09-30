@@ -174,3 +174,16 @@ html, body {
 /* СТИЛІ ДЛЯ ШКІДЛИВИХ ЗВИЧОК */
 .habit-card-item { margin-bottom: 14px; }
 .habit-reason-footer { margin-top: 10px; font-size: 0.8rem; color: #ffd60a; background: #2c2c2e; padding: 8px 10px; border-radius: 8px; border: 1px solid #3a3a3c; }
+
+/* iOS: дозволити введення тексту (user-select:none ламає input у Safari) */
+input, textarea, select { -webkit-user-select: text; user-select: text; }
+
+/* Календар з реальними датами */
+.weekday-label { text-align: center; font-size: 0.7rem; color: #8e8e93; }
+.day-square.locked { background: #1c1c1e; color: #48484a; cursor: default; }
+.day-square.today { outline: 2px solid #0a84ff; outline-offset: 1px; }
+.month-nav { display: flex; justify-content: space-between; align-items: center; margin: 8px 0; }
+.month-nav strong { color: #fff; text-transform: capitalize; }
+.month-nav button { background: #2c2c2e; color: #fff; border: 1px solid #3a3a3c; width: 36px; height: 32px; border-radius: 8px; font-size: 1.2rem; cursor: pointer; }
+.month-nav button:disabled { opacity: 0.3; cursor: default; }
+details summary { list-style: none; }
