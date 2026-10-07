@@ -1,5 +1,5 @@
 // Змінюйте версію при кожному оновленні файлів, щоб телефон підтягнув нову версію
-const CACHE = 'life-app-v1';
+const CACHE = 'life-app-v2';
 const ASSETS = ['./', 'index.html', 'style.css', 'app.js', 'manifest.json', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-180.png'];
 
 self.addEventListener('install', e => {

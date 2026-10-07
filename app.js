@@ -35,7 +35,7 @@ const ALL_KEYS = [
   'user_stocks_v6', 'user_crypto_v6', 'journal_stocks_v6', 'journal_crypto_v6',
   'current_month_days', 'discipline_history', 'discipline_log', 'discipline_started',
   'user_termine', 'user_year_goals', 'user_step_goals', 'user_plans_archive',
-  'user_workouts_history', 'user_habits_list', 'user_habits_v2', 'current_weight', 'routine_checks'
+  'user_workouts_history', 'last_exercise_weights', 'user_habits_list', 'user_habits_v2', 'current_weight', 'routine_checks'
 ];
 
 function exportData() {
@@ -389,6 +389,19 @@ function renderNutrition() {
 // --- РОЗДІЛ: ТРЕНУВАННЯ ---
 
 let workoutsHistory = JSON.parse(localStorage.getItem('user_workouts_history')) || [];
+let lastWeights = load('last_exercise_weights', {}); // остання вага для кожної вправи
+
+// підставляє останню використану вагу при виборі вправи
+function initWorkoutWeights() {
+  document.querySelectorAll('#workout-exercises-container .workout-exercise-card').forEach(card => {
+    const sel = card.querySelector('.exercise-select');
+    const inp = card.querySelector('.weight-input');
+    if (!sel || !inp) return;
+    const fill = () => { inp.value = lastWeights[sel.value] ?? ''; };
+    sel.addEventListener('change', fill);
+    fill();
+  });
+}
 
 function updateBodyFat() {
   const weightInput = document.getElementById('current-weight-input');
@@ -417,9 +430,13 @@ function finishWorkout() {
     const exName = exerciseSelect ? exerciseSelect.value : '';
     const sets = setsSelect ? setsSelect.value : '';
     const reps = repsSelect ? repsSelect.value : '';
+    const weightInput = card.querySelector('.weight-input');
+    const kg = weightInput ? parseFloat(String(weightInput.value).replace(',', '.')) : NaN;
 
     if (sets && reps) {
-      summaryDetails.push(`${exName}: ${sets} підх. по ${reps} пов.`);
+      const kgText = kg > 0 ? ` × ${kg} кг` : '';
+      summaryDetails.push(`${exName}: ${sets} підх. по ${reps} пов.${kgText}`);
+      if (kg > 0) lastWeights[exName] = kg;
     }
   });
 
@@ -434,8 +451,9 @@ function finishWorkout() {
   
   const description = `Вага: ${weightVal} кг. ` + summaryDetails.join(' | ');
 
+  save('last_exercise_weights', lastWeights);
   workoutsHistory.unshift({ date: dateStr, desc: description });
-  localStorage.setItem('user_workouts_history', JSON.stringify(workoutsHistory));
+  localStorage.setItem('user_workouts_history', 'last_exercise_weights', JSON.stringify(workoutsHistory));
 
   renderWorkoutsHistory();
 
@@ -890,6 +908,7 @@ function initRoutineChecks() {
 document.addEventListener('DOMContentLoaded', () => {
   initUI();
   initRoutineChecks();
+  initWorkoutWeights();
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
 });
